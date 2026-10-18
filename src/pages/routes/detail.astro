@@ -1,0 +1,317 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Detalle de ruta">
+
+    <main id="route-page" class="min-h-screen bg-slate-50">
+
+        <!-- MODAL EDITAR SERVICIO -->
+        <div
+                id="edit-service-modal"
+                class="fixed inset-0 z-50 hidden overflow-y-auto"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="edit-service-modal-title"
+                aria-describedby="edit-service-modal-description"
+                aria-hidden="true"
+        >
+            <!-- FONDO -->
+            <div id="edit-service-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+            <!-- CONTENEDOR -->
+            <div class="relative flex min-h-full items-end justify-center p-0 sm:items-center sm:p-4">
+                <div class="w-full max-w-lg rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl">
+
+                    <!-- CABECERA -->
+                    <div class="mb-6 flex items-start justify-between gap-4">
+                        <div>
+                            <h2 id="edit-service-modal-title" class="text-xl font-bold text-slate-900">
+                                Editar servicio
+                            </h2>
+
+                            <p id="edit-service-modal-description" class="mt-1 text-sm text-slate-600">
+                                Modifica el cliente o el tipo de servicio.
+                            </p>
+                        </div>
+
+                        <button
+                                id="close-edit-service"
+                                type="button"
+                                class="-m-2 rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600"
+                                aria-label="Cerrar"
+                        >
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M4.3 4.3a1 1 0 0 1 1.4 0L10 8.6l4.3-4.3a1 1 0 1 1 1.4 1.4L11.4 10l4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4Z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- ERROR -->
+                    <div
+                            id="edit-service-error"
+                            role="alert"
+                            class="mb-5 hidden rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+                    ></div>
+
+                    <!-- FORM -->
+                    <div class="space-y-5">
+
+                        <!-- CLIENTE -->
+                        <div>
+                            <label for="edit-service-customer" class="mb-1.5 block text-sm font-semibold text-slate-800">
+                                Cliente
+                            </label>
+
+                            <select
+                                    id="edit-service-customer"
+                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-200 disabled:bg-slate-100 disabled:text-slate-500"
+                            >
+                            </select>
+
+                            <p id="edit-service-customer-empty" class="mt-2 hidden rounded-lg bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-inset ring-amber-200">
+                                ⚠️ No hay clientes activos disponibles.
+                                Activa un cliente para poder agregar o editar un servicio.
+                            </p>
+                        </div>
+
+                        <!-- TIPO -->
+                        <div>
+                            <label for="edit-service-type" class="mb-1.5 block text-sm font-semibold text-slate-800">
+                                Tipo de servicio
+                            </label>
+
+                            <select
+                                    id="edit-service-type"
+                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                            >
+                                <option value="S">S — Servicio</option>
+                                <option value="R">R — Reconexión</option>
+                                <option value="A">A — Alinear</option>
+                                <option value="CF">CF — Cambio a fibra</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- ACCIONES -->
+                    <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+                        <button
+                                id="cancel-edit-service"
+                                type="button"
+                                class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                                id="save-edit-service"
+                                type="button"
+                                class="rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            Guardar cambios
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- HEADER -->
+        <header class="border-b border-slate-200 bg-white">
+            <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+                <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div>
+                        <h1 id="route-title" class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                            Ruta
+                        </h1>
+
+                        <p id="route-technician" class="mt-1 text-sm text-slate-500">
+                            Cargando...
+                        </p>
+                    </div>
+
+                    <div
+                            id="route-status"
+                            class="inline-flex w-fit rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700"
+                    >
+                        Cargando
+                    </div>
+
+                </div>
+            </div>
+        </header>
+
+
+        <!-- CONTENIDO -->
+        <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
+
+            <!-- ERROR -->
+            <div
+                    id="error-message"
+                    role="alert"
+                    class="mb-6 hidden rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+            ></div>
+
+            <!-- RESUMEN -->
+            <div class="grid gap-3 sm:grid-cols-3 sm:gap-4">
+
+                <div class="rounded-xl bg-white p-5 ring-1 ring-slate-200">
+                    <p class="flex items-center gap-2 text-sm font-medium text-slate-600">
+                        <span class="h-2 w-2 rounded-full bg-slate-400" aria-hidden="true"></span>
+                        Servicios
+                    </p>
+                    <p id="total-services" class="mt-2 text-3xl font-bold tabular-nums text-slate-900">
+                        0
+                    </p>
+                </div>
+
+                <div class="rounded-xl bg-white p-5 ring-1 ring-slate-200">
+                    <p class="flex items-center gap-2 text-sm font-medium text-slate-600">
+                        <span class="h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>
+                        Completados
+                    </p>
+                    <p id="completed-services" class="mt-2 text-3xl font-bold tabular-nums text-green-700">
+                        0
+                    </p>
+                </div>
+
+                <div class="rounded-xl bg-white p-5 ring-1 ring-slate-200">
+                    <p class="flex items-center gap-2 text-sm font-medium text-slate-600">
+                        <span class="h-2 w-2 rounded-full bg-orange-500" aria-hidden="true"></span>
+                        Pendientes
+                    </p>
+                    <p id="pending-services" class="mt-2 text-3xl font-bold tabular-nums text-orange-600">
+                        0
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- SERVICIOS -->
+
+            <section
+                    class="mt-10"
+                    aria-labelledby="services-heading"
+            >
+
+                <!-- ENCABEZADO -->
+
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+                    <div>
+
+                        <div class="flex items-center gap-3">
+
+                <span
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600"
+                >
+                    <svg
+                            class="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                    >
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                    </svg>
+                </span>
+
+                            <div>
+
+                                <h2
+                                        id="services-heading"
+                                        class="text-xl font-bold tracking-tight text-slate-900"
+                                >
+                                    Servicios
+                                </h2>
+
+                                <p class="mt-0.5 text-sm text-slate-500">
+                                    Visitas programadas para esta ruta.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                            id="add-service"
+                            type="button"
+                            class="hidden inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+                    >
+
+                        <svg
+                                class="h-4 w-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                aria-hidden="true"
+                        >
+                            <path d="M12 5v14" />
+                            <path d="M5 12h14" />
+                        </svg>
+
+                        Agregar servicio
+
+                    </button>
+
+                </div>
+
+
+                <!-- CONTENEDOR -->
+
+                <div
+                        id="services-container"
+                        class="mt-6 space-y-4"
+                        aria-live="polite"
+                >
+
+                    <div class="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
+
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+
+                            <svg
+                                    class="h-6 w-6"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    aria-hidden="true"
+                            >
+                                <path d="M9 12h6" />
+                                <path d="M9 16h6" />
+                                <path d="M8 4h8" />
+                                <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" />
+                            </svg>
+
+                        </div>
+
+                        <p class="mt-3 text-sm font-semibold text-slate-700">
+                            Cargando servicios...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <script src="../../scripts/route-detail.ts"></script>
+
+</Layout>

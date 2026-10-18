@@ -1,0 +1,319 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Nuevo técnico">
+    <main class="min-h-screen bg-slate-100">
+        <section class="mx-auto max-w-3xl px-6 py-8">
+            <form
+                    id="form"
+                    class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+            >
+                <div class="space-y-5">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">
+                            Nuevo técnico
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Registra los datos y la fotografía del técnico.
+                        </p>
+                    </div>
+
+                    <!-- Fotografía -->
+                    <div>
+                        <label
+                                for="photo"
+                                class="mb-2 block text-sm font-semibold"
+                        >
+                            Fotografía del técnico
+                        </label>
+
+                        <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                            <img
+                                    id="photo-preview"
+                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E"
+                                    alt="Vista previa de la fotografía del técnico"
+                                    class="h-28 w-28 rounded-full border border-slate-200 object-cover"
+                            />
+
+                            <div class="w-full">
+                                <input
+                                        id="photo"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-orange-50 file:px-4 file:py-2 file:font-semibold file:text-orange-700 hover:file:bg-orange-100"
+                                />
+                                <p class="mt-2 text-xs text-slate-500">
+                                    JPG, PNG o WEBP. Máximo 5 MB.
+                                </p>
+                                <button
+                                        id="remove-photo"
+                                        type="button"
+                                        class="mt-2 hidden text-sm font-medium text-red-600 hover:text-red-700"
+                                >
+                                    Quitar fotografía
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div>
+                        <label for="name" class="mb-2 block text-sm font-semibold">
+                            Nombre completo
+                        </label>
+                        <input
+                                id="name"
+                                required
+                                maxlength="100"
+                                placeholder="Ej. Carlos Mendoza"
+                                class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        />
+                    </div>
+
+                    <!-- Teléfono (Con selector de extensión y input de dígitos) -->
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold">
+                            Teléfono
+                        </label>
+                        <div class="flex gap-2">
+                            <!-- Select para la extensión/código de país -->
+                            <select
+                                    id="phone-country"
+                                    class="rounded-xl border border-slate-300 bg-white px-3 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                            >
+                                <option value="+52">🇲🇽 +52 (México)</option>
+                                <option value="+1">🇺🇸 +1 (EE. UU.)</option>
+                            </select>
+
+                            <!-- Input para los dígitos del número -->
+                            <input
+                                    id="phone-digits"
+                                    type="tel"
+                                    maxlength="10"
+                                    placeholder="5512345678"
+                                    class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                            />
+                        </div>
+                    </div>
+
+                    <div
+                            id="error"
+                            role="alert"
+                            class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                    ></div>
+
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <a
+                                href="/technicians"
+                                class="rounded-xl border border-slate-300 px-6 py-3 text-center font-semibold text-slate-700"
+                        >
+                            Cancelar
+                        </a>
+                        <button
+                                id="submit"
+                                type="submit"
+                                class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            Guardar técnico
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        import {
+            createTechnician,
+            uploadTechnicianPhoto,
+        } from "../../services/api";
+
+        const form = document.querySelector<HTMLFormElement>("#form");
+        const nameInput = document.querySelector<HTMLInputElement>("#name");
+        const phoneCountrySelect = document.querySelector<HTMLSelectElement>("#phone-country");
+        const phoneDigitsInput = document.querySelector<HTMLInputElement>("#phone-digits");
+        const photoInput = document.querySelector<HTMLInputElement>("#photo");
+        const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
+        const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
+        const button = document.querySelector<HTMLButtonElement>("#submit");
+        const error = document.querySelector<HTMLDivElement>("#error");
+
+        let selectedPhoto: File | null = null;
+        let previewUrl: string | null = null;
+
+        photoInput?.addEventListener("change", () => {
+            const file = photoInput.files?.[0];
+
+            if (!file) {
+                selectedPhoto = null;
+                return;
+            }
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                showError("Selecciona una imagen JPG, PNG o WEBP.");
+                photoInput.value = "";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showError("La fotografía no debe superar los 5 MB.");
+                photoInput.value = "";
+                return;
+            }
+
+            hideError();
+            selectedPhoto = file;
+
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+
+            previewUrl = URL.createObjectURL(file);
+
+            if (photoPreview) {
+                photoPreview.src = previewUrl;
+            }
+
+            removePhotoButton?.classList.remove("hidden");
+        });
+
+        removePhotoButton?.addEventListener("click", () => {
+            selectedPhoto = null;
+
+            if (photoInput) {
+                photoInput.value = "";
+            }
+
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            if (photoPreview) {
+                photoPreview.src =
+                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E";
+            }
+
+            removePhotoButton.classList.add("hidden");
+            hideError();
+        });
+
+        function showError(message: string) {
+            if (!error) return;
+            error.textContent = message;
+            error.classList.remove("hidden");
+        }
+
+        function hideError() {
+            error?.classList.add("hidden");
+        }
+
+        function validateTechnician(
+            name: string,
+            phone: string
+        ): string | null {
+            if (!name.trim()) {
+                return "El nombre del técnico es obligatorio.";
+            }
+
+            if (name.trim().length < 3) {
+                return "El nombre debe tener al menos 3 caracteres.";
+            }
+
+            // Si se ingresó teléfono, validarlo (el teléfono es opcional para técnicos en este form, si quieres que sea obligatorio quita el primer if interno)
+            if (phone.trim()) {
+                const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
+                const digitsOnly = cleanPhone.replace("+", "");
+                const pureNumber = digitsOnly.slice(-10);
+                const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);
+
+                if (isAllSameDigits) {
+                    return "El número de teléfono no puede tener todos sus dígitos iguales.";
+                }
+
+                const phoneRegex = /^(\+52|\+1)\d{10}$/;
+                if (!phoneRegex.test(cleanPhone)) {
+                    return "Introduce un número de teléfono de 10 dígitos válido.";
+                }
+            }
+
+            return null;
+        }
+
+        form?.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            hideError();
+
+            // Unir la extensión con los dígitos ingresados
+            const countryCode = phoneCountrySelect?.value ?? "+52";
+            const digits = phoneDigitsInput?.value.trim() ?? "";
+            const fullPhone = digits ? `${countryCode}${digits}` : "";
+
+            // 1. Validar antes de deshabilitar el botón
+            const validationError = validateTechnician(
+                nameInput?.value ?? "",
+                fullPhone
+            );
+
+            if (validationError) {
+                showError(validationError);
+                return;
+            }
+
+            // 2. Deshabilitar el botón mientras se guarda
+            if (button) {
+                button.disabled = true;
+                button.textContent = selectedPhoto
+                    ? "Guardando técnico y fotografía..."
+                    : "Guardando técnico...";
+            }
+
+            try {
+                const technician = await createTechnician({
+                    name: nameInput!.value.trim(),
+                    phone: fullPhone || null,
+                });
+
+                if (selectedPhoto) {
+                    try {
+                        await uploadTechnicianPhoto(
+                            technician.id,
+                            selectedPhoto
+                        );
+                    } catch {
+                        showError(
+                            "El técnico se creó, pero no se pudo subir su fotografía. Puedes agregarla después desde la edición del técnico."
+                        );
+
+                        if (button) {
+                            button.disabled = false;
+                            button.textContent = "Reintentar fotografía";
+                        }
+
+                        return;
+                    }
+                }
+
+                window.location.href = "/technicians";
+            } catch (err) {
+                showError(
+                    err instanceof Error
+                        ? err.message
+                        : "No se pudo crear el técnico."
+                );
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = "Guardar técnico";
+                }
+            }
+        });
+    </script>
+</Layout>

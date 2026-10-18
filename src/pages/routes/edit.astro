@@ -1,0 +1,417 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Editar ruta">
+
+    <main class="min-h-screen bg-slate-100">
+        <!-- CONTENIDO -->
+
+        <section class="mx-auto max-w-5xl px-6 py-8">
+
+            <div
+                    id="error-message"
+                    class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            ></div>
+
+
+            <div
+                    id="success-message"
+                    class="mb-6 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+            ></div>
+
+
+            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+
+                <div class="grid gap-6 md:grid-cols-2">
+
+                    <!-- FECHA -->
+
+                    <div>
+
+                        <label
+                                for="route-date"
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Fecha de ruta
+                        </label>
+
+                        <input
+                                id="route-date"
+                                type="date"
+                                required
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        />
+
+                    </div>
+
+
+                    <!-- TÉCNICO -->
+
+                    <div>
+
+                        <label
+                                for="technician"
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Técnico
+                        </label>
+
+                        <select
+                                id="technician"
+                                required
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        >
+
+                            <option value="">
+                                Cargando técnicos...
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCIONES -->
+
+                <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+                    <a
+                            href="/routes"
+                            class="rounded-xl border border-slate-300 px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                        Cancelar
+                    </a>
+
+
+                    <button
+                            id="save"
+                            type="button"
+                            class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        import {
+            getRoute,
+            getTechnicians,
+            updateRoute,
+        } from "../../services/api";
+
+
+        const routeId =
+            new URLSearchParams(
+                window.location.search,
+            ).get("id");
+
+
+        const routeDateInput =
+            document.querySelector<HTMLInputElement>(
+                "#route-date",
+            );
+
+
+        const technicianSelect =
+            document.querySelector<HTMLSelectElement>(
+                "#technician",
+            );
+
+
+        const saveButton =
+            document.querySelector<HTMLButtonElement>(
+                "#save",
+            );
+
+
+        const errorMessage =
+            document.querySelector<HTMLDivElement>(
+                "#error-message",
+            );
+
+
+        const successMessage =
+            document.querySelector<HTMLDivElement>(
+                "#success-message",
+            );
+
+
+        /*
+         * ==========================================
+         * ERROR
+         * ==========================================
+         */
+
+        function showError(
+            message: string,
+        ) {
+
+            if (!errorMessage) {
+                return;
+            }
+
+
+            errorMessage.textContent =
+                message;
+
+
+            errorMessage.classList.remove(
+                "hidden",
+            );
+        }
+
+
+        /*
+         * ==========================================
+         * ÉXITO
+         * ==========================================
+         */
+
+        function showSuccess(
+            message: string,
+        ) {
+
+            if (!successMessage) {
+                return;
+            }
+
+
+            successMessage.textContent =
+                message;
+
+
+            successMessage.classList.remove(
+                "hidden",
+            );
+        }
+
+
+        /*
+         * ==========================================
+         * CARGAR DATOS
+         * ==========================================
+         */
+
+        async function loadData() {
+
+            try {
+
+                if (!routeId) {
+
+                    throw new Error(
+                        "No se encontró el ID de la ruta.",
+                    );
+                }
+
+
+                const [
+                    route,
+                    technicians,
+                ] = await Promise.all([
+                    getRoute(routeId),
+                    getTechnicians(),
+                ]);
+
+
+                /*
+                 * La edición solo está permitida
+                 * para rutas asignadas.
+                 */
+
+                if (route.status !== "assigned") {
+
+                    throw new Error(
+                        "Esta ruta ya no puede editarse.",
+                    );
+                }
+
+
+                if (routeDateInput) {
+
+                    routeDateInput.value =
+                        route.route_date;
+                }
+
+
+                if (technicianSelect) {
+
+                    technicianSelect.innerHTML = `
+                        <option value="">
+                            Selecciona un técnico
+                        </option>
+                    `;
+
+
+                    technicians
+                        .filter(
+                            (technician) =>
+                                technician.active,
+                        )
+                        .forEach(
+                            (technician) => {
+
+                                const option =
+                                    document.createElement(
+                                        "option",
+                                    );
+
+
+                                option.value =
+                                    technician.id;
+
+
+                                option.textContent =
+                                    technician.name;
+
+
+                                option.selected =
+                                    technician.id ===
+                                    route.technician_id;
+
+
+                                technicianSelect.appendChild(
+                                    option,
+                                );
+                            },
+                        );
+                }
+
+            } catch (error) {
+
+                showError(
+                    error instanceof Error
+                        ? error.message
+                        : "No se pudo cargar la ruta.",
+                );
+            }
+        }
+
+
+        /*
+         * ==========================================
+         * GUARDAR
+         * ==========================================
+         */
+
+        async function saveChanges() {
+
+            if (!routeId) {
+
+                showError(
+                    "No se encontró el ID de la ruta.",
+                );
+
+                return;
+            }
+
+
+            const routeDate =
+                routeDateInput?.value;
+
+
+            const technicianId =
+                technicianSelect?.value;
+
+
+            if (!routeDate) {
+
+                showError(
+                    "Selecciona una fecha.",
+                );
+
+                return;
+            }
+
+
+            if (!technicianId) {
+
+                showError(
+                    "Selecciona un técnico.",
+                );
+
+                return;
+            }
+
+
+            try {
+
+                if (saveButton) {
+
+                    saveButton.disabled =
+                        true;
+
+                    saveButton.textContent =
+                        "Guardando...";
+                }
+
+
+                await updateRoute(
+                    routeId,
+                    {
+                        route_date:
+                        routeDate,
+                        technician_id:
+                        technicianId,
+                    },
+                );
+
+
+                showSuccess(
+                    "Ruta actualizada correctamente.",
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            `/routes/detail?id=${routeId}`;
+
+                    },
+                    700,
+                );
+
+            } catch (error) {
+
+                showError(
+                    error instanceof Error
+                        ? error.message
+                        : "No se pudo actualizar la ruta.",
+                );
+
+
+                if (saveButton) {
+
+                    saveButton.disabled =
+                        false;
+
+                    saveButton.textContent =
+                        "Guardar cambios";
+                }
+            }
+        }
+
+
+        saveButton?.addEventListener(
+            "click",
+            saveChanges,
+        );
+
+
+        loadData();
+
+    </script>
+
+</Layout>

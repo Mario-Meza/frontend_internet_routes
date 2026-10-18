@@ -1,0 +1,38 @@
+---
+---
+
+<button
+        id="menu-button"
+        type="button"
+        class="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
+        aria-label="Abrir menú"
+>
+    ☰
+</button>
+
+
+<script>
+
+    const button =
+        document.querySelector<HTMLButtonElement>(
+            "#menu-button",
+        );
+
+    const sidebar =
+        document.querySelector<HTMLElement>(
+            "#sidebar",
+        );
+
+
+    button?.addEventListener(
+        "click",
+        () => {
+
+            sidebar?.classList.toggle(
+                "-translate-x-full",
+            );
+
+        },
+    );
+
+</script>

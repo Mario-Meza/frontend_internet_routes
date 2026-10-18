@@ -1,0 +1,326 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Rutas">
+
+    <main class="min-h-screen bg-slate-50/60 pb-16">
+
+        <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+
+            <!-- CABECERA -->
+            <header class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="flex h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Panel de Control</span>
+                    </div>
+                    <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                        Rutas
+                    </h1>
+                    <p class="mt-1 text-sm text-slate-500">
+                        Consulta las rutas programadas y el técnico asignado.
+                    </p>
+                </div>
+
+                <a
+                        href="/routes/new"
+                        class="inline-flex items-center justify-center gap-2.5 rounded-xl bg-orange-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-orange-600/25 transition-all duration-200 hover:bg-orange-700 hover:shadow-orange-600/35 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1Z" />
+                    </svg>
+                    <span>Nueva ruta</span>
+                </a>
+
+            </header>
+
+
+            <!-- Loading (skeleton) -->
+            <div
+                    id="loading"
+                    role="status"
+                    aria-live="polite"
+                    class="overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-sm"
+            >
+                <span class="sr-only">Cargando rutas...</span>
+
+                <div class="animate-pulse divide-y divide-slate-100" aria-hidden="true">
+                    {Array.from({ length: 5 }).map(() => (
+                            <div class="flex items-center gap-4 px-6 py-5">
+                                <div class="h-4 w-28 rounded-md bg-slate-200"></div>
+                                <div class="h-9 w-9 rounded-full bg-slate-200"></div>
+                                <div class="h-4 w-48 rounded-md bg-slate-200"></div>
+                                <div class="ml-auto h-6 w-24 rounded-full bg-slate-200"></div>
+                            </div>
+                    ))}
+                </div>
+            </div>
+
+
+            <!-- Error -->
+            <div
+                    id="error"
+                    role="alert"
+                    class="hidden rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-700 shadow-sm"
+            >
+            </div>
+
+
+            <!-- Tabla -->
+            <div
+                    id="routes-container"
+                    class="hidden overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-sm"
+            >
+
+                <table class="min-w-full divide-y divide-slate-200">
+
+                    <caption class="sr-only">Listado de rutas</caption>
+
+                    <thead class="hidden bg-slate-50/75 md:table-header-group">
+
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Fecha
+                        </th>
+
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Técnico
+                        </th>
+
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Servicios
+                        </th>
+
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Estado
+                        </th>
+
+                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
+                            <span class="sr-only">Acción</span>
+                        </th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody
+                            id="routes-body"
+                            class="block divide-y divide-slate-100 md:table-row-group bg-white"
+                    >
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Empty -->
+            <div
+                    id="empty"
+                    class="hidden rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-sm"
+            >
+
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-50 text-3xl shadow-inner" aria-hidden="true">
+                    🗺️
+                </div>
+
+                <h2 class="mt-4 text-lg font-bold text-slate-900">
+                    Aún no hay rutas
+                </h2>
+
+                <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">
+                    Crea la primera ruta para asignar servicios a un técnico.
+                </p>
+
+                <div class="mt-6">
+                    <a
+                            href="/routes/new"
+                            class="inline-flex items-center justify-center rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-600/20 transition hover:bg-orange-700"
+                    >
+                        Crear ruta
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        import { getRoutes, getTechnicians } from "../../services/api";
+
+        const loading = document.getElementById("loading");
+        const error = document.getElementById("error");
+        const container = document.getElementById("routes-container");
+        const empty = document.getElementById("empty");
+        const routesBody = document.getElementById("routes-body");
+
+        // Estado -> etiqueta + estilos actualizados. Se añaden más estados con sus clases correspondientes.
+        const STATUS_STYLES: Record<string, { label: string; classes: string }> = {
+            assigned: {
+                label: "Asignada",
+                classes: "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20",
+            },
+            in_progress: {
+                label: "En proceso",
+                classes: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20",
+            },
+            completed: {
+                label: "Completada",
+                classes: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20",
+            },
+            canceled: {
+                label: "Cancelada",
+                classes: "bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20",
+            },
+        };
+
+        const FALLBACK_STATUS_CLASSES = "bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-500/20";
+
+        function escapeHtml(value: unknown): string {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function getInitials(name: string): string {
+            return name
+                .split(" ")
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((word) => word[0].toUpperCase())
+                .join("");
+        }
+
+        async function loadRoutes() {
+
+            try {
+
+                const [routes, technicians] = await Promise.all([
+                    getRoutes(),
+                    getTechnicians(),
+                ]);
+
+                loading?.classList.add("hidden");
+
+                if (routes.length === 0) {
+
+                    empty?.classList.remove("hidden");
+
+                    return;
+                }
+
+                container?.classList.remove("hidden");
+
+                const technicianMap = new Map(
+                    technicians.map((technician) => [
+                        technician.id,
+                        technician.name,
+                    ]),
+                );
+
+                if (routesBody) {
+
+                    routesBody.innerHTML = routes
+                        .map((route) => {
+
+                            const technicianName =
+                                technicianMap.get(
+                                    route.technician_id,
+                                ) ?? "Técnico desconocido";
+
+                            const serviceCount =
+                                route.services.length;
+
+                            const status = STATUS_STYLES[route.status];
+                            const statusLabel = status?.label ?? route.status;
+                            const statusClasses = status?.classes ?? FALLBACK_STATUS_CLASSES;
+
+                            const serviceLabel =
+                                serviceCount === 1 ? "servicio" : "servicios";
+
+                            // Mantiene la adaptabilidad móvil (tarjetas) y escritorio (tabla) de origen[cite: 4]
+                            return `
+                                <tr class="block px-4 py-4 transition-colors hover:bg-slate-50/80 md:table-row md:px-0 md:py-0">
+
+                                    <td data-label="Fecha" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-medium before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-4 md:before:content-none">
+                                        <span class="font-bold tabular-nums text-slate-800">
+                                            ${escapeHtml(route.route_date)}
+                                        </span>
+                                    </td>
+
+
+                                    <td data-label="Técnico" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-medium before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-4 md:before:content-none">
+                                        <div class="flex items-center gap-3">
+                                            <span
+                                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-xs font-black text-orange-700 shadow-sm ring-1 ring-orange-200"
+                                                aria-hidden="true"
+                                            >
+                                                ${escapeHtml(getInitials(technicianName))}
+                                            </span>
+
+                                            <span class="font-semibold text-slate-800">
+                                                ${escapeHtml(technicianName)}
+                                            </span>
+                                        </div>
+                                    </td>
+
+
+                                    <td data-label="Servicios" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-medium before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-4 md:before:content-none">
+                                        <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
+                                            <span class="font-bold tabular-nums text-slate-900">${serviceCount}</span>
+                                            <span>${serviceLabel}</span>
+                                        </span>
+                                    </td>
+
+
+                                    <td data-label="Estado" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-medium before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-4 md:before:content-none">
+                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-extrabold whitespace-nowrap ${statusClasses}">
+                                            ${escapeHtml(statusLabel)}
+                                        </span>
+                                    </td>
+
+
+                                    <td class="pt-3 md:table-cell md:px-6 md:py-4 md:text-right">
+                                        <a href="/routes/detail?id=${encodeURIComponent(route.id)}" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-orange-50 px-3.5 py-2 text-xs font-bold text-orange-700 transition-all hover:bg-orange-100 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 md:w-auto">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Ver ruta
+                                            <span class="sr-only">del ${escapeHtml(route.route_date)}</span>
+                                            <span aria-hidden="true" class="text-sm">→</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            `;
+                        })
+                        .join("");
+                }
+
+            } catch (err) {
+
+                loading?.classList.add("hidden");
+
+                if (error) {
+
+                    error.textContent =
+                        err instanceof Error
+                            ? err.message
+                            : "No se pudieron cargar las rutas.";
+
+                    error.classList.remove("hidden");
+                }
+            }
+        }
+
+        loadRoutes();
+    </script>
+
+</Layout>

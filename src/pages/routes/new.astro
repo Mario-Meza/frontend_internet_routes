@@ -1,0 +1,958 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Nueva ruta">
+
+    <main class="min-h-screen bg-slate-100">
+
+
+        <!-- CONTENIDO -->
+        <section class="mx-auto max-w-5xl px-6 py-8">
+
+            <!-- MENSAJE DE ERROR -->
+            <div
+                    id="error-message"
+                    class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            >
+            </div>
+
+
+            <!-- MENSAJE DE ÉXITO -->
+            <div
+                    id="success-message"
+                    class="mb-6 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+            >
+            </div>
+
+
+            <!-- DATOS DE LA RUTA -->
+            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+
+                <div class="mb-6">
+
+                    <h2 class="text-xl font-bold text-slate-900">
+                        Información de la ruta
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Define la fecha y el técnico responsable.
+                    </p>
+
+                </div>
+
+
+                <div class="grid gap-6 md:grid-cols-2">
+
+                    <!-- FECHA -->
+                    <div>
+
+                        <label
+                                for="route-date"
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Fecha de ruta
+                        </label>
+
+                        <input
+                                id="route-date"
+                                type="date"
+                                required
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        />
+
+                    </div>
+
+
+                    <!-- TÉCNICO -->
+                    <div>
+
+                        <label
+                                for="technician"
+                                class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Técnico
+                        </label>
+
+                        <select
+                                id="technician"
+                                required
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        >
+
+                            <option value="">
+                                Cargando técnicos...
+                            </option>
+
+                        </select>
+
+                        <p
+                                id="no-active-technicians"
+                                role="status"
+                                class="mt-2 hidden rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+                        >
+                            No hay técnicos activos disponibles. Activa un técnico o registra uno nuevo antes de crear una ruta.
+                            <a href="/technicians" class="font-semibold underline underline-offset-2 hover:text-amber-950">Administrar técnicos</a>.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SERVICIOS -->
+            <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+
+                <div class="mb-6 flex items-center justify-between gap-4">
+
+                    <div>
+
+                        <h2 class="text-xl font-bold text-slate-900">
+                            Servicios de la ruta
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Agrega los clientes que serán visitados.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                            id="add-service"
+                            type="button"
+                            class="shrink-0 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    >
+                        + Agregar servicio
+                    </button>
+
+                </div>
+
+                <div
+                        id="no-active-customers"
+                        role="status"
+                        class="mb-5 hidden rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
+                >
+                    <p class="font-semibold">No hay clientes activos disponibles.</p>
+                    <p class="mt-1">Activa un cliente o registra uno nuevo antes de asignar servicios a la ruta.</p>
+                    <a href="/customers" class="mt-2 inline-block font-semibold underline underline-offset-2 hover:text-amber-950">Administrar clientes</a>
+                </div>
+
+                <!-- SERVICIOS -->
+                <div
+                        id="services-container"
+                        class="space-y-4"
+                >
+                </div>
+
+
+                <!-- SIN SERVICIOS -->
+                <div
+                        id="empty-services"
+                        class="rounded-xl border border-dashed border-slate-300 p-8 text-center"
+                >
+
+                    <div class="text-4xl">
+                        📋
+                    </div>
+
+                    <p id="empty-services-title" class="mt-3 font-medium text-slate-700">
+                        Aún no hay servicios
+                    </p>
+
+                    <p id="empty-services-description" class="mt-1 text-sm text-slate-500">
+                        Agrega al menos un servicio a la ruta.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACCIONES -->
+            <div class="mt-6 flex flex-col-reverse justify-end gap-3 sm:flex-row">
+
+                <a
+                        href="/routes"
+                        class="rounded-xl border border-slate-300 bg-white px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                    Cancelar
+                </a>
+
+
+                <button
+                        id="create-route"
+                        type="button"
+                        class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    Crear ruta
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        import {
+            getCustomers,
+            getTechnicians,
+            createRoute,
+        } from "../../services/api";
+
+        import type { Customer } from "../../types/customer";
+        import type {
+            RouteServiceCreate,
+            ServiceType,
+        } from "../../types/route";
+
+
+        const routeDateInput =
+            document.querySelector<HTMLInputElement>(
+                "#route-date",
+            );
+
+        const technicianSelect =
+            document.querySelector<HTMLSelectElement>(
+                "#technician",
+            );
+
+        const noActiveTechniciansMessage =
+            document.querySelector<HTMLParagraphElement>(
+                "#no-active-technicians",
+            );
+
+        const noActiveCustomersMessage =
+            document.querySelector<HTMLDivElement>(
+                "#no-active-customers",
+            );
+
+        const servicesContainer =
+            document.querySelector<HTMLDivElement>(
+                "#services-container",
+            );
+
+        const emptyServices =
+            document.querySelector<HTMLDivElement>(
+                "#empty-services",
+            );
+
+        const addServiceButton =
+            document.querySelector<HTMLButtonElement>(
+                "#add-service",
+            );
+
+        const createRouteButton =
+            document.querySelector<HTMLButtonElement>(
+                "#create-route",
+            );
+
+        const errorMessage =
+            document.querySelector<HTMLDivElement>(
+                "#error-message",
+            );
+
+        const successMessage =
+            document.querySelector<HTMLDivElement>(
+                "#success-message",
+            );
+
+
+        let customers: Customer[] = [];
+        let activeTechniciansCount = 0;
+        let isSubmitting = false;
+
+
+        const serviceTypes: {
+            value: ServiceType;
+            label: string;
+        }[] = [
+            {
+                value: "S",
+                label: "Servicio",
+            },
+            {
+                value: "R",
+                label: "Reconexión",
+            },
+            {
+                value: "A",
+                label: "Alinear",
+            },
+            {
+                value: "CF",
+                label: "Cambio a fibra",
+            },
+        ];
+
+
+        /*
+         * ==========================================
+         * CARGAR INFORMACIÓN INICIAL
+         * ==========================================
+         */
+
+        async function loadInitialData() {
+
+            try {
+
+                const [
+                    customersResponse,
+                    techniciansResponse,
+                ] = await Promise.all([
+                    getCustomers(),
+                    getTechnicians(),
+                ]);
+
+                // Los registros antiguos sin "active" se consideran activos.
+                customers = customersResponse.filter(
+                    (customer) => customer.active !== false,
+                );
+
+                const activeTechnicians = techniciansResponse.filter(
+                    (technician) => technician.active === true,
+                );
+                activeTechniciansCount = activeTechnicians.length;
+
+                if (technicianSelect) {
+                    technicianSelect.innerHTML = activeTechnicians.length
+                        ? `
+                            <option value="">
+                                Selecciona un técnico
+                            </option>
+                        `
+                        : `
+                            <option value="">
+                                No hay técnicos activos disponibles
+                            </option>
+                        `;
+
+                    activeTechnicians.forEach((technician) => {
+                        const option = document.createElement("option");
+                        option.value = technician.id;
+                        option.textContent = technician.name;
+                        technicianSelect.appendChild(option);
+                    });
+
+                    technicianSelect.disabled = activeTechnicians.length === 0;
+                }
+
+                noActiveTechniciansMessage?.classList.toggle(
+                    "hidden",
+                    activeTechnicians.length > 0,
+                );
+
+                noActiveCustomersMessage?.classList.toggle(
+                    "hidden",
+                    customers.length > 0,
+                );
+
+                updateFormAvailability();
+
+                // Solo crear la tarjeta inicial cuando la ruta se puede configurar.
+                // Si falta un cliente activo o un técnico activo, mostrar el estado vacío
+                // en lugar de una tarjeta que solo permitiría pulsar "Eliminar".
+                if (customers.length > 0 && activeTechniciansCount > 0) {
+                    addService();
+                } else {
+                    updateServiceNumbers();
+                }
+
+            } catch (error) {
+
+                showError(
+                    error instanceof Error
+                        ? error.message
+                        : "No se pudieron cargar clientes y técnicos. Intenta recargar la página.",
+                );
+
+                if (technicianSelect) {
+                    technicianSelect.disabled = true;
+                    technicianSelect.innerHTML = `
+                        <option value="">
+                            No se pudieron cargar los técnicos
+                        </option>
+                    `;
+                }
+
+                if (addServiceButton) {
+                    addServiceButton.disabled = true;
+                }
+                if (createRouteButton) {
+                    createRouteButton.disabled = true;
+                }
+            }
+        }
+
+        /*
+         * ==========================================
+         * AGREGAR SERVICIO
+         * ==========================================
+         */
+
+        function addService() {
+
+            if (!servicesContainer) {
+                return;
+            }
+
+            // No generar una tarjeta eliminable si faltan datos indispensables.
+            if (customers.length === 0 || activeTechniciansCount === 0) {
+                updateServiceNumbers();
+                return;
+            }
+
+            const serviceCard =
+                document.createElement("div");
+
+
+            serviceCard.className =
+                "service-card rounded-xl border border-slate-200 bg-slate-50 p-5";
+
+
+            serviceCard.innerHTML = `
+
+                <div class="mb-4 flex items-center justify-between">
+
+                    <div class="flex items-center gap-3">
+
+                        <span
+                            class="service-number flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-600"
+                        >
+                            1
+                        </span>
+
+                        <h3 class="font-semibold text-slate-800">
+                            Servicio
+                        </h3>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="remove-service text-sm font-medium text-red-500 transition hover:text-red-700"
+                    >
+                        Eliminar
+                    </button>
+
+                </div>
+
+
+                <div class="grid gap-4 md:grid-cols-2">
+
+                    <div>
+
+                        <label
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Cliente
+                        </label>
+
+                        <select
+                            class="customer-select w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                            ${customers.length === 0 ? "disabled" : ""}
+                        >
+
+                            <option value="">
+                                ${customers.length > 0 ? "Selecciona un cliente" : "No hay clientes activos disponibles"}
+                            </option>
+
+                        </select>
+
+                        <p class="customer-empty-message ${customers.length > 0 ? "hidden" : ""} mt-2 text-sm text-amber-700">
+                            No hay clientes activos. Activa un cliente para asignarlo a esta ruta.
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <label
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
+                            Tipo de servicio
+                        </label>
+
+                        <select
+                            class="service-type-select w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                        >
+                        </select>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            const customerSelect =
+                serviceCard.querySelector<HTMLSelectElement>(
+                    ".customer-select",
+                );
+
+
+            const serviceTypeSelect =
+                serviceCard.querySelector<HTMLSelectElement>(
+                    ".service-type-select",
+                );
+
+
+            /*
+             * Clientes
+             */
+
+            if (customerSelect) {
+
+                customers.forEach((customer) => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value = customer.id;
+
+                    option.textContent =
+                        `${customer.name} — ${customer.location}`;
+
+                    customerSelect.appendChild(option);
+
+                });
+            }
+
+
+            /*
+             * Tipos de servicio
+             */
+
+            if (serviceTypeSelect) {
+
+                serviceTypes.forEach((serviceType) => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        serviceType.value;
+
+                    option.textContent =
+                        `${serviceType.value} — ${serviceType.label}`;
+
+                    serviceTypeSelect.appendChild(option);
+
+                });
+            }
+
+
+            /*
+             * Eliminar servicio
+             */
+
+            const removeButton =
+                serviceCard.querySelector<HTMLButtonElement>(
+                    ".remove-service",
+                );
+
+
+            removeButton?.addEventListener(
+                "click",
+                () => {
+
+                    serviceCard.remove();
+
+                    updateServiceNumbers();
+
+                },
+            );
+
+
+            servicesContainer.appendChild(
+                serviceCard,
+            );
+
+
+            updateServiceNumbers();
+        }
+
+
+        /*
+         * ==========================================
+         * ACTUALIZAR NUMERACIÓN
+         * ==========================================
+         */
+
+        function updateServiceNumbers() {
+
+            if (!servicesContainer || !emptyServices) {
+                return;
+            }
+
+            const cards = servicesContainer.querySelectorAll(
+                ".service-card",
+            );
+
+            cards.forEach((card, index) => {
+                const number = card.querySelector(
+                    ".service-number",
+                );
+
+                if (number) {
+                    number.textContent = String(index + 1);
+                }
+            });
+
+            const emptyTitle = document.querySelector<HTMLElement>(
+                "#empty-services-title",
+            );
+            const emptyDescription = document.querySelector<HTMLElement>(
+                "#empty-services-description",
+            );
+
+            if (cards.length === 0) {
+                emptyServices.classList.remove("hidden");
+
+                if (customers.length === 0) {
+                    if (emptyTitle) {
+                        emptyTitle.textContent = "No se pueden agregar servicios";
+                    }
+                    if (emptyDescription) {
+                        emptyDescription.textContent =
+                            "Activa o registra al menos un cliente para continuar.";
+                    }
+                } else if (activeTechniciansCount === 0) {
+                    if (emptyTitle) {
+                        emptyTitle.textContent = "No hay técnicos activos";
+                    }
+                    if (emptyDescription) {
+                        emptyDescription.textContent =
+                            "Activa o registra un técnico antes de configurar esta ruta.";
+                    }
+                } else {
+                    if (emptyTitle) {
+                        emptyTitle.textContent = "Aún no hay servicios";
+                    }
+                    if (emptyDescription) {
+                        emptyDescription.textContent =
+                            "Agrega al menos un servicio a la ruta.";
+                    }
+                }
+            } else {
+                emptyServices.classList.add("hidden");
+            }
+        }
+
+
+        /*
+         * ==========================================
+         * CREAR RUTA
+         * ==========================================
+         */
+
+        async function handleCreateRoute() {
+
+            hideMessages();
+
+
+            const routeDate =
+                routeDateInput?.value.trim();
+
+            const technicianId =
+                technicianSelect?.value;
+
+            if (customers.length === 0) {
+                showError(
+                    "No hay clientes activos disponibles. Activa un cliente antes de crear la ruta.",
+                );
+                return;
+            }
+
+            if (activeTechniciansCount === 0) {
+                showError(
+                    "No hay técnicos activos disponibles. Activa o registra un técnico antes de crear la ruta.",
+                );
+                return;
+            }
+
+            if (!routeDate) {
+
+                showError(
+                    "Selecciona la fecha de la ruta.",
+                );
+
+                return;
+            }
+
+
+            if (!technicianId) {
+
+                showError(
+                    "Selecciona un técnico.",
+                );
+
+                return;
+            }
+
+
+            const cards =
+                servicesContainer?.querySelectorAll(
+                    ".service-card",
+                );
+
+
+            if (!cards || cards.length === 0) {
+
+                showError(
+                    "Agrega al menos un servicio.",
+                );
+
+                return;
+            }
+
+
+            const services: RouteServiceCreate[] = [];
+
+
+            for (const card of cards) {
+
+                const customerSelect =
+                    card.querySelector<HTMLSelectElement>(
+                        ".customer-select",
+                    );
+
+                const serviceTypeSelect =
+                    card.querySelector<HTMLSelectElement>(
+                        ".service-type-select",
+                    );
+
+
+                const customerId =
+                    customerSelect?.value;
+
+                const serviceType =
+                    serviceTypeSelect?.value;
+
+
+                if (!customerId) {
+
+                    showError(
+                        "Todos los servicios deben tener un cliente.",
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    serviceType !== "S" &&
+                    serviceType !== "R" &&
+                    serviceType !== "A" &&
+                    serviceType !== "CF"
+                ) {
+
+                    showError(
+                        "Uno de los servicios tiene un tipo inválido.",
+                    );
+
+                    return;
+                }
+
+
+                services.push({
+                    customer_id: customerId,
+                    service_type: serviceType,
+                });
+            }
+
+
+            try {
+
+                setLoading(true);
+
+
+                /*
+                 * Crear ruta completa
+                 */
+
+                const route = await createRoute(
+                    routeDate,
+                    technicianId,
+                    services,
+                );
+
+
+                showSuccess(
+                    "Ruta creada correctamente.",
+                );
+
+
+                /*
+                 * Redirigir al detalle
+                 */
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        `/routes/detail?id=${route.id}`;
+
+                }, 700);
+
+
+            } catch (error) {
+
+                showError(
+                    error instanceof Error
+                        ? error.message
+                        : "No se pudo crear la ruta.",
+                );
+
+                setLoading(false);
+            }
+        }
+
+
+        /*
+         * ==========================================
+         * ESTADO DEL BOTÓN
+         * ==========================================
+         */
+
+        function updateFormAvailability() {
+            const hasActiveCustomers = customers.length > 0;
+            const hasActiveTechnicians = activeTechniciansCount > 0;
+
+            const canAddService =
+                hasActiveCustomers && hasActiveTechnicians;
+
+            if (addServiceButton) {
+                addServiceButton.disabled = !canAddService;
+                addServiceButton.classList.toggle(
+                    "cursor-not-allowed",
+                    !canAddService,
+                );
+                addServiceButton.classList.toggle(
+                    "opacity-50",
+                    !canAddService,
+                );
+                addServiceButton.title = !hasActiveCustomers
+                    ? "Necesitas al menos un cliente activo"
+                    : !hasActiveTechnicians
+                        ? "Necesitas al menos un técnico activo"
+                        : "Agregar un servicio";
+            }
+
+            if (createRouteButton) {
+                createRouteButton.disabled =
+                    isSubmitting ||
+                    !hasActiveCustomers ||
+                    !hasActiveTechnicians;
+
+                createRouteButton.title = !hasActiveCustomers
+                    ? "Necesitas al menos un cliente activo"
+                    : !hasActiveTechnicians
+                        ? "Necesitas al menos un técnico activo"
+                        : "Crear ruta";
+            }
+        }
+
+
+        function setLoading(
+            loading: boolean,
+        ) {
+            isSubmitting = loading;
+
+            if (createRouteButton) {
+                createRouteButton.textContent = loading
+                    ? "Creando ruta..."
+                    : "Crear ruta";
+            }
+
+            updateFormAvailability();
+        }
+
+
+        /*
+         * ==========================================
+         * MENSAJES
+         * ==========================================
+         */
+
+        function showError(
+            message: string,
+        ) {
+
+            if (!errorMessage) {
+                return;
+            }
+
+
+            errorMessage.textContent =
+                message;
+
+            errorMessage.classList.remove(
+                "hidden",
+            );
+        }
+
+
+        function showSuccess(
+            message: string,
+        ) {
+
+            if (!successMessage) {
+                return;
+            }
+
+
+            successMessage.textContent =
+                message;
+
+            successMessage.classList.remove(
+                "hidden",
+            );
+        }
+
+
+        function hideMessages() {
+
+            errorMessage?.classList.add(
+                "hidden",
+            );
+
+            successMessage?.classList.add(
+                "hidden",
+            );
+        }
+
+
+        /*
+         * ==========================================
+         * EVENTOS
+         * ==========================================
+         */
+
+        addServiceButton?.addEventListener(
+            "click",
+            addService,
+        );
+
+
+        createRouteButton?.addEventListener(
+            "click",
+            handleCreateRoute,
+        );
+
+
+        /*
+         * Cargar datos
+         */
+
+        loadInitialData();
+
+    </script>
+
+</Layout>

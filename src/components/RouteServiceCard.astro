@@ -1,0 +1,258 @@
+---
+import type { Customer } from "../types/customer";
+import type { RouteService } from "../types/route";
+
+interface Props {
+    service: RouteService;
+    customer: Customer | undefined;
+    index: number;
+}
+
+const {
+    service,
+    customer,
+    index,
+} = Astro.props;
+
+
+const customerName =
+    customer?.name ?? "Cliente no encontrado";
+
+const location =
+    customer?.location ?? "Sin localidad";
+
+const phone =
+    customer?.phone ?? "Sin teléfono";
+
+const reference =
+    customer?.reference ?? "Sin referencia";
+
+
+const serviceTypes = {
+    S: {
+        label: "Servicio",
+        classes: "bg-blue-100 text-blue-700",
+    },
+
+    R: {
+        label: "Reconexión",
+        classes: "bg-purple-100 text-purple-700",
+    },
+
+    A: {
+        label: "Alinear",
+        classes: "bg-amber-100 text-amber-700",
+    },
+
+    E: {
+        label: "Enlazar",
+        classes: "bg-cyan-100 text-cyan-700",
+    },
+};
+
+
+const serviceType =
+    serviceTypes[service.service_type];
+
+
+const serviceStatuses = {
+    pending: {
+        label: "Pendiente",
+        classes: "text-slate-500",
+    },
+
+    in_progress: {
+        label: "En proceso",
+        classes: "text-orange-600",
+    },
+
+    completed: {
+        label: "Completado",
+        classes: "text-green-600",
+    },
+
+    not_completed: {
+        label: "No realizado",
+        classes: "text-red-600",
+    },
+
+    canceled: {
+        label: "Cancelado",
+        classes: "text-slate-500",
+    },
+};
+
+
+const serviceStatus =
+    serviceStatuses[service.status];
+---
+
+<article
+        class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+>
+
+    <div
+            class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"
+    >
+
+        <!-- Cliente -->
+
+        <div class="flex gap-4">
+
+            <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-600"
+            >
+                {index + 1}
+            </div>
+
+
+            <div>
+
+                <h3 class="text-lg font-bold text-slate-900">
+                    {customerName}
+                </h3>
+
+
+                <div class="mt-2 space-y-1 text-sm text-slate-500">
+
+                    <p>
+                        📍 {location}
+                    </p>
+
+                    <p>
+                        📞 {phone}
+                    </p>
+
+                    <p>
+                        📌 {reference}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Tipo -->
+
+        {
+            serviceType && (
+                        <span
+                                class:list={[
+                                    "inline-flex rounded-full px-3 py-1 text-xs font-semibold",
+                                    serviceType.classes,
+                                ]}
+                        >
+                    {serviceType.label}
+                </span>
+            )
+        }
+
+    </div>
+
+
+    <!-- Estado -->
+
+    <div class="mt-6 border-t border-slate-100 pt-5">
+
+        <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+
+            <div>
+
+                <p class="text-sm font-medium text-slate-500">
+                    Estado
+                </p>
+
+
+                {
+                    serviceStatus && (
+                                <p
+                                        class:list={[
+                                            "mt-1 font-semibold",
+                                            serviceStatus.classes,
+                                        ]}
+                                >
+                                    {serviceStatus.label}
+                                </p>
+                    )
+                }
+
+            </div>
+
+
+            <!-- Acciones -->
+
+            <div class="flex flex-col gap-3 sm:items-end">
+
+                {
+                    service.status === "pending" && (
+                                <button
+                                        type="button"
+                                        data-action="start"
+                                        data-service-id={service.service_id}
+                                        class="rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+                                >
+                                    Iniciar visita
+                                </button>
+                    )
+                }
+
+
+                {
+                    service.status === "in_progress" && (
+                                <>
+                            <textarea
+                                    data-notes={service.service_id}
+                                    rows="2"
+                                    placeholder="Observaciones de la visita..."
+                                    class="w-full min-w-72 rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                            >{service.notes ?? ""}</textarea>
+
+                                    <button
+                                            type="button"
+                                            data-action="complete"
+                                            data-service-id={service.service_id}
+                                            class="rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
+                                    >
+                                        Completar visita
+                                    </button>
+                                </>
+                    )
+                }
+
+
+                {
+                    service.status === "completed" && (
+                                <div class="rounded-xl bg-green-50 px-5 py-3 text-sm font-semibold text-green-700">
+                                    ✓ Visita completada
+                                </div>
+                    )
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- Observaciones -->
+
+        {
+            service.notes && (
+                        <div class="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
+
+                            <strong>
+                                Observaciones:
+                            </strong>{" "}
+
+                            {service.notes}
+
+                        </div>
+            )
+        }
+
+    </div>
+
+</article>

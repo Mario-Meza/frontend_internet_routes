@@ -1,0 +1,355 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Editar técnico">
+
+    <main class="min-h-screen bg-slate-50/60 pb-16">
+
+        <section class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+
+            <!-- CABECERA -->
+            <header class="mb-8">
+                <div class="flex items-center gap-2">
+                    <span class="flex h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Gestión de Personal</span>
+                </div>
+                <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                    Editar técnico
+                </h1>
+                <p class="mt-1 text-sm text-slate-500">
+                    Modifica los datos generales y administra la fotografía del personal técnico[cite: 10].
+                </p>
+            </header>
+
+            <form
+                    id="technician-form"
+                    class="rounded-2xl bg-white p-6 shadow-sm border border-slate-200/80 sm:p-8"
+            >
+
+                <div class="space-y-6">
+
+                    <!-- FOTOGRAFÍA -->
+                    <div>
+                        <label class="mb-2 block text-sm font-bold text-slate-700">
+                            Fotografía del técnico
+                        </label>
+
+                        <div class="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+                            <img
+                                    id="photo-preview"
+                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E"
+                                    alt="Vista previa de la fotografía"
+                                    class="h-24 w-24 shrink-0 rounded-2xl object-cover ring-1 ring-orange-200 shadow-sm"
+                            />
+
+                            <div class="w-full space-y-2">
+                                <input
+                                        id="photo"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-orange-50 file:px-4 file:py-2.5 file:font-bold file:text-orange-700 hover:file:bg-orange-100 transition cursor-pointer"
+                                />
+                                <p class="text-xs font-medium text-slate-400">
+                                    JPG, PNG o WEBP. Máximo 5 MB.
+                                </p>
+                                <div class="flex flex-wrap gap-3 pt-1">
+                                    <button
+                                            id="remove-photo"
+                                            type="button"
+                                            class="hidden text-xs font-bold text-red-600 hover:text-red-700 transition"
+                                    >
+                                        Eliminar fotografía actual
+                                    </button>
+                                    <button
+                                            id="undo-photo"
+                                            type="button"
+                                            class="hidden text-xs font-bold text-slate-600 hover:text-slate-800 transition"
+                                    >
+                                        Deshacer cambios de foto
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100" />
+
+                    <!-- NOMBRE -->
+                    <div>
+                        <label
+                                for="name"
+                                class="mb-2 block text-sm font-bold text-slate-700"
+                        >
+                            Nombre completo
+                        </label>
+
+                        <input
+                                id="name"
+                                type="text"
+                                required
+                                maxlength="100"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20"
+                        />
+                    </div>
+
+                    <!-- TELÉFONO -->
+                    <div>
+                        <label
+                                for="phone"
+                                class="mb-2 block text-sm font-bold text-slate-700"
+                        >
+                            Teléfono
+                        </label>
+
+                        <input
+                                id="phone"
+                                type="tel"
+                                maxlength="20"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20"
+                        />
+                    </div>
+
+                    <!-- ERROR -->
+                    <div
+                            id="error"
+                            class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 shadow-sm"
+                    ></div>
+
+                    <!-- ACCIONES -->
+                    <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                        <a
+                                href="/technicians"
+                                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                        >
+                            Cancelar
+                        </a>
+
+                        <button
+                                id="submit"
+                                type="submit"
+                                class="inline-flex items-center justify-center rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-600/25 transition-all hover:bg-orange-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            Guardar cambios
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        import {
+            getTechnician,
+            updateTechnician,
+            uploadTechnicianPhoto,
+            deleteTechnicianPhoto,
+        } from "../../services/api";
+
+        import type {
+            TechnicianUpdate,
+        } from "../../types/technician";
+
+        const technicianId = new URLSearchParams(window.location.search).get("id");
+
+        const form = document.querySelector<HTMLFormElement>("#technician-form");
+        const nameInput = document.querySelector<HTMLInputElement>("#name");
+        const phoneInput = document.querySelector<HTMLInputElement>("#phone");
+        const photoInput = document.querySelector<HTMLInputElement>("#photo");
+        const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
+        const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
+        const undoPhotoButton = document.querySelector<HTMLButtonElement>("#undo-photo");
+        const submitButton = document.querySelector<HTMLButtonElement>("#submit");
+        const error = document.querySelector<HTMLDivElement>("#error");
+
+        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+
+        let selectedPhoto: File | null = null;
+        let previewUrl: string | null = null;
+        let hasOriginalPhoto = false;
+        let deletePhotoRequested = false;
+
+        const defaultSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E";
+
+        function showError(message: string) {
+            if (!error) return;
+            error.textContent = message;
+            error.classList.remove("hidden");
+        }
+
+        function hideError() {
+            error?.classList.add("hidden");
+        }
+
+        // Cargar datos del técnico e imagen actual al iniciar
+        // Cargar datos del técnico e imagen actual al iniciar
+        async function loadTechnician() {
+            try {
+                if (!technicianId) {
+                    throw new Error("No se encontró el ID del técnico.");
+                }
+
+                const technician = await getTechnician(technicianId) as any;
+
+                if (nameInput) nameInput.value = technician.name;
+                if (phoneInput) phoneInput.value = technician.phone ?? "";
+
+                // Verificamos si el técnico tiene una URL o ruta de foto en sus datos
+                const photoUrl = technician.photo_url || technician.photo;
+
+                if (photoPreview && photoUrl) {
+                    photoPreview.src = photoUrl;
+                    hasOriginalPhoto = true;
+                    removePhotoButton?.classList.remove("hidden");
+                } else if (photoPreview) {
+                    hasOriginalPhoto = false;
+                    photoPreview.src = defaultSvg;
+                    removePhotoButton?.classList.add("hidden");
+                }
+
+            } catch (err) {
+                showError(
+                    err instanceof Error ? err.message : "No se pudo cargar el técnico.",
+                );
+            }
+        }
+
+        // Seleccionar nueva foto
+        photoInput?.addEventListener("change", () => {
+            const file = photoInput.files?.[0];
+
+            if (!file) return;
+
+            const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+            if (!allowedTypes.includes(file.type)) {
+                showError("Selecciona una imagen válida (JPG, PNG o WEBP).");
+                photoInput.value = "";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showError("La fotografía no debe superar los 5 MB.");
+                photoInput.value = "";
+                return;
+            }
+
+            hideError();
+            selectedPhoto = file;
+            deletePhotoRequested = false;
+
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+            previewUrl = URL.createObjectURL(file);
+            if (photoPreview) photoPreview.src = previewUrl;
+
+            removePhotoButton?.classList.add("hidden");
+            undoPhotoButton?.classList.remove("hidden");
+        });
+
+        // Solicitar eliminación de la foto actual
+        removePhotoButton?.addEventListener("click", () => {
+            selectedPhoto = null;
+            if (photoInput) photoInput.value = "";
+            deletePhotoRequested = true;
+
+            if (photoPreview) photoPreview.src = defaultSvg;
+            removePhotoButton.classList.add("hidden");
+            undoPhotoButton?.classList.remove("hidden");
+            hideError();
+        });
+
+        // Deshacer cambios de foto (restaurar estado original)
+        undoPhotoButton?.addEventListener("click", () => {
+            selectedPhoto = null;
+            if (photoInput) photoInput.value = "";
+            deletePhotoRequested = false;
+
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            if (technicianId && hasOriginalPhoto) {
+                photoPreview!.src = `${API_URL}/technicians/${technicianId}/photo`;
+                removePhotoButton?.classList.remove("hidden");
+            } else {
+                photoPreview!.src = defaultSvg;
+                removePhotoButton?.classList.add("hidden");
+            }
+
+            undoPhotoButton.classList.add("hidden");
+            hideError();
+        });
+
+        // Enviar formulario
+        form?.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            hideError();
+
+            if (!technicianId) {
+                showError("No se encontró el ID del técnico.");
+                return;
+            }
+
+            if (!nameInput?.value.trim()) {
+                showError("El nombre del técnico es obligatorio.");
+                return;
+            }
+
+            const technicianData: TechnicianUpdate = {
+                name: nameInput.value.trim(),
+                phone: phoneInput?.value.trim() || null,
+            };
+
+            try {
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Guardando cambios...";
+                }
+
+                // 1. Actualizar datos de texto (nombre y teléfono)[cite: 10]
+                await updateTechnician(technicianId, technicianData);
+
+                // 2. Gestionar la foto según la acción elegida
+                if (deletePhotoRequested) {
+                    try {
+                        await deleteTechnicianPhoto(technicianId);
+                    } catch {
+                        // Si falla la eliminación de la foto pero el texto se guardó, informamos
+                        console.warn("No se pudo eliminar la foto del servidor.");
+                    }
+                } else if (selectedPhoto) {
+                    try {
+                        await uploadTechnicianPhoto(technicianId, selectedPhoto);
+                    } catch {
+                        showError("Los datos se guardaron, pero ocurrió un error al subir la nueva fotografía.");
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = "Reintentar foto";
+                        }
+                        return;
+                    }
+                }
+
+                window.location.href = "/technicians";
+
+            } catch (err) {
+                showError(
+                    err instanceof Error ? err.message : "No se pudo actualizar el técnico.",
+                );
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Guardar cambios";
+                }
+            }
+        });
+
+        loadTechnician();
+    </script>
+
+</Layout>
