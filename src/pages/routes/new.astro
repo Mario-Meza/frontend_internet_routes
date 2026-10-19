@@ -4,193 +4,155 @@ import Layout from "../../layouts/Layout.astro";
 
 <Layout title="Nueva ruta">
 
-    <main class="min-h-screen bg-slate-100">
-
+    <main class="min-h-screen bg-slate-50/50">
 
         <!-- CONTENIDO -->
-        <section class="mx-auto max-w-5xl px-6 py-8">
+        <section class="mx-auto max-w-5xl px-6 py-10 sm:py-14">
 
-            <!-- MENSAJE DE ERROR -->
-            <div
-                    id="error-message"
-                    class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-            >
-            </div>
+            <!-- CABECERA -->
+            <header class="mb-8">
+                <a href="/routes" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a rutas
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 shadow-sm ring-1 ring-inset ring-orange-200">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight text-slate-900">
+                            Nueva asignación
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Programa una nueva ruta asignando una fecha, técnico y los servicios a realizar.
+                        </p>
+                    </div>
+                </div>
+            </header>
 
-
-            <!-- MENSAJE DE ÉXITO -->
-            <div
-                    id="success-message"
-                    class="mb-6 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700"
-            >
-            </div>
+            <!-- MENSAJES DE NOTIFICACIÓN -->
+            <div id="error-message" class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 shadow-sm"></div>
+            <div id="success-message" class="mb-6 hidden rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700 shadow-sm"></div>
 
 
             <!-- DATOS DE LA RUTA -->
-            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <section class="mb-8 overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50">
 
-                <div class="mb-6">
-
-                    <h2 class="text-xl font-bold text-slate-900">
-                        Información de la ruta
+                <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        1. Detalles Generales
                     </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Define la fecha y el técnico responsable.
-                    </p>
-
                 </div>
 
-
-                <div class="grid gap-6 md:grid-cols-2">
-
+                <div class="grid gap-6 px-6 py-8 md:grid-cols-2">
                     <!-- FECHA -->
                     <div>
-
-                        <label
-                                for="route-date"
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
+                        <label for="route-date" class="mb-2 block text-sm font-bold text-slate-700">
                             Fecha de ruta
                         </label>
-
                         <input
                                 id="route-date"
                                 type="date"
                                 required
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
-
                     </div>
-
 
                     <!-- TÉCNICO -->
                     <div>
-
-                        <label
-                                for="technician"
-                                class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
-                            Técnico
+                        <label for="technician" class="mb-2 block text-sm font-bold text-slate-700">
+                            Técnico Asignado
                         </label>
-
                         <select
                                 id="technician"
                                 required
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
                         >
-
-                            <option value="">
-                                Cargando técnicos...
-                            </option>
-
+                            <option value="">Cargando técnicos operativos...</option>
                         </select>
 
-                        <p
-                                id="no-active-technicians"
-                                role="status"
-                                class="mt-2 hidden rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
-                        >
-                            No hay técnicos activos disponibles. Activa un técnico o registra uno nuevo antes de crear una ruta.
-                            <a href="/technicians" class="font-semibold underline underline-offset-2 hover:text-amber-950">Administrar técnicos</a>.
-                        </p>
-
+                        <div id="no-active-technicians" class="mt-3 hidden rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 flex gap-2">
+                            <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            <div>
+                                <p class="font-semibold">No hay técnicos operativos.</p>
+                                <p class="mt-0.5 text-xs text-amber-700/80">Necesitas <a href="/technicians" class="underline font-bold hover:text-amber-900">dar de alta o activar</a> un técnico para crear una ruta.</p>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-
             </section>
 
 
             <!-- SERVICIOS -->
-            <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <section class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50">
 
-                <div class="mb-6 flex items-center justify-between gap-4">
-
-                    <div>
-
-                        <h2 class="text-xl font-bold text-slate-900">
-                            Servicios de la ruta
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Agrega los clientes que serán visitados.
-                        </p>
-
-                    </div>
-
+                <div class="flex flex-col gap-4 border-b border-slate-100 bg-slate-50/50 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        2. Servicios a Realizar
+                    </h2>
 
                     <button
                             id="add-service"
                             type="button"
-                            class="shrink-0 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-100 px-4 py-2 text-sm font-bold text-orange-700 shadow-sm transition hover:bg-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        + Agregar servicio
+                        + Añadir Visita
                     </button>
-
                 </div>
 
-                <div
-                        id="no-active-customers"
-                        role="status"
-                        class="mb-5 hidden rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800"
-                >
-                    <p class="font-semibold">No hay clientes activos disponibles.</p>
-                    <p class="mt-1">Activa un cliente o registra uno nuevo antes de asignar servicios a la ruta.</p>
-                    <a href="/customers" class="mt-2 inline-block font-semibold underline underline-offset-2 hover:text-amber-950">Administrar clientes</a>
-                </div>
-
-                <!-- SERVICIOS -->
-                <div
-                        id="services-container"
-                        class="space-y-4"
-                >
-                </div>
-
-
-                <!-- SIN SERVICIOS -->
-                <div
-                        id="empty-services"
-                        class="rounded-xl border border-dashed border-slate-300 p-8 text-center"
-                >
-
-                    <div class="text-4xl">
-                        📋
+                <div class="p-6 sm:p-8">
+                    <div id="no-active-customers" class="mb-5 hidden rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 flex gap-3">
+                        <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <div>
+                            <p class="font-bold">No hay clientes activos en la base de datos.</p>
+                            <p class="mt-1 text-xs">Debes <a href="/customers" class="underline font-bold hover:text-amber-900">registrar al menos un cliente</a> antes de poder asignarle servicios en una ruta.</p>
+                        </div>
                     </div>
 
-                    <p id="empty-services-title" class="mt-3 font-medium text-slate-700">
-                        Aún no hay servicios
-                    </p>
+                    <!-- CONTENEDOR DE SERVICIOS -->
+                    <div id="services-container" class="space-y-4"></div>
 
-                    <p id="empty-services-description" class="mt-1 text-sm text-slate-500">
-                        Agrega al menos un servicio a la ruta.
-                    </p>
+                    <!-- SIN SERVICIOS (EMPTY STATE) -->
+                    <div id="empty-services" class="rounded-xl border-2 border-dashed border-slate-200 p-10 text-center">
+                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 ring-8 ring-slate-50/50">
+                            <svg class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <p id="empty-services-title" class="mt-4 font-bold text-slate-900">
+                            Aún no hay visitas programadas
+                        </p>
+                        <p id="empty-services-description" class="mt-1 text-sm text-slate-500">
+                            Haz clic en "Añadir Visita" para seleccionar clientes.
+                        </p>
+                    </div>
+                </div>
 
+                <!-- FOOTER / BOTONES DE ACCIÓN -->
+                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-10">
+                    <a
+                            href="/routes"
+                            class="mb-3 block w-full rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] sm:mb-0 sm:w-auto"
+                    >
+                        Cancelar
+                    </a>
+
+                    <button
+                            id="create-route"
+                            type="button"
+                            class="block w-full rounded-xl bg-orange-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-orange-500/30 transition hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                    >
+                        Crear Asignación
+                    </button>
                 </div>
 
             </section>
-
-
-            <!-- ACCIONES -->
-            <div class="mt-6 flex flex-col-reverse justify-end gap-3 sm:flex-row">
-
-                <a
-                        href="/routes"
-                        class="rounded-xl border border-slate-300 bg-white px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-50"
-                >
-                    Cancelar
-                </a>
-
-
-                <button
-                        id="create-route"
-                        type="button"
-                        class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    Crear ruta
-                </button>
-
-            </div>
 
         </section>
 
@@ -198,7 +160,6 @@ import Layout from "../../layouts/Layout.astro";
 
 
     <script>
-
         import {
             getCustomers,
             getTechnicians,
@@ -206,131 +167,48 @@ import Layout from "../../layouts/Layout.astro";
         } from "../../services/api";
 
         import type { Customer } from "../../types/customer";
-        import type {
-            RouteServiceCreate,
-            ServiceType,
-        } from "../../types/route";
+        import type { RouteServiceCreate, ServiceType } from "../../types/route";
 
+        const routeDateInput = document.querySelector<HTMLInputElement>("#route-date");
+        const technicianSelect = document.querySelector<HTMLSelectElement>("#technician");
+        const noActiveTechniciansMessage = document.querySelector<HTMLDivElement>("#no-active-technicians");
+        const noActiveCustomersMessage = document.querySelector<HTMLDivElement>("#no-active-customers");
 
-        const routeDateInput =
-            document.querySelector<HTMLInputElement>(
-                "#route-date",
-            );
+        const servicesContainer = document.querySelector<HTMLDivElement>("#services-container");
+        const emptyServices = document.querySelector<HTMLDivElement>("#empty-services");
 
-        const technicianSelect =
-            document.querySelector<HTMLSelectElement>(
-                "#technician",
-            );
+        const addServiceButton = document.querySelector<HTMLButtonElement>("#add-service");
+        const createRouteButton = document.querySelector<HTMLButtonElement>("#create-route");
 
-        const noActiveTechniciansMessage =
-            document.querySelector<HTMLParagraphElement>(
-                "#no-active-technicians",
-            );
-
-        const noActiveCustomersMessage =
-            document.querySelector<HTMLDivElement>(
-                "#no-active-customers",
-            );
-
-        const servicesContainer =
-            document.querySelector<HTMLDivElement>(
-                "#services-container",
-            );
-
-        const emptyServices =
-            document.querySelector<HTMLDivElement>(
-                "#empty-services",
-            );
-
-        const addServiceButton =
-            document.querySelector<HTMLButtonElement>(
-                "#add-service",
-            );
-
-        const createRouteButton =
-            document.querySelector<HTMLButtonElement>(
-                "#create-route",
-            );
-
-        const errorMessage =
-            document.querySelector<HTMLDivElement>(
-                "#error-message",
-            );
-
-        const successMessage =
-            document.querySelector<HTMLDivElement>(
-                "#success-message",
-            );
-
+        const errorMessage = document.querySelector<HTMLDivElement>("#error-message");
+        const successMessage = document.querySelector<HTMLDivElement>("#success-message");
 
         let customers: Customer[] = [];
         let activeTechniciansCount = 0;
         let isSubmitting = false;
 
-
-        const serviceTypes: {
-            value: ServiceType;
-            label: string;
-        }[] = [
-            {
-                value: "S",
-                label: "Servicio",
-            },
-            {
-                value: "R",
-                label: "Reconexión",
-            },
-            {
-                value: "A",
-                label: "Alinear",
-            },
-            {
-                value: "CF",
-                label: "Cambio a fibra",
-            },
+        const serviceTypes: { value: ServiceType; label: string; bg: string; text:string; }[] = [
+            { value: "S", label: "Servicio", bg: "bg-blue-50", text: "text-blue-700" },
+            { value: "R", label: "Reconexión", bg: "bg-purple-50", text: "text-purple-700" },
+            { value: "A", label: "Alinear", bg: "bg-amber-50", text: "text-amber-700" },
+            { value: "CF", label: "Cambio a fibra", bg: "bg-indigo-50", text: "text-indigo-700" },
         ];
 
-
-        /*
-         * ==========================================
-         * CARGAR INFORMACIÓN INICIAL
-         * ==========================================
-         */
-
         async function loadInitialData() {
-
             try {
-
-                const [
-                    customersResponse,
-                    techniciansResponse,
-                ] = await Promise.all([
+                const [customersResponse, techniciansResponse] = await Promise.all([
                     getCustomers(),
                     getTechnicians(),
                 ]);
 
-                // Los registros antiguos sin "active" se consideran activos.
-                customers = customersResponse.filter(
-                    (customer) => customer.active !== false,
-                );
-
-                const activeTechnicians = techniciansResponse.filter(
-                    (technician) => technician.active === true,
-                );
+                customers = customersResponse.filter((customer) => customer.active !== false);
+                const activeTechnicians = techniciansResponse.filter((technician) => technician.active === true);
                 activeTechniciansCount = activeTechnicians.length;
 
                 if (technicianSelect) {
                     technicianSelect.innerHTML = activeTechnicians.length
-                        ? `
-                            <option value="">
-                                Selecciona un técnico
-                            </option>
-                        `
-                        : `
-                            <option value="">
-                                No hay técnicos activos disponibles
-                            </option>
-                        `;
+                        ? `<option value="">Selecciona un técnico</option>`
+                        : `<option value="">No hay técnicos operativos</option>`;
 
                     activeTechnicians.forEach((technician) => {
                         const option = document.createElement("option");
@@ -338,25 +216,14 @@ import Layout from "../../layouts/Layout.astro";
                         option.textContent = technician.name;
                         technicianSelect.appendChild(option);
                     });
-
                     technicianSelect.disabled = activeTechnicians.length === 0;
                 }
 
-                noActiveTechniciansMessage?.classList.toggle(
-                    "hidden",
-                    activeTechnicians.length > 0,
-                );
-
-                noActiveCustomersMessage?.classList.toggle(
-                    "hidden",
-                    customers.length > 0,
-                );
+                noActiveTechniciansMessage?.classList.toggle("hidden", activeTechnicians.length > 0);
+                noActiveCustomersMessage?.classList.toggle("hidden", customers.length > 0);
 
                 updateFormAvailability();
 
-                // Solo crear la tarjeta inicial cuando la ruta se puede configurar.
-                // Si falta un cliente activo o un técnico activo, mostrar el estado vacío
-                // en lugar de una tarjeta que solo permitiría pulsar "Eliminar".
                 if (customers.length > 0 && activeTechniciansCount > 0) {
                     addService();
                 } else {
@@ -364,595 +231,260 @@ import Layout from "../../layouts/Layout.astro";
                 }
 
             } catch (error) {
-
-                showError(
-                    error instanceof Error
-                        ? error.message
-                        : "No se pudieron cargar clientes y técnicos. Intenta recargar la página.",
-                );
-
+                showError("No se pudieron cargar clientes y técnicos. Revisa tu conexión.");
                 if (technicianSelect) {
                     technicianSelect.disabled = true;
-                    technicianSelect.innerHTML = `
-                        <option value="">
-                            No se pudieron cargar los técnicos
-                        </option>
-                    `;
+                    technicianSelect.innerHTML = `<option value="">Error de conexión</option>`;
                 }
-
-                if (addServiceButton) {
-                    addServiceButton.disabled = true;
-                }
-                if (createRouteButton) {
-                    createRouteButton.disabled = true;
-                }
+                if (addServiceButton) addServiceButton.disabled = true;
+                if (createRouteButton) createRouteButton.disabled = true;
             }
         }
 
-        /*
-         * ==========================================
-         * AGREGAR SERVICIO
-         * ==========================================
-         */
-
+        // LÓGICA DE DIBUJADO DE LAS TARJETAS (NUEVO DISEÑO UI)
         function addService() {
-
-            if (!servicesContainer) {
-                return;
-            }
-
-            // No generar una tarjeta eliminable si faltan datos indispensables.
+            if (!servicesContainer) return;
             if (customers.length === 0 || activeTechniciansCount === 0) {
                 updateServiceNumbers();
                 return;
             }
 
-            const serviceCard =
-                document.createElement("div");
-
-
-            serviceCard.className =
-                "service-card rounded-xl border border-slate-200 bg-slate-50 p-5";
-
+            const serviceCard = document.createElement("div");
+            // Estructura de tarjeta moderna
+            serviceCard.className = "service-card relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-orange-200";
 
             serviceCard.innerHTML = `
-
-                <div class="mb-4 flex items-center justify-between">
-
+                <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
-
-                        <span
-                            class="service-number flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-600"
-                        >
+                        <span class="service-number flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-sm font-black text-white shadow-sm ring-2 ring-slate-100">
                             1
                         </span>
-
-                        <h3 class="font-semibold text-slate-800">
-                            Servicio
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">
+                            Visita
                         </h3>
-
                     </div>
-
-
-                    <button
-                        type="button"
-                        class="remove-service text-sm font-medium text-red-500 transition hover:text-red-700"
-                    >
-                        Eliminar
+                    
+                    <button type="button" class="remove-service inline-flex items-center justify-center rounded-xl bg-red-50 p-2 text-red-500 shadow-sm transition hover:bg-red-100 hover:text-red-700" title="Eliminar servicio">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
-
                 </div>
 
-
-                <div class="grid gap-4 md:grid-cols-2">
-
-                    <div>
-
-                        <label
-                            class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
-                            Cliente
+                <div class="grid gap-5 md:grid-cols-12">
+                    <div class="md:col-span-8">
+                        <label class="mb-2 block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            Cliente Destino
                         </label>
-
-                        <select
-                            class="customer-select w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-slate-100"
-                            ${customers.length === 0 ? "disabled" : ""}
-                        >
-
-                            <option value="">
-                                ${customers.length > 0 ? "Selecciona un cliente" : "No hay clientes activos disponibles"}
-                            </option>
-
+                        <select class="customer-select w-full rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20 disabled:cursor-not-allowed">
+                            <option value="">Selecciona un cliente de la lista</option>
                         </select>
-
-                        <p class="customer-empty-message ${customers.length > 0 ? "hidden" : ""} mt-2 text-sm text-amber-700">
-                            No hay clientes activos. Activa un cliente para asignarlo a esta ruta.
-                        </p>
-
                     </div>
 
-
-                    <div>
-
-                        <label
-                            class="mb-2 block text-sm font-semibold text-slate-700"
-                        >
-                            Tipo de servicio
+                    <div class="md:col-span-4">
+                        <label class="mb-2 block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            Tipo de Trabajo
                         </label>
-
-                        <select
-                            class="service-type-select w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                        >
+                        <select class="service-type-select w-full rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20">
                         </select>
-
                     </div>
-
                 </div>
-
             `;
 
-
-            const customerSelect =
-                serviceCard.querySelector<HTMLSelectElement>(
-                    ".customer-select",
-                );
-
-
-            const serviceTypeSelect =
-                serviceCard.querySelector<HTMLSelectElement>(
-                    ".service-type-select",
-                );
-
-
-            /*
-             * Clientes
-             */
+            const customerSelect = serviceCard.querySelector<HTMLSelectElement>(".customer-select");
+            const serviceTypeSelect = serviceCard.querySelector<HTMLSelectElement>(".service-type-select");
 
             if (customerSelect) {
-
                 customers.forEach((customer) => {
-
-                    const option =
-                        document.createElement("option");
-
+                    const option = document.createElement("option");
                     option.value = customer.id;
-
-                    option.textContent =
-                        `${customer.name} — ${customer.location}`;
-
+                    option.textContent = `${customer.name} — ${customer.location}`;
                     customerSelect.appendChild(option);
-
                 });
             }
-
-
-            /*
-             * Tipos de servicio
-             */
 
             if (serviceTypeSelect) {
-
                 serviceTypes.forEach((serviceType) => {
-
-                    const option =
-                        document.createElement("option");
-
-                    option.value =
-                        serviceType.value;
-
-                    option.textContent =
-                        `${serviceType.value} — ${serviceType.label}`;
-
+                    const option = document.createElement("option");
+                    option.value = serviceType.value;
+                    option.textContent = serviceType.label;
                     serviceTypeSelect.appendChild(option);
-
                 });
             }
 
+            const removeButton = serviceCard.querySelector<HTMLButtonElement>(".remove-service");
+            removeButton?.addEventListener("click", () => {
+                serviceCard.remove();
+                updateServiceNumbers();
+            });
 
-            /*
-             * Eliminar servicio
-             */
-
-            const removeButton =
-                serviceCard.querySelector<HTMLButtonElement>(
-                    ".remove-service",
-                );
-
-
-            removeButton?.addEventListener(
-                "click",
-                () => {
-
-                    serviceCard.remove();
-
-                    updateServiceNumbers();
-
-                },
-            );
-
-
-            servicesContainer.appendChild(
-                serviceCard,
-            );
-
-
+            servicesContainer.appendChild(serviceCard);
             updateServiceNumbers();
         }
 
-
-        /*
-         * ==========================================
-         * ACTUALIZAR NUMERACIÓN
-         * ==========================================
-         */
-
         function updateServiceNumbers() {
+            if (!servicesContainer || !emptyServices) return;
 
-            if (!servicesContainer || !emptyServices) {
-                return;
-            }
-
-            const cards = servicesContainer.querySelectorAll(
-                ".service-card",
-            );
+            const cards = servicesContainer.querySelectorAll(".service-card");
 
             cards.forEach((card, index) => {
-                const number = card.querySelector(
-                    ".service-number",
-                );
-
-                if (number) {
-                    number.textContent = String(index + 1);
-                }
+                const number = card.querySelector(".service-number");
+                if (number) number.textContent = String(index + 1);
             });
 
-            const emptyTitle = document.querySelector<HTMLElement>(
-                "#empty-services-title",
-            );
-            const emptyDescription = document.querySelector<HTMLElement>(
-                "#empty-services-description",
-            );
+            const emptyTitle = document.querySelector<HTMLElement>("#empty-services-title");
+            const emptyDescription = document.querySelector<HTMLElement>("#empty-services-description");
 
             if (cards.length === 0) {
                 emptyServices.classList.remove("hidden");
 
                 if (customers.length === 0) {
-                    if (emptyTitle) {
-                        emptyTitle.textContent = "No se pueden agregar servicios";
-                    }
-                    if (emptyDescription) {
-                        emptyDescription.textContent =
-                            "Activa o registra al menos un cliente para continuar.";
-                    }
+                    if (emptyTitle) emptyTitle.textContent = "No se pueden añadir visitas";
+                    if (emptyDescription) emptyDescription.textContent = "La base de datos de clientes está vacía.";
                 } else if (activeTechniciansCount === 0) {
-                    if (emptyTitle) {
-                        emptyTitle.textContent = "No hay técnicos activos";
-                    }
-                    if (emptyDescription) {
-                        emptyDescription.textContent =
-                            "Activa o registra un técnico antes de configurar esta ruta.";
-                    }
+                    if (emptyTitle) emptyTitle.textContent = "Bloqueado";
+                    if (emptyDescription) emptyDescription.textContent = "Registra un técnico para proceder.";
                 } else {
-                    if (emptyTitle) {
-                        emptyTitle.textContent = "Aún no hay servicios";
-                    }
-                    if (emptyDescription) {
-                        emptyDescription.textContent =
-                            "Agrega al menos un servicio a la ruta.";
-                    }
+                    if (emptyTitle) emptyTitle.textContent = "Aún no hay visitas programadas";
+                    if (emptyDescription) emptyDescription.textContent = "Haz clic en 'Añadir Visita' en la parte superior.";
                 }
             } else {
                 emptyServices.classList.add("hidden");
             }
         }
 
-
-        /*
-         * ==========================================
-         * CREAR RUTA
-         * ==========================================
-         */
-
         async function handleCreateRoute() {
-
             hideMessages();
 
-
-            const routeDate =
-                routeDateInput?.value.trim();
-
-            const technicianId =
-                technicianSelect?.value;
+            const routeDate = routeDateInput?.value.trim();
+            const technicianId = technicianSelect?.value;
 
             if (customers.length === 0) {
-                showError(
-                    "No hay clientes activos disponibles. Activa un cliente antes de crear la ruta.",
-                );
+                showError("No hay clientes activos disponibles.");
                 return;
             }
 
             if (activeTechniciansCount === 0) {
-                showError(
-                    "No hay técnicos activos disponibles. Activa o registra un técnico antes de crear la ruta.",
-                );
+                showError("No hay técnicos activos disponibles.");
                 return;
             }
 
             if (!routeDate) {
-
-                showError(
-                    "Selecciona la fecha de la ruta.",
-                );
-
+                showError("Debes seleccionar una fecha para programar la ruta.");
                 return;
             }
-
 
             if (!technicianId) {
-
-                showError(
-                    "Selecciona un técnico.",
-                );
-
+                showError("Debes asignar un técnico responsable a esta ruta.");
                 return;
             }
 
-
-            const cards =
-                servicesContainer?.querySelectorAll(
-                    ".service-card",
-                );
-
-
+            const cards = servicesContainer?.querySelectorAll(".service-card");
             if (!cards || cards.length === 0) {
-
-                showError(
-                    "Agrega al menos un servicio.",
-                );
-
+                showError("Agrega al menos una visita a la ruta.");
                 return;
             }
-
 
             const services: RouteServiceCreate[] = [];
+            let isValid = true;
 
+            cards.forEach(card => {
+                const customerSelect = card.querySelector<HTMLSelectElement>(".customer-select");
+                const serviceTypeSelect = card.querySelector<HTMLSelectElement>(".service-type-select");
 
-            for (const card of cards) {
-
-                const customerSelect =
-                    card.querySelector<HTMLSelectElement>(
-                        ".customer-select",
-                    );
-
-                const serviceTypeSelect =
-                    card.querySelector<HTMLSelectElement>(
-                        ".service-type-select",
-                    );
-
-
-                const customerId =
-                    customerSelect?.value;
-
-                const serviceType =
-                    serviceTypeSelect?.value;
-
+                const customerId = customerSelect?.value;
+                const serviceType = serviceTypeSelect?.value;
 
                 if (!customerId) {
-
-                    showError(
-                        "Todos los servicios deben tener un cliente.",
-                    );
-
+                    showError("Te faltó seleccionar el cliente en una o más visitas.");
+                    isValid = false;
                     return;
                 }
 
-
-                if (
-                    serviceType !== "S" &&
-                    serviceType !== "R" &&
-                    serviceType !== "A" &&
-                    serviceType !== "CF"
-                ) {
-
-                    showError(
-                        "Uno de los servicios tiene un tipo inválido.",
-                    );
-
+                if (serviceType !== "S" && serviceType !== "R" && serviceType !== "A" && serviceType !== "CF") {
+                    showError("Tipo de trabajo inválido seleccionado.");
+                    isValid = false;
                     return;
                 }
 
+                services.push({ customer_id: customerId, service_type: serviceType });
+            });
 
-                services.push({
-                    customer_id: customerId,
-                    service_type: serviceType,
-                });
-            }
-
+            if (!isValid) return;
 
             try {
-
                 setLoading(true);
-
-
-                /*
-                 * Crear ruta completa
-                 */
-
-                const route = await createRoute(
-                    routeDate,
-                    technicianId,
-                    services,
-                );
-
-
-                showSuccess(
-                    "Ruta creada correctamente.",
-                );
-
-
-                /*
-                 * Redirigir al detalle
-                 */
+                const route = await createRoute(routeDate, technicianId, services);
+                showSuccess("¡Asignación creada correctamente!");
 
                 setTimeout(() => {
-
-                    window.location.href =
-                        `/routes/detail?id=${route.id}`;
-
-                }, 700);
-
+                    window.location.href = `/routes/detail?id=${route.id}`;
+                }, 1000);
 
             } catch (error) {
-
-                showError(
-                    error instanceof Error
-                        ? error.message
-                        : "No se pudo crear la ruta.",
-                );
-
+                showError(error instanceof Error ? error.message : "Error del servidor. Intenta de nuevo.");
                 setLoading(false);
             }
         }
 
-
-        /*
-         * ==========================================
-         * ESTADO DEL BOTÓN
-         * ==========================================
-         */
-
         function updateFormAvailability() {
             const hasActiveCustomers = customers.length > 0;
             const hasActiveTechnicians = activeTechniciansCount > 0;
-
-            const canAddService =
-                hasActiveCustomers && hasActiveTechnicians;
+            const canAddService = hasActiveCustomers && hasActiveTechnicians;
 
             if (addServiceButton) {
                 addServiceButton.disabled = !canAddService;
-                addServiceButton.classList.toggle(
-                    "cursor-not-allowed",
-                    !canAddService,
-                );
-                addServiceButton.classList.toggle(
-                    "opacity-50",
-                    !canAddService,
-                );
-                addServiceButton.title = !hasActiveCustomers
-                    ? "Necesitas al menos un cliente activo"
-                    : !hasActiveTechnicians
-                        ? "Necesitas al menos un técnico activo"
-                        : "Agregar un servicio";
             }
 
             if (createRouteButton) {
-                createRouteButton.disabled =
-                    isSubmitting ||
-                    !hasActiveCustomers ||
-                    !hasActiveTechnicians;
-
-                createRouteButton.title = !hasActiveCustomers
-                    ? "Necesitas al menos un cliente activo"
-                    : !hasActiveTechnicians
-                        ? "Necesitas al menos un técnico activo"
-                        : "Crear ruta";
+                createRouteButton.disabled = isSubmitting || !canAddService;
             }
         }
 
-
-        function setLoading(
-            loading: boolean,
-        ) {
+        function setLoading(loading: boolean) {
             isSubmitting = loading;
-
             if (createRouteButton) {
-                createRouteButton.textContent = loading
-                    ? "Creando ruta..."
-                    : "Crear ruta";
+                createRouteButton.innerHTML = loading
+                    ? `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Guardando...
+                      `
+                    : "Crear Asignación";
             }
-
             updateFormAvailability();
         }
 
-
-        /*
-         * ==========================================
-         * MENSAJES
-         * ==========================================
-         */
-
-        function showError(
-            message: string,
-        ) {
-
-            if (!errorMessage) {
-                return;
-            }
-
-
-            errorMessage.textContent =
-                message;
-
-            errorMessage.classList.remove(
-                "hidden",
-            );
+        function showError(message: string) {
+            if (!errorMessage) return;
+            errorMessage.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            errorMessage.classList.remove("hidden");
         }
 
-
-        function showSuccess(
-            message: string,
-        ) {
-
-            if (!successMessage) {
-                return;
-            }
-
-
-            successMessage.textContent =
-                message;
-
-            successMessage.classList.remove(
-                "hidden",
-            );
+        function showSuccess(message: string) {
+            if (!successMessage) return;
+            successMessage.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            successMessage.classList.remove("hidden");
         }
-
 
         function hideMessages() {
-
-            errorMessage?.classList.add(
-                "hidden",
-            );
-
-            successMessage?.classList.add(
-                "hidden",
-            );
+            errorMessage?.classList.add("hidden");
+            successMessage?.classList.add("hidden");
         }
 
-
-        /*
-         * ==========================================
-         * EVENTOS
-         * ==========================================
-         */
-
-        addServiceButton?.addEventListener(
-            "click",
-            addService,
-        );
-
-
-        createRouteButton?.addEventListener(
-            "click",
-            handleCreateRoute,
-        );
-
-
-        /*
-         * Cargar datos
-         */
+        addServiceButton?.addEventListener("click", addService);
+        createRouteButton?.addEventListener("click", handleCreateRoute);
 
         loadInitialData();
-
     </script>
-
 </Layout>

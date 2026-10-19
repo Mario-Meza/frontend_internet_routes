@@ -1,0 +1,207 @@
+---
+// src/pages/panel/ruta.astro
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Detalle de Instalación - Rutas Digitales">
+    <main class="min-h-screen bg-slate-50 p-4 sm:p-6 pb-24">
+
+        <!-- Cabecera -->
+        <header class="mb-6 flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <a href="/panel" class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-xl font-black text-slate-900">Detalle de Ruta</h1>
+                <p id="route-id-display" class="text-xs font-medium text-slate-500">Cargando...</p>
+            </div>
+        </header>
+
+        <!-- Contenedor del Servicio/Cliente -->
+        <div id="service-container" class="space-y-6">
+            <div class="animate-pulse flex flex-col gap-4">
+                <div class="h-48 bg-slate-200 rounded-2xl"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Observaciones (Oculto por defecto) -->
+    <div id="observations-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden transform transition-all">
+            <div class="p-6">
+                <h3 class="text-lg font-black text-slate-900 mb-2">Finalizar Instalación</h3>
+                <p class="text-sm text-slate-500 mb-4">Registra los detalles técnicos del servicio antes de cerrar la ruta.</p>
+
+                <textarea
+                        id="service-notes"
+                        rows="4"
+                        placeholder="Ej. Antena LiteBeam 5AC alineada correctamente. Cableado Cat5E ponchado en norma T568B. Router TP-Link TL-WR850N configurado..."
+                        class="w-full rounded-xl border border-slate-300 p-3 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all resize-none"
+                ></textarea>
+
+                <div class="mt-6 flex gap-3">
+                    <button id="cancel-modal" class="flex-1 rounded-xl bg-slate-100 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200 transition">
+                        Cancelar
+                    </button>
+                    <button id="confirm-complete" class="flex-1 rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-md hover:bg-green-700 transition">
+                        Completar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        import { getRoute, startService, completeService } from "../../services/api";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const routeId = urlParams.get("id");
+
+        const container = document.getElementById("service-container");
+        const routeIdDisplay = document.getElementById("route-id-display");
+
+        // Elementos del Modal
+        const modal = document.getElementById("observations-modal");
+        const cancelModalBtn = document.getElementById("cancel-modal") as HTMLButtonElement;
+        const confirmCompleteBtn = document.getElementById("confirm-complete") as HTMLButtonElement;
+        const notesInput = document.getElementById("service-notes") as HTMLTextAreaElement;
+
+        let currentServiceId: string | null = null;
+
+        // Proteger ruta
+        if (!localStorage.getItem("auth_token")) {
+            window.location.href = "/login";
+        }
+
+        async function loadRouteDetails() {
+            if (!routeId || !container || !routeIdDisplay) return;
+
+            try {
+                const route = await getRoute(routeId);
+                routeIdDisplay.textContent = `ID: ${route.id.substring(0, 8).toUpperCase()}`;
+
+                // Renderizamos los servicios (clientes) de esta ruta
+                if (route.services && route.services.length > 0) {
+                    container.innerHTML = route.services.map(service => {
+                        const customer = service.customer;
+                        const statusLower = service.status.toLowerCase();
+
+                        // Validamos contra los valores en inglés y en español
+                        const isPending = statusLower === 'pending' || statusLower === 'pendiente';
+                        const isInProgress = statusLower === 'in_progress' || statusLower === 'en_progreso';
+                        const isCompleted = statusLower === 'completed' || statusLower === 'completada';
+
+                        // Traducción para la etiqueta visual
+                        const statusText = isPending ? 'Pendiente' : isInProgress ? 'En Progreso' : isCompleted ? 'Completado' : service.status;
+
+                        return `
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="p-5 border-b border-slate-100">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h2 class="text-lg font-black text-slate-900">${customer?.name || 'Cliente sin nombre'}</h2>
+                                    <span class="inline-block px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                            isInProgress ? 'bg-blue-100 text-blue-700' :
+                                isCompleted ? 'bg-green-100 text-green-700' :
+                                    'bg-orange-100 text-orange-700'
+                        }">
+                                        ${statusText}
+                                    </span>
+                                </div>
+                                <div class="space-y-2 mt-4 text-sm text-slate-600">
+                                    <p class="flex items-start gap-2">
+                                        <span class="text-slate-400">📍</span>
+                                        <span>${customer?.location || 'Dirección no registrada'} <br><span class="text-xs text-slate-400">${customer?.reference || ''}</span></span>
+                                    </p>
+                                    <p class="flex items-center gap-2">
+                                        <span class="text-slate-400">📞</span>
+                                        <a href="tel:${customer?.phone}" class="text-blue-600 font-medium">${customer?.phone || 'Sin teléfono'}</a>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-slate-50 flex gap-3">
+                                ${isPending ? `
+                                    <button onclick="window.handleStartService('${route.id}', '${service.service_id}')" class="w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white shadow-md hover:bg-slate-800 transition active:scale-[0.98]">
+                                        ▶ Iniciar Instalación
+                                    </button>
+                                ` : isInProgress ? `
+                                    <button onclick="window.handleOpenCompleteModal('${service.service_id}')" class="w-full rounded-xl bg-green-600 px-4 py-3.5 text-sm font-bold text-white shadow-md hover:bg-green-700 transition active:scale-[0.98]">
+                                        ✓ Terminar Instalación
+                                    </button>
+                                ` : `
+                                    <div class="w-full text-center py-2 text-sm font-bold text-green-600">
+                                        Servicio completado exitosamente
+                                    </div>
+                                    ${service.notes ? `<div class="w-full mt-2 p-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 italic">" ${service.notes} "</div>` : ''}
+                                `}
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `<div class="p-6 text-center text-slate-500 bg-white rounded-2xl border border-slate-200">No hay servicios asignados a esta ruta.</div>`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm font-medium">Error al cargar los detalles.</div>`;
+            }
+        }
+
+        // =====================================
+        // ACCIONES DE BOTONES (Expuestas a window)
+        // =====================================
+
+        window.handleStartService = async (rId: string, sId: string) => {
+            try {
+                await startService(rId, sId);
+                loadRouteDetails();
+            } catch (error) {
+                alert(error instanceof Error ? error.message : "Error al iniciar el servicio");
+            }
+        };
+
+        window.handleOpenCompleteModal = (sId: string) => {
+            currentServiceId = sId;
+            notesInput.value = "";
+            modal?.classList.remove("hidden");
+        };
+
+        cancelModalBtn?.addEventListener("click", () => {
+            modal?.classList.add("hidden");
+            currentServiceId = null;
+        });
+
+        confirmCompleteBtn?.addEventListener("click", async () => {
+            if (!routeId || !currentServiceId) return;
+
+            try {
+                confirmCompleteBtn.disabled = true;
+                confirmCompleteBtn.textContent = "Guardando...";
+
+                await completeService(routeId, currentServiceId, notesInput.value.trim());
+
+                modal?.classList.add("hidden");
+                loadRouteDetails();
+
+            } catch (error) {
+                alert(error instanceof Error ? error.message : "Error al completar el servicio");
+            } finally {
+                confirmCompleteBtn.disabled = false;
+                confirmCompleteBtn.textContent = "Completar";
+            }
+        });
+
+        declare global {
+            interface Window {
+                handleStartService: (rId: string, sId: string) => void;
+                handleOpenCompleteModal: (sId: string) => void;
+            }
+        }
+
+        loadRouteDetails();
+    </script>
+</Layout>

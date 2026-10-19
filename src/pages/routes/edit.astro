@@ -4,99 +4,109 @@ import Layout from "../../layouts/Layout.astro";
 
 <Layout title="Editar ruta">
 
-    <main class="min-h-screen bg-slate-100">
+    <main class="min-h-screen bg-slate-50/50">
+
         <!-- CONTENIDO -->
+        <section class="mx-auto max-w-4xl px-6 py-10 sm:py-14">
 
-        <section class="mx-auto max-w-5xl px-6 py-8">
+            <!-- CABECERA -->
+            <header class="mb-8">
+                <a href="/routes" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a rutas
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 shadow-sm ring-1 ring-inset ring-orange-200">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight text-slate-900">
+                            Modificar Asignación
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Cambia la fecha programada o reasigna la ruta a otro técnico operativo.
+                        </p>
+                    </div>
+                </div>
+            </header>
 
-            <div
-                    id="error-message"
-                    class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-            ></div>
+            <!-- MENSAJES DE NOTIFICACIÓN -->
+            <div id="error-message" class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 shadow-sm"></div>
+            <div id="success-message" class="mb-6 hidden rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700 shadow-sm"></div>
 
 
-            <div
-                    id="success-message"
-                    class="mb-6 hidden rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700"
-            ></div>
+            <form
+                    id="edit-route-form"
+                    class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50"
+            >
+                <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        Datos Generales de la Ruta
+                    </h2>
+                </div>
 
-
-            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-
-                <div class="grid gap-6 md:grid-cols-2">
+                <div class="grid gap-6 px-6 py-8 md:grid-cols-2">
 
                     <!-- FECHA -->
-
                     <div>
-
                         <label
                                 for="route-date"
-                                class="mb-2 block text-sm font-semibold text-slate-700"
+                                class="mb-2 block text-sm font-bold text-slate-700"
                         >
-                            Fecha de ruta
+                            Fecha programada
                         </label>
-
                         <input
                                 id="route-date"
                                 type="date"
                                 required
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
-
                     </div>
 
-
                     <!-- TÉCNICO -->
-
                     <div>
-
                         <label
                                 for="technician"
-                                class="mb-2 block text-sm font-semibold text-slate-700"
+                                class="mb-2 block text-sm font-bold text-slate-700"
                         >
-                            Técnico
+                            Técnico Responsable
                         </label>
-
                         <select
                                 id="technician"
                                 required
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
                         >
-
-                            <option value="">
-                                Cargando técnicos...
-                            </option>
-
+                            <option value="">Cargando técnicos operativos...</option>
                         </select>
-
                     </div>
 
                 </div>
 
 
-                <!-- ACCIONES -->
-
-                <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-
+                <!-- FOOTER / BOTONES DE ACCIÓN -->
+                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-10">
                     <a
                             href="/routes"
-                            class="rounded-xl border border-slate-300 px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-50"
+                            class="mb-3 block w-full rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] sm:mb-0 sm:w-auto"
                     >
                         Cancelar
                     </a>
 
-
                     <button
                             id="save"
-                            type="button"
-                            class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                            type="submit"
+                            class="block w-full rounded-xl bg-blue-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-blue-500/30 transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                     >
                         Guardar cambios
                     </button>
-
                 </div>
 
-            </section>
+            </form>
 
         </section>
 
@@ -104,314 +114,141 @@ import Layout from "../../layouts/Layout.astro";
 
 
     <script>
-
         import {
             getRoute,
             getTechnicians,
             updateRoute,
         } from "../../services/api";
 
+        const routeId = new URLSearchParams(window.location.search).get("id");
 
-        const routeId =
-            new URLSearchParams(
-                window.location.search,
-            ).get("id");
+        const form = document.querySelector<HTMLFormElement>("#edit-route-form");
+        const routeDateInput = document.querySelector<HTMLInputElement>("#route-date");
+        const technicianSelect = document.querySelector<HTMLSelectElement>("#technician");
+        const saveButton = document.querySelector<HTMLButtonElement>("#save");
 
+        const errorMessage = document.querySelector<HTMLDivElement>("#error-message");
+        const successMessage = document.querySelector<HTMLDivElement>("#success-message");
 
-        const routeDateInput =
-            document.querySelector<HTMLInputElement>(
-                "#route-date",
-            );
-
-
-        const technicianSelect =
-            document.querySelector<HTMLSelectElement>(
-                "#technician",
-            );
-
-
-        const saveButton =
-            document.querySelector<HTMLButtonElement>(
-                "#save",
-            );
-
-
-        const errorMessage =
-            document.querySelector<HTMLDivElement>(
-                "#error-message",
-            );
-
-
-        const successMessage =
-            document.querySelector<HTMLDivElement>(
-                "#success-message",
-            );
-
-
-        /*
-         * ==========================================
-         * ERROR
-         * ==========================================
-         */
-
-        function showError(
-            message: string,
-        ) {
-
-            if (!errorMessage) {
-                return;
-            }
-
-
-            errorMessage.textContent =
-                message;
-
-
-            errorMessage.classList.remove(
-                "hidden",
-            );
+        function showError(message: string) {
+            if (!errorMessage) return;
+            errorMessage.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            errorMessage.classList.remove("hidden");
         }
 
-
-        /*
-         * ==========================================
-         * ÉXITO
-         * ==========================================
-         */
-
-        function showSuccess(
-            message: string,
-        ) {
-
-            if (!successMessage) {
-                return;
-            }
-
-
-            successMessage.textContent =
-                message;
-
-
-            successMessage.classList.remove(
-                "hidden",
-            );
+        function showSuccess(message: string) {
+            if (!successMessage) return;
+            successMessage.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            successMessage.classList.remove("hidden");
         }
 
-
-        /*
-         * ==========================================
-         * CARGAR DATOS
-         * ==========================================
-         */
+        function hideMessages() {
+            errorMessage?.classList.add("hidden");
+            successMessage?.classList.add("hidden");
+        }
 
         async function loadData() {
-
             try {
+                if (!routeId) throw new Error("No se encontró el ID de la ruta.");
 
-                if (!routeId) {
-
-                    throw new Error(
-                        "No se encontró el ID de la ruta.",
-                    );
-                }
-
-
-                const [
-                    route,
-                    technicians,
-                ] = await Promise.all([
+                const [route, technicians] = await Promise.all([
                     getRoute(routeId),
                     getTechnicians(),
                 ]);
 
-
-                /*
-                 * La edición solo está permitida
-                 * para rutas asignadas.
-                 */
-
                 if (route.status !== "assigned") {
-
-                    throw new Error(
-                        "Esta ruta ya no puede editarse.",
-                    );
+                    throw new Error("Esta ruta ya se encuentra en proceso o ha finalizado. No es posible editarla.");
                 }
-
 
                 if (routeDateInput) {
-
-                    routeDateInput.value =
-                        route.route_date;
+                    routeDateInput.value = route.route_date;
                 }
-
 
                 if (technicianSelect) {
+                    technicianSelect.innerHTML = `<option value="">Selecciona un técnico</option>`;
 
-                    technicianSelect.innerHTML = `
-                        <option value="">
-                            Selecciona un técnico
-                        </option>
-                    `;
-
-
-                    technicians
-                        .filter(
-                            (technician) =>
-                                technician.active,
-                        )
-                        .forEach(
-                            (technician) => {
-
-                                const option =
-                                    document.createElement(
-                                        "option",
-                                    );
-
-
-                                option.value =
-                                    technician.id;
-
-
-                                option.textContent =
-                                    technician.name;
-
-
-                                option.selected =
-                                    technician.id ===
-                                    route.technician_id;
-
-
-                                technicianSelect.appendChild(
-                                    option,
-                                );
-                            },
-                        );
+                    technicians.filter((t) => t.active).forEach((technician) => {
+                        const option = document.createElement("option");
+                        option.value = technician.id;
+                        option.textContent = technician.name;
+                        option.selected = technician.id === route.technician_id;
+                        technicianSelect.appendChild(option);
+                    });
                 }
 
             } catch (error) {
-
-                showError(
-                    error instanceof Error
-                        ? error.message
-                        : "No se pudo cargar la ruta.",
-                );
+                showError(error instanceof Error ? error.message : "No se pudo cargar la información de la ruta.");
+                if (saveButton) saveButton.disabled = true;
+                if (technicianSelect) technicianSelect.disabled = true;
+                if (routeDateInput) routeDateInput.disabled = true;
             }
         }
 
-
-        /*
-         * ==========================================
-         * GUARDAR
-         * ==========================================
-         */
-
-        async function saveChanges() {
+        form?.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            hideMessages();
 
             if (!routeId) {
-
-                showError(
-                    "No se encontró el ID de la ruta.",
-                );
-
+                showError("No se encontró el ID de la ruta.");
                 return;
             }
 
-
-            const routeDate =
-                routeDateInput?.value;
-
-
-            const technicianId =
-                technicianSelect?.value;
-
+            const routeDate = routeDateInput?.value;
+            const technicianId = technicianSelect?.value;
 
             if (!routeDate) {
-
-                showError(
-                    "Selecciona una fecha.",
-                );
-
+                showError("Selecciona la fecha programada.");
                 return;
             }
-
 
             if (!technicianId) {
-
-                showError(
-                    "Selecciona un técnico.",
-                );
-
+                showError("Debes asignar la ruta a un técnico operativo.");
                 return;
             }
 
-
             try {
-
                 if (saveButton) {
-
-                    saveButton.disabled =
-                        true;
-
-                    saveButton.textContent =
-                        "Guardando...";
+                    saveButton.disabled = true;
+                    saveButton.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Guardando...
+                    `;
                 }
 
+                await updateRoute(routeId, {
+                    route_date: routeDate,
+                    technician_id: technicianId,
+                });
 
-                await updateRoute(
-                    routeId,
-                    {
-                        route_date:
-                        routeDate,
-                        technician_id:
-                        technicianId,
-                    },
-                );
+                showSuccess("¡Asignación actualizada correctamente!");
 
-
-                showSuccess(
-                    "Ruta actualizada correctamente.",
-                );
-
-
-                setTimeout(
-                    () => {
-
-                        window.location.href =
-                            `/routes/detail?id=${routeId}`;
-
-                    },
-                    700,
-                );
+                setTimeout(() => {
+                    window.location.href = `/routes/detail?id=${routeId}`;
+                }, 1000);
 
             } catch (error) {
-
-                showError(
-                    error instanceof Error
-                        ? error.message
-                        : "No se pudo actualizar la ruta.",
-                );
-
+                showError(error instanceof Error ? error.message : "No se pudo actualizar la ruta. Intenta de nuevo.");
 
                 if (saveButton) {
-
-                    saveButton.disabled =
-                        false;
-
-                    saveButton.textContent =
-                        "Guardar cambios";
+                    saveButton.disabled = false;
+                    saveButton.textContent = "Guardar cambios";
                 }
             }
-        }
-
-
-        saveButton?.addEventListener(
-            "click",
-            saveChanges,
-        );
-
+        });
 
         loadData();
-
     </script>
-
 </Layout>

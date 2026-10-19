@@ -1,0 +1,148 @@
+---
+// src/pages/login.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Iniciar Sesión - Rutas Digitales">
+    <main class="flex min-h-screen items-center justify-center bg-slate-50/50 p-4 sm:p-8">
+
+        <section class="w-full max-w-[420px] overflow-hidden rounded-3xl bg-white p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] ring-1 ring-slate-200/50 sm:p-10">
+
+            <!-- CABECERA DE LOGIN -->
+            <div class="mb-8 text-center">
+                <div class="mx-auto mb-5 inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-tr from-orange-500 to-orange-400 text-white shadow-lg shadow-orange-500/30 ring-4 ring-orange-50">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-black tracking-tight text-slate-900">Rutas Digitales</h1>
+                <p class="mt-2 text-sm font-medium text-slate-500">Ingresa tus credenciales para acceder</p>
+            </div>
+
+            <!-- FORMULARIO -->
+            <form id="login-form" class="space-y-6">
+
+                <div class="space-y-5">
+                    <!-- CORREO -->
+                    <div>
+                        <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Correo Electrónico</label>
+                        <div class="relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                                </svg>
+                            </div>
+                            <input
+                                    type="email"
+                                    id="email"
+                                    required
+                                    placeholder="tu@correo.com"
+                                    class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- CONTRASEÑA -->
+                    <div>
+                        <label for="password" class="mb-2 block text-sm font-bold text-slate-700">Contraseña</label>
+                        <div class="relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <input
+                                    type="password"
+                                    id="password"
+                                    required
+                                    placeholder="••••••••"
+                                    class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR PARA ERRORES -->
+                <div id="error-message" class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 shadow-sm">
+                </div>
+
+                <!-- BOTÓN DE ENVÍO -->
+                <button
+                        type="submit"
+                        id="submit-btn"
+                        class="mt-2 w-full rounded-xl bg-orange-600 px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                    Ingresar al sistema
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <script>
+        import { loginTechnician } from "../services/api";
+
+        const form = document.querySelector<HTMLFormElement>("#login-form");
+        const emailInput = document.querySelector<HTMLInputElement>("#email");
+        const passwordInput = document.querySelector<HTMLInputElement>("#password");
+        const submitBtn = document.querySelector<HTMLButtonElement>("#submit-btn");
+        const errorMessage = document.querySelector<HTMLDivElement>("#error-message");
+
+        function showError(message: string) {
+            if (!errorMessage) return;
+            errorMessage.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            errorMessage.classList.remove("hidden");
+        }
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (errorMessage) errorMessage.classList.add("hidden");
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Verificando...
+                `;
+            }
+
+            try {
+                const data = await loginTechnician(
+                    emailInput!.value.trim(),
+                    passwordInput!.value
+                );
+
+                // Guardar el token y el rol
+                localStorage.setItem("auth_token", data.access_token);
+                localStorage.setItem("user_role", data.role);
+
+                // Redirigir estrictamente según el rol
+                if (data.role === "admin") {
+                    window.location.href = "/";
+                } else {
+                    window.location.href = "/panel";
+                }
+
+            } catch (error) {
+                showError(error instanceof Error ? error.message : "Error de credenciales o conexión.");
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Ingresar al sistema";
+                }
+            }
+        });
+    </script>
+</Layout>

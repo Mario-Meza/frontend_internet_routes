@@ -23,23 +23,33 @@ async function apiRequest<T>(
     options?: RequestInit,
 ): Promise<T> {
 
-    // Verificamos si el cuerpo enviado es un FormData
     const isFormData = options?.body instanceof FormData;
+
+    // NUEVO: Obtenemos el token guardado del login
+    const token = typeof window !== "undefined" ? localStorage.getItem("technician_token") : null;
+
+    // Preparamos los headers
+    const headers: Record<string, string> = {};
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    // NUEVO: Si hay token, lo inyectamos en la petición
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(
         `${API_URL}${endpoint}`,
         {
             ...options,
-            headers: isFormData
-                ? { ...options?.headers } // Si es FormData, dejamos que fetch asigne el boundary automáticamente
-                : {
-                    "Content-Type": "application/json",
-                    ...options?.headers,
-                },
+            headers: {
+                ...headers,
+                ...options?.headers as Record<string, string>,
+            },
         },
     );
-
-    // Resto del código de manejo de errores y respuestas...
 
 
     /*
@@ -509,3 +519,57 @@ export async function deleteTechnicianPhoto(
         },
     );
 }
+
+// ==========================================
+// AUTENTICACIÓN
+// ==========================================
+
+export async function loginTechnician(email: string, password: string): Promise<{ access_token: string, token_type: string, role: string }> {
+    const formData = new URLSearchParams();
+    formData.append("username", email); // FastAPI OAuth2 espera 'username'
+    formData.append("password", password);
+
+    const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error al iniciar sesión");
+    }
+
+    return response.json();
+}
+
+// En src/services/api.ts
+export async function getAdminProfile() {
+    const token = localStorage.getItem("auth_token");
+    const response = await fetch(`${API_URL}/admin/profile`, {
+        headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!response.ok) throw new Error("Error al obtener el perfil");
+    return response.json();
+}
+
+export async function updateAdminProfile(data: any) {
+    const token = localStorage.getItem("auth_token");
+    const response = await fetch(`${API_URL}/admin/profile`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error al actualizar perfil");
+    }
+    return response.json();
+}
+
+

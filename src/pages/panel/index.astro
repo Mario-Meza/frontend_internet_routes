@@ -1,0 +1,99 @@
+---
+// src/pages/panel/index.astro
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Mi Panel - Rutas Digitales">
+    <main class="min-h-screen bg-slate-50 p-4 sm:p-6 pb-20">
+        <!-- Cabecera del Panel -->
+        <header class="mb-6 flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div>
+                <h1 class="text-xl font-black text-slate-900">Mis Rutas</h1>
+                <p class="text-xs font-medium text-slate-500">Rutas asignadas para hoy</p>
+            </div>
+            <button id="logout-btn" class="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Contenedor donde se inyectarán las rutas -->
+        <div id="routes-container" class="space-y-4">
+            <div class="animate-pulse flex flex-col gap-4">
+                <div class="h-32 bg-slate-200 rounded-2xl"></div>
+                <div class="h-32 bg-slate-200 rounded-2xl"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        import { getRoutes } from "../../services/api";
+
+        // 1. Proteger la ruta: Si no hay token, lo mandamos al login
+        const token = localStorage.getItem("auth_token");
+        if (!token) {
+            window.location.href = "/login";
+        }
+
+        // 2. Lógica para Cerrar Sesión
+        document.getElementById("logout-btn")?.addEventListener("click", () => {
+            localStorage.removeItem("auth_token");
+            window.location.href = "/login";
+        });
+
+        // 3. Cargar las rutas
+        async function loadMyRoutes() {
+            const container = document.getElementById("routes-container");
+            if (!container) return;
+
+            try {
+                // Obtenemos las rutas
+                const routes = await getRoutes();
+
+                if (routes.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-8 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="inline-flex w-12 h-12 rounded-full bg-slate-100 items-center justify-center mb-3">✅</div>
+                            <h3 class="text-slate-900 font-bold">¡Todo despejado!</h3>
+                            <p class="text-slate-500 text-sm mt-1">No tienes rutas asignadas por el momento.</p>
+                        </div>`;
+                    return;
+                }
+
+                // Renderizamos cada ruta como una tarjeta móvil
+                container.innerHTML = routes.map(route => `
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="inline-block px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                    route.status === 'en_progreso' ? 'bg-blue-100 text-blue-700' :
+                        route.status === 'completada' ? 'bg-green-100 text-green-700' :
+                            'bg-orange-100 text-orange-700'
+                }">
+                                    ${route.status || 'Pendiente'}
+                                </span>
+                                <h3 class="text-lg font-black text-slate-900 mt-2">Ruta #${route.id.substring(0, 5).toUpperCase()}</h3>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">
+                                ${new Date(route.scheduled_date || new Date()).toLocaleDateString('es-MX')}
+                            </span>
+                        </div>
+                        
+                        <a href="/panel/ruta?id=${route.id}" class="block w-full text-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98]">
+                            Ver detalles e iniciar
+                        </a>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm font-medium">
+                        Tu sesión expiró o hubo un error al cargar. <a href="/login" class="underline font-bold">Inicia sesión de nuevo</a>.
+                    </div>`;
+            }
+        }
+
+        loadMyRoutes();
+    </script>
+</Layout>

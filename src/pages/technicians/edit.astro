@@ -3,145 +3,174 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout title="Editar técnico">
+    <main class="min-h-screen bg-slate-50/50">
+        <section class="mx-auto max-w-3xl px-6 py-10 sm:py-14">
 
-    <main class="min-h-screen bg-slate-50/60 pb-16">
-
-        <section class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-
-            <!-- CABECERA -->
             <header class="mb-8">
-                <div class="flex items-center gap-2">
-                    <span class="flex h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Gestión de Personal</span>
+                <a href="/technicians" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a técnicos
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shadow-sm ring-1 ring-inset ring-blue-200">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight text-slate-900">
+                            Editar Perfil
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Modifica los datos personales y de acceso del técnico.
+                        </p>
+                    </div>
                 </div>
-                <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
-                    Editar técnico
-                </h1>
-                <p class="mt-1 text-sm text-slate-500">
-                    Modifica los datos generales y administra la fotografía del personal técnico[cite: 10].
-                </p>
             </header>
 
             <form
                     id="technician-form"
-                    class="rounded-2xl bg-white p-6 shadow-sm border border-slate-200/80 sm:p-8"
+                    class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50"
             >
-
-                <div class="space-y-6">
+                <div class="p-6 sm:p-10 space-y-8">
 
                     <!-- FOTOGRAFÍA -->
-                    <div>
-                        <label class="mb-2 block text-sm font-bold text-slate-700">
-                            Fotografía del técnico
+                    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6">
+                        <label class="mb-4 block text-sm font-bold text-slate-700">
+                            Fotografía de perfil
                         </label>
 
-                        <div class="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+                        <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
                             <img
                                     id="photo-preview"
-                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E"
+                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E"
                                     alt="Vista previa de la fotografía"
-                                    class="h-24 w-24 shrink-0 rounded-2xl object-cover ring-1 ring-orange-200 shadow-sm"
+                                    class="h-24 w-24 shrink-0 rounded-full border-4 border-white bg-white object-cover shadow-md"
                             />
 
-                            <div class="w-full space-y-2">
-                                <input
-                                        id="photo"
-                                        type="file"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-orange-50 file:px-4 file:py-2.5 file:font-bold file:text-orange-700 hover:file:bg-orange-100 transition cursor-pointer"
-                                />
-                                <p class="text-xs font-medium text-slate-400">
-                                    JPG, PNG o WEBP. Máximo 5 MB.
-                                </p>
-                                <div class="flex flex-wrap gap-3 pt-1">
+                            <div class="w-full flex-1">
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <label for="photo" class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-blue-600 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
+                                        <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>Cambiar imagen</span>
+                                        <input
+                                                id="photo"
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/webp"
+                                                class="sr-only"
+                                        />
+                                    </label>
+
                                     <button
                                             id="remove-photo"
                                             type="button"
-                                            class="hidden text-xs font-bold text-red-600 hover:text-red-700 transition"
+                                            class="hidden rounded-xl bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                                     >
-                                        Eliminar fotografía actual
-                                    </button>
-                                    <button
-                                            id="undo-photo"
-                                            type="button"
-                                            class="hidden text-xs font-bold text-slate-600 hover:text-slate-800 transition"
-                                    >
-                                        Deshacer cambios de foto
+                                        Eliminar
                                     </button>
                                 </div>
+                                <p class="mt-3 text-xs font-medium text-slate-500">
+                                    Formatos recomendados: JPG, PNG o WEBP. Tamaño máximo: 5 MB.
+                                </p>
+
+                                <button
+                                        id="undo-photo"
+                                        type="button"
+                                        class="mt-3 hidden text-xs font-bold text-slate-500 hover:text-slate-800 transition underline decoration-slate-300 underline-offset-2"
+                                >
+                                    Deshacer cambios de foto
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <hr class="border-slate-100" />
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <!-- NOMBRE -->
+                        <div class="sm:col-span-2">
+                            <label
+                                    for="name"
+                                    class="mb-2 block text-sm font-bold text-slate-700"
+                            >
+                                Nombre completo
+                            </label>
+                            <input
+                                    id="name"
+                                    type="text"
+                                    required
+                                    maxlength="100"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                            />
+                        </div>
 
-                    <!-- NOMBRE -->
-                    <div>
-                        <label
-                                for="name"
-                                class="mb-2 block text-sm font-bold text-slate-700"
-                        >
-                            Nombre completo
-                        </label>
+                        <!-- TELÉFONO -->
+                        <div class="sm:col-span-2">
+                            <label
+                                    for="phone"
+                                    class="mb-2 block text-sm font-bold text-slate-700"
+                            >
+                                Teléfono de contacto
+                            </label>
+                            <input
+                                    id="phone"
+                                    type="tel"
+                                    maxlength="20"
+                                    placeholder="Ej. +52 55 1234 5678"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                            />
+                        </div>
 
-                        <input
-                                id="name"
-                                type="text"
-                                required
-                                maxlength="100"
-                                class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20"
-                        />
-                    </div>
+                        <div class="sm:col-span-2 my-2 border-t border-slate-100"></div>
 
-                    <!-- TELÉFONO -->
-                    <div>
-                        <label
-                                for="phone"
-                                class="mb-2 block text-sm font-bold text-slate-700"
-                        >
-                            Teléfono
-                        </label>
-
-                        <input
-                                id="phone"
-                                type="tel"
-                                maxlength="20"
-                                class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20"
-                        />
+                        <!-- CORREO -->
+                        <div class="sm:col-span-2">
+                            <label
+                                    for="email"
+                                    class="mb-2 block text-sm font-bold text-slate-700"
+                            >
+                                Correo Electrónico (Acceso)
+                            </label>
+                            <input
+                                    id="email"
+                                    type="email"
+                                    required
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                            />
+                            <p class="mt-2 text-xs font-medium text-slate-400">El técnico usará este correo para iniciar sesión en la aplicación móvil.</p>
+                        </div>
                     </div>
 
                     <!-- ERROR -->
                     <div
                             id="error"
-                            class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 shadow-sm"
+                            class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700"
                     ></div>
-
-                    <!-- ACCIONES -->
-                    <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
-                        <a
-                                href="/technicians"
-                                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
-                        >
-                            Cancelar
-                        </a>
-
-                        <button
-                                id="submit"
-                                type="submit"
-                                class="inline-flex items-center justify-center rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-600/25 transition-all hover:bg-orange-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                            Guardar cambios
-                        </button>
-                    </div>
 
                 </div>
 
+                <!-- Footer Formulario -->
+                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-10">
+                    <a
+                            href="/technicians"
+                            class="mb-3 block w-full rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] sm:mb-0 sm:w-auto"
+                    >
+                        Cancelar
+                    </a>
+
+                    <button
+                            id="submit"
+                            type="submit"
+                            class="block w-full rounded-xl bg-blue-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-blue-500/30 transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                    >
+                        Guardar cambios
+                    </button>
+                </div>
             </form>
-
         </section>
-
     </main>
-
 
     <script>
         import {
@@ -160,6 +189,8 @@ import Layout from "../../layouts/Layout.astro";
         const form = document.querySelector<HTMLFormElement>("#technician-form");
         const nameInput = document.querySelector<HTMLInputElement>("#name");
         const phoneInput = document.querySelector<HTMLInputElement>("#phone");
+        const emailInput = document.querySelector<HTMLInputElement>("#email");
+
         const photoInput = document.querySelector<HTMLInputElement>("#photo");
         const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
         const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
@@ -174,11 +205,16 @@ import Layout from "../../layouts/Layout.astro";
         let hasOriginalPhoto = false;
         let deletePhotoRequested = false;
 
-        const defaultSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E";
+        const defaultSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
 
         function showError(message: string) {
             if (!error) return;
-            error.textContent = message;
+            error.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
             error.classList.remove("hidden");
         }
 
@@ -186,20 +222,19 @@ import Layout from "../../layouts/Layout.astro";
             error?.classList.add("hidden");
         }
 
-        // Cargar datos del técnico e imagen actual al iniciar
-        // Cargar datos del técnico e imagen actual al iniciar
         async function loadTechnician() {
             try {
                 if (!technicianId) {
                     throw new Error("No se encontró el ID del técnico.");
                 }
 
+                // Usamos `any` para evitar advertencias de TypeScript si `email` no está en tu interfaz local todavía
                 const technician = await getTechnician(technicianId) as any;
 
                 if (nameInput) nameInput.value = technician.name;
                 if (phoneInput) phoneInput.value = technician.phone ?? "";
+                if (emailInput) emailInput.value = technician.email ?? "";
 
-                // Verificamos si el técnico tiene una URL o ruta de foto en sus datos
                 const photoUrl = technician.photo_url || technician.photo;
 
                 if (photoPreview && photoUrl) {
@@ -214,12 +249,11 @@ import Layout from "../../layouts/Layout.astro";
 
             } catch (err) {
                 showError(
-                    err instanceof Error ? err.message : "No se pudo cargar el técnico.",
+                    err instanceof Error ? err.message : "No se pudo cargar la información del técnico.",
                 );
             }
         }
 
-        // Seleccionar nueva foto
         photoInput?.addEventListener("change", () => {
             const file = photoInput.files?.[0];
 
@@ -250,7 +284,6 @@ import Layout from "../../layouts/Layout.astro";
             undoPhotoButton?.classList.remove("hidden");
         });
 
-        // Solicitar eliminación de la foto actual
         removePhotoButton?.addEventListener("click", () => {
             selectedPhoto = null;
             if (photoInput) photoInput.value = "";
@@ -262,7 +295,6 @@ import Layout from "../../layouts/Layout.astro";
             hideError();
         });
 
-        // Deshacer cambios de foto (restaurar estado original)
         undoPhotoButton?.addEventListener("click", () => {
             selectedPhoto = null;
             if (photoInput) photoInput.value = "";
@@ -274,7 +306,8 @@ import Layout from "../../layouts/Layout.astro";
             }
 
             if (technicianId && hasOriginalPhoto) {
-                photoPreview!.src = `${API_URL}/technicians/${technicianId}/photo`;
+                // Forzamos un bypass de caché en la URL de la imagen
+                photoPreview!.src = `${API_URL}/technicians/${technicianId}/photo?t=${new Date().getTime()}`;
                 removePhotoButton?.classList.remove("hidden");
             } else {
                 photoPreview!.src = defaultSvg;
@@ -285,7 +318,6 @@ import Layout from "../../layouts/Layout.astro";
             hideError();
         });
 
-        // Enviar formulario
         form?.addEventListener("submit", async (event) => {
             event.preventDefault();
             hideError();
@@ -300,26 +332,35 @@ import Layout from "../../layouts/Layout.astro";
                 return;
             }
 
+            if (!emailInput?.value.trim() || !emailInput?.value.includes('@')) {
+                showError("Ingresa un correo electrónico válido.");
+                return;
+            }
+
             const technicianData: TechnicianUpdate = {
                 name: nameInput.value.trim(),
                 phone: phoneInput?.value.trim() || null,
+                email: emailInput.value.trim(),
             };
 
             try {
                 if (submitButton) {
                     submitButton.disabled = true;
-                    submitButton.textContent = "Guardando cambios...";
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Actualizando datos...
+                    `;
                 }
 
-                // 1. Actualizar datos de texto (nombre y teléfono)[cite: 10]
                 await updateTechnician(technicianId, technicianData);
 
-                // 2. Gestionar la foto según la acción elegida
                 if (deletePhotoRequested) {
                     try {
                         await deleteTechnicianPhoto(technicianId);
                     } catch {
-                        // Si falla la eliminación de la foto pero el texto se guardó, informamos
                         console.warn("No se pudo eliminar la foto del servidor.");
                     }
                 } else if (selectedPhoto) {
@@ -339,7 +380,7 @@ import Layout from "../../layouts/Layout.astro";
 
             } catch (err) {
                 showError(
-                    err instanceof Error ? err.message : "No se pudo actualizar el técnico.",
+                    err instanceof Error ? err.message : "Hubo un error al intentar actualizar el perfil.",
                 );
 
                 if (submitButton) {
@@ -351,5 +392,4 @@ import Layout from "../../layouts/Layout.astro";
 
         loadTechnician();
     </script>
-
 </Layout>

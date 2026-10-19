@@ -299,11 +299,15 @@ function renderRoute() {
     );
 
     if (addServiceButton) {
-
-        addServiceButton.classList.toggle(
-            "hidden",
-            currentRoute.status !== "assigned",
-        );
+        if (currentRoute.status === "assigned") {
+            // Mostrar el botón
+            addServiceButton.classList.remove("hidden");
+            addServiceButton.classList.add("inline-flex");
+        } else {
+            // Ocultar el botón por completo
+            addServiceButton.classList.remove("inline-flex");
+            addServiceButton.classList.add("hidden");
+        }
     }
 
 
@@ -690,7 +694,7 @@ function createServiceCard(
                                             type="button"
                                             data-action="start"
                                             data-service-id="${service.service_id}"
-                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
+                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-400 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
                                         >
                                             ▶ Iniciar visita
                                         </button>

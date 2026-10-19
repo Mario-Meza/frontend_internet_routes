@@ -28,8 +28,11 @@ export interface Route {
     id: string;
     route_date: string;
     technician_id: string;
-    status: string;
     services: RouteService[];
+    // NUEVOS CAMPOS:
+    scheduled_date: string;
+    status: string;
+    observations?: string | null;
 }
 
 export interface RouteService {

@@ -3,96 +3,150 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout title="Nuevo técnico">
-    <main class="min-h-screen bg-slate-100">
-        <section class="mx-auto max-w-3xl px-6 py-8">
-            <form
-                    id="form"
-                    class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-            >
-                <div class="space-y-5">
+    <main class="min-h-screen bg-slate-50/50">
+        <section class="mx-auto max-w-3xl px-6 py-10 sm:py-14">
+
+            <header class="mb-8">
+                <a href="/technicians" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a técnicos
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 shadow-sm ring-1 ring-inset ring-orange-200">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                    </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-slate-900">
+                        <h1 class="text-3xl font-black tracking-tight text-slate-900">
                             Nuevo técnico
                         </h1>
                         <p class="mt-1 text-sm text-slate-500">
-                            Registra los datos y la fotografía del técnico.
+                            Crea una cuenta para que un técnico pueda acceder al sistema de campo.
                         </p>
                     </div>
+                </div>
+            </header>
+
+            <form
+                    id="form"
+                    class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50"
+            >
+                <div class="p-6 sm:p-10 space-y-8">
 
                     <!-- Fotografía -->
-                    <div>
+                    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6">
                         <label
                                 for="photo"
-                                class="mb-2 block text-sm font-semibold"
+                                class="mb-4 block text-sm font-bold text-slate-700"
                         >
-                            Fotografía del técnico
+                            Fotografía de perfil (Opcional)
                         </label>
 
-                        <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                        <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
                             <img
                                     id="photo-preview"
-                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E"
+                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E"
                                     alt="Vista previa de la fotografía del técnico"
-                                    class="h-28 w-28 rounded-full border border-slate-200 object-cover"
+                                    class="h-24 w-24 rounded-full border-4 border-white bg-white object-cover shadow-md"
                             />
 
-                            <div class="w-full">
-                                <input
-                                        id="photo"
-                                        type="file"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        class="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-orange-50 file:px-4 file:py-2 file:font-semibold file:text-orange-700 hover:file:bg-orange-100"
-                                />
-                                <p class="mt-2 text-xs text-slate-500">
-                                    JPG, PNG o WEBP. Máximo 5 MB.
+                            <div class="w-full flex-1">
+                                <label for="photo" class="group relative flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-orange-600 focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2">
+                                    <svg class="h-5 w-5 text-slate-400 group-hover:text-orange-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Seleccionar imagen</span>
+                                    <input
+                                            id="photo"
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            class="sr-only"
+                                    />
+                                </label>
+                                <p class="mt-2.5 text-xs font-medium text-slate-500">
+                                    Formatos recomendados: JPG, PNG o WEBP. Tamaño máximo: 5 MB.
                                 </p>
                                 <button
                                         id="remove-photo"
                                         type="button"
-                                        class="mt-2 hidden text-sm font-medium text-red-600 hover:text-red-700"
+                                        class="mt-3 hidden text-xs font-bold text-red-600 transition hover:text-red-700 focus:outline-none"
                                 >
-                                    Quitar fotografía
+                                    ✕ Quitar fotografía actual
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Nombre -->
-                    <div>
-                        <label for="name" class="mb-2 block text-sm font-semibold">
-                            Nombre completo
-                        </label>
-                        <input
-                                id="name"
-                                required
-                                maxlength="100"
-                                placeholder="Ej. Carlos Mendoza"
-                                class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                        />
-                    </div>
-
-                    <!-- Teléfono (Con selector de extensión y input de dígitos) -->
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold">
-                            Teléfono
-                        </label>
-                        <div class="flex gap-2">
-                            <!-- Select para la extensión/código de país -->
-                            <select
-                                    id="phone-country"
-                                    class="rounded-xl border border-slate-300 bg-white px-3 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                            >
-                                <option value="+52">🇲🇽 +52 (México)</option>
-                                <option value="+1">🇺🇸 +1 (EE. UU.)</option>
-                            </select>
-
-                            <!-- Input para los dígitos del número -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <!-- Nombre -->
+                        <div class="sm:col-span-2">
+                            <label for="name" class="mb-2 block text-sm font-bold text-slate-700">
+                                Nombre completo
+                            </label>
                             <input
-                                    id="phone-digits"
-                                    type="tel"
-                                    maxlength="10"
-                                    placeholder="5512345678"
-                                    class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                                    id="name"
+                                    required
+                                    maxlength="100"
+                                    placeholder="Ej. Carlos Mendoza"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                            />
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="sm:col-span-2">
+                            <label class="mb-2 block text-sm font-bold text-slate-700">
+                                Número de celular (Opcional)
+                            </label>
+                            <div class="flex gap-2">
+                                <select
+                                        id="phone-country"
+                                        class="w-[110px] shrink-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm font-medium outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                                >
+                                    <option value="+52">🇲🇽 +52</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                </select>
+
+                                <input
+                                        id="phone-digits"
+                                        type="tel"
+                                        maxlength="10"
+                                        placeholder="55 1234 5678"
+                                        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-2 my-2 border-t border-slate-100"></div>
+
+                        <!-- NUEVO: Correo -->
+                        <div class="sm:col-span-1">
+                            <label for="email" class="mb-2 block text-sm font-bold text-slate-700">
+                                Correo electrónico de acceso
+                            </label>
+                            <input
+                                    id="email"
+                                    type="email"
+                                    required
+                                    placeholder="tecnico@rutas.com"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                            />
+                        </div>
+
+                        <!-- NUEVO: Contraseña -->
+                        <div class="sm:col-span-1">
+                            <label for="password" class="mb-2 block text-sm font-bold text-slate-700">
+                                Contraseña
+                            </label>
+                            <input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    minlength="6"
+                                    placeholder="Mínimo 6 caracteres"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                             />
                         </div>
                     </div>
@@ -100,24 +154,26 @@ import Layout from "../../layouts/Layout.astro";
                     <div
                             id="error"
                             role="alert"
-                            class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                            class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700"
                     ></div>
 
-                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <a
-                                href="/technicians"
-                                class="rounded-xl border border-slate-300 px-6 py-3 text-center font-semibold text-slate-700"
-                        >
-                            Cancelar
-                        </a>
-                        <button
-                                id="submit"
-                                type="submit"
-                                class="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                            Guardar técnico
-                        </button>
-                    </div>
+                </div>
+
+                <!-- Footer Formulario -->
+                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-10">
+                    <a
+                            href="/technicians"
+                            class="mb-3 block w-full rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] sm:mb-0 sm:w-auto"
+                    >
+                        Cancelar
+                    </a>
+                    <button
+                            id="submit"
+                            type="submit"
+                            class="block w-full rounded-xl bg-orange-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-orange-500/30 transition hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                    >
+                        Guardar técnico
+                    </button>
                 </div>
             </form>
         </section>
@@ -133,6 +189,11 @@ import Layout from "../../layouts/Layout.astro";
         const nameInput = document.querySelector<HTMLInputElement>("#name");
         const phoneCountrySelect = document.querySelector<HTMLSelectElement>("#phone-country");
         const phoneDigitsInput = document.querySelector<HTMLInputElement>("#phone-digits");
+
+        // NUEVOS SELECTORES
+        const emailInput = document.querySelector<HTMLInputElement>("#email");
+        const passwordInput = document.querySelector<HTMLInputElement>("#password");
+
         const photoInput = document.querySelector<HTMLInputElement>("#photo");
         const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
         const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
@@ -142,6 +203,7 @@ import Layout from "../../layouts/Layout.astro";
         let selectedPhoto: File | null = null;
         let previewUrl: string | null = null;
 
+        // Custom file input logic
         photoInput?.addEventListener("change", () => {
             const file = photoInput.files?.[0];
 
@@ -198,7 +260,7 @@ import Layout from "../../layouts/Layout.astro";
 
             if (photoPreview) {
                 photoPreview.src =
-                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23e2e8f0'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%2394a3b8'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%2394a3b8'/%3E%3C/svg%3E";
+                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
             }
 
             removePhotoButton.classList.add("hidden");
@@ -207,7 +269,12 @@ import Layout from "../../layouts/Layout.astro";
 
         function showError(message: string) {
             if (!error) return;
-            error.textContent = message;
+            error.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p>${message}</p>
+                </div>
+            `;
             error.classList.remove("hidden");
         }
 
@@ -217,7 +284,9 @@ import Layout from "../../layouts/Layout.astro";
 
         function validateTechnician(
             name: string,
-            phone: string
+            phone: string,
+            email: string,
+            password: string
         ): string | null {
             if (!name.trim()) {
                 return "El nombre del técnico es obligatorio.";
@@ -227,7 +296,14 @@ import Layout from "../../layouts/Layout.astro";
                 return "El nombre debe tener al menos 3 caracteres.";
             }
 
-            // Si se ingresó teléfono, validarlo (el teléfono es opcional para técnicos en este form, si quieres que sea obligatorio quita el primer if interno)
+            if (!email.trim() || !email.includes('@')) {
+                return "Ingresa un correo electrónico válido.";
+            }
+
+            if (password.length < 6) {
+                return "La contraseña debe tener al menos 6 caracteres.";
+            }
+
             if (phone.trim()) {
                 const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
                 const digitsOnly = cleanPhone.replace("+", "");
@@ -251,15 +327,18 @@ import Layout from "../../layouts/Layout.astro";
             event.preventDefault();
             hideError();
 
-            // Unir la extensión con los dígitos ingresados
             const countryCode = phoneCountrySelect?.value ?? "+52";
             const digits = phoneDigitsInput?.value.trim() ?? "";
             const fullPhone = digits ? `${countryCode}${digits}` : "";
 
-            // 1. Validar antes de deshabilitar el botón
+            const emailValue = emailInput?.value.trim() ?? "";
+            const passwordValue = passwordInput?.value ?? "";
+
             const validationError = validateTechnician(
                 nameInput?.value ?? "",
-                fullPhone
+                fullPhone,
+                emailValue,
+                passwordValue
             );
 
             if (validationError) {
@@ -267,18 +346,23 @@ import Layout from "../../layouts/Layout.astro";
                 return;
             }
 
-            // 2. Deshabilitar el botón mientras se guarda
             if (button) {
                 button.disabled = true;
-                button.textContent = selectedPhoto
-                    ? "Guardando técnico y fotografía..."
-                    : "Guardando técnico...";
+                button.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    ${selectedPhoto ? "Guardando técnico..." : "Creando acceso..."}
+                `;
             }
 
             try {
                 const technician = await createTechnician({
                     name: nameInput!.value.trim(),
                     phone: fullPhone || null,
+                    email: emailValue,
+                    password: passwordValue
                 });
 
                 if (selectedPhoto) {
@@ -289,12 +373,13 @@ import Layout from "../../layouts/Layout.astro";
                         );
                     } catch {
                         showError(
-                            "El técnico se creó, pero no se pudo subir su fotografía. Puedes agregarla después desde la edición del técnico."
+                            "El técnico se creó, pero no se pudo subir su fotografía. Puedes intentarlo de nuevo desde la edición."
                         );
 
                         if (button) {
                             button.disabled = false;
-                            button.textContent = "Reintentar fotografía";
+                            button.textContent = "Finalizar";
+                            button.onclick = () => window.location.href = "/technicians";
                         }
 
                         return;
