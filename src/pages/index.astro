@@ -202,6 +202,9 @@ import Layout from "../layouts/Layout.astro";
         import type { Route } from "../types/route";
         import type { Technician } from "../types/technician";
 
+        // IMPORTANTE: Definimos la URL de la API para construir la ruta de la imagen
+        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+
         // LÓGICA DE BOTONES DINÁMICOS EN HEADER
         const headerActions = document.getElementById("header-actions");
         const currentToken = localStorage.getItem("auth_token");
@@ -346,10 +349,31 @@ import Layout from "../layouts/Layout.astro";
         }
 
         function routeRow(route: Route): string {
-            const technician = technicians.find((item) => item.id === route.technician_id);
+            // Mapeamos el técnico permitiendo campos opcionales de foto
+            const technician = technicians.find((item) => item.id === route.technician_id) as Technician & { photo_url?: string | null; photo?: string | null } | undefined;
             const technicianName = technician?.name ?? "Técnico no encontrado";
             const servicesCount = route.services.length;
             const avatarColor = getAvatarColor(technicianName);
+
+            // Construir la URL de la foto o usar el fallback de colores
+            let avatarHtml = '';
+            if (technician) {
+                const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
+                avatarHtml = `
+                    <img
+                        src="${escapeHtml(photoUrl)}"
+                        alt="${escapeHtml(technicianName)}"
+                        class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm"
+                        onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white', textContent: '${getInitials(technicianName)}'}));"
+                    />
+                `;
+            } else {
+                avatarHtml = `
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
+                        ${escapeHtml(getInitials(technicianName))}
+                    </span>
+                 `;
+            }
 
             return `
                 <tr class="group transition-colors hover:bg-slate-50">
@@ -367,12 +391,10 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                     </td>
 
-                    <!-- TÉCNICO -->
+                    <!-- TÉCNICO CON FOTO O INICIALES -->
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-3">
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
-                                ${escapeHtml(getInitials(technicianName))}
-                            </span>
+                            ${avatarHtml}
                             <span class="text-sm font-bold text-slate-800">
                                 ${escapeHtml(technicianName)}
                             </span>

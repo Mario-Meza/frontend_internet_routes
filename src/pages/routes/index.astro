@@ -142,6 +142,8 @@ import Layout from "../../layouts/Layout.astro";
     <script>
         import { getRoutes, getTechnicians } from "../../services/api";
 
+        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+
         const loading = document.getElementById("loading");
         const error = document.getElementById("error");
         const container = document.getElementById("routes-container");
@@ -166,7 +168,7 @@ import Layout from "../../layouts/Layout.astro";
                 .join("");
         }
 
-        // Nuevo: Formato de fecha agradable
+        // Formato de fecha agradable
         function formatDate(value: string): string {
             const [year, month, day] = value.split("-");
             const date = new Date(Number(year), Number(month) - 1, Number(day));
@@ -177,7 +179,7 @@ import Layout from "../../layouts/Layout.astro";
             }).replace('.', '');
         }
 
-        // Nuevo: Color dinámico para avatar
+        // Color dinámico para avatar
         function getAvatarColor(name: string): string {
             const colors = [
                 'bg-blue-100 text-blue-700', 'bg-indigo-100 text-indigo-700',
@@ -188,7 +190,7 @@ import Layout from "../../layouts/Layout.astro";
             return colors[charCode % colors.length];
         }
 
-        // Nuevo: Renderizado de status con puntos
+        // Renderizado de status con puntos
         function renderStatus(status: string): string {
             const config: Record<string, { label: string; bg: string; dot: string; text: string; border: string }> = {
                 assigned: { label: "Asignada", bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700", border: "ring-blue-600/20" },
@@ -223,17 +225,39 @@ import Layout from "../../layouts/Layout.astro";
 
                 container?.classList.remove("hidden");
 
+                // CAMBIO: Ahora guardamos el objeto completo del técnico, no solo su nombre
                 const technicianMap = new Map(
-                    technicians.map((technician) => [technician.id, technician.name])
+                    technicians.map((technician) => [technician.id, technician])
                 );
 
                 if (routesBody) {
                     routesBody.innerHTML = routes
                         .map((route) => {
-                            const technicianName = technicianMap.get(route.technician_id) ?? "Técnico desconocido";
+                            const technician = technicianMap.get(route.technician_id) as any;
+                            const technicianName = technician?.name ?? "Técnico desconocido";
                             const serviceCount = route.services.length;
                             const serviceLabel = serviceCount === 1 ? "Visita" : "Visitas";
                             const avatarColor = getAvatarColor(technicianName);
+
+                            // LÓGICA DE AVATAR / FOTO
+                            let avatarHtml = '';
+                            if (technician) {
+                                const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
+                                avatarHtml = `
+                                    <img
+                                        src="${escapeHtml(photoUrl)}"
+                                        alt="${escapeHtml(technicianName)}"
+                                        class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm"
+                                        onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white', textContent: '${getInitials(technicianName)}'}));"
+                                    />
+                                `;
+                            } else {
+                                avatarHtml = `
+                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
+                                        ${escapeHtml(getInitials(technicianName))}
+                                    </span>
+                                `;
+                            }
 
                             return `
                                 <tr class="group block px-4 py-4 transition-colors hover:bg-slate-50/80 md:table-row md:px-0 md:py-0">
@@ -255,9 +279,7 @@ import Layout from "../../layouts/Layout.astro";
                                     <!-- TÉCNICO -->
                                     <td data-label="Técnico" class="flex items-center justify-between gap-4 py-3 before:text-xs before:font-medium before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                                         <div class="flex items-center gap-3">
-                                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white" aria-hidden="true">
-                                                ${escapeHtml(getInitials(technicianName))}
-                                            </span>
+                                            ${avatarHtml}
                                             <span class="text-sm font-bold text-slate-800">
                                                 ${escapeHtml(technicianName)}
                                             </span>
