@@ -117,11 +117,13 @@ import Layout from "../../layouts/Layout.astro";
                 const isPending = statusLower === 'pending' || statusLower === 'pendiente';
                 const isInProgress = statusLower === 'in_progress' || statusLower === 'en_progreso';
                 const isCompleted = statusLower === 'completed' || statusLower === 'completada';
+                const isCanceled = statusLower === 'canceled' || statusLower === 'cancelada';
 
                 return {
                     isPending,
                     isInProgress,
                     isCompleted,
+                    isCanceled,
                     text: isPending ? 'PENDIENTE' : isInProgress ? 'EN PROCESO' : isCompleted ? 'COMPLETADO' : statusLower.toUpperCase()
                     };
                 }
@@ -134,103 +136,126 @@ import Layout from "../../layouts/Layout.astro";
 
                     // Actualiza título superior
                     routeIdDisplay.innerHTML = `
-                    <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-                    Asignación #${route.id.substring(0, 8).toUpperCase()}
-                        `;
+                        <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                        Asignación #${route.id.substring(0, 8).toUpperCase()}
+                    `;
+
+                    // 1. VERIFICAMOS SI TODA LA RUTA ESTÁ CANCELADA
+                    const isRouteCanceled = route.status.toLowerCase() === 'canceled' || route.status.toLowerCase() === 'cancelada';
 
                     if (route.services && route.services.length > 0) {
                         container.innerHTML = route.services.map((service, index) => {
                             const customer = service.customer;
-                            const status = formatDisplayStatus(service.status.toLowerCase());
+
+                            // 2. LÓGICA DE ESTADO MEJORADA: Si la ruta se canceló, el servicio también está cancelado
+                            let status = formatDisplayStatus(service.status.toLowerCase());
+
+                            if (isRouteCanceled) {
+                                status = {
+                                    isPending: false,
+                                    isInProgress: false,
+                                    isCompleted: false,
+                                    isCanceled: true,
+                                    text: 'CANCELADO'
+                                };
+                            } else {
+                                status.isCanceled = false;
+                            }
 
                             return `
-                        <div class="relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all ${status.isCompleted ? 'opacity-80' : ''}">
-                            
-                            <!-- Borde de color lateral (Indicador rápido de estado) -->
-                            <div class="absolute bottom-0 left-0 top-0 w-1.5 ${status.isPending ? 'bg-orange-400' : status.isInProgress ? 'bg-blue-500' : 'bg-emerald-500'}"></div>
-                            
-                            <div class="p-5 pl-6 border-b border-slate-100">
-                                <div class="flex justify-between items-start mb-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="flex h-6 w-6 items-center justify-center rounded-md bg-slate-100 text-xs font-black text-slate-500">
-                                            ${index + 1}
-                                        </span>
-                                        <h2 class="text-lg font-black text-slate-900 leading-tight">${customer?.name || 'Sin nombre'}</h2>
-                                    </div>
-                                    <span class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-black tracking-wider ${
+                            <div class="relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all ${(status.isCompleted || status.isCanceled) ? 'opacity-80' : ''}">
+                                
+                                <!-- Borde de color lateral (Indicador rápido de estado) -->
+                                <div class="absolute bottom-0 left-0 top-0 w-1.5 ${status.isPending ? 'bg-orange-400' : status.isInProgress ? 'bg-blue-500' : status.isCanceled ? 'bg-red-500' : 'bg-emerald-500'}"></div>
+                                
+                                <div class="p-5 pl-6 border-b border-slate-100">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="flex h-6 w-6 items-center justify-center rounded-md bg-slate-100 text-xs font-black text-slate-500">
+                                                ${index + 1}
+                                            </span>
+                                            <h2 class="text-lg font-black text-slate-900 leading-tight">${customer?.name || 'Sin nombre'}</h2>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-black tracking-wider ${
                                 status.isInProgress ? 'bg-blue-100 text-blue-700' :
-                                    status.isCompleted ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'
-                                }">
-                                        ${status.isInProgress ? '<span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>' : ''}
-                                ${status.text}
-                                    </span>
+                                    status.isCompleted ? 'bg-emerald-100 text-emerald-700' :
+                                        status.isCanceled ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
+                            }">
+                                            ${status.isInProgress ? '<span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>' : ''}
+                                            ${status.text}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="space-y-2.5 mt-4 text-sm font-medium text-slate-600">
+                                        <div class="flex items-start gap-3">
+                                            <div class="mt-0.5 rounded-lg bg-slate-100 p-1.5 text-slate-400 shrink-0">
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            </div>
+                                            <p class="leading-snug">
+                                                <span class="block text-slate-900">${customer?.location || 'Dirección no registrada'}</span>
+                                                ${customer?.reference ? `<span class="block mt-0.5 text-xs text-slate-500">Ref: ${customer.reference}</span>` : ''}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="rounded-lg bg-blue-50 p-1.5 text-blue-500 shrink-0">
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                            </div>
+                                            <a href="tel:${customer?.phone}" class="text-blue-600 font-bold hover:underline">${customer?.phone || 'Sin teléfono'}</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <div class="space-y-2.5 mt-4 text-sm font-medium text-slate-600">
-                                    <div class="flex items-start gap-3">
-                                        <div class="mt-0.5 rounded-lg bg-slate-100 p-1.5 text-slate-400 shrink-0">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                <!-- ZONA DE ACCIÓN -->
+                                <div class="p-4 pl-5 ${(status.isCompleted || status.isCanceled) ? 'bg-white' : 'bg-slate-50'}">
+                                    ${status.isCanceled ? `
+                                        <div class="flex w-full items-center justify-center gap-2 py-1 text-sm font-bold text-red-600">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            Ruta suspendida por administración
                                         </div>
-                                        <p class="leading-snug">
-                                            <span class="block text-slate-900">${customer?.location || 'Dirección no registrada'}</span>
-                                            ${customer?.reference ? `<span class="block mt-0.5 text-xs text-slate-500">Ref: ${customer.reference}</span>` : ''}
-                                        </p>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="rounded-lg bg-blue-50 p-1.5 text-blue-500 shrink-0">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                    ` : status.isPending ? `
+                                        <button onclick="window.handleStartService('${route.id}', '${service.service_id}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-4 text-sm font-bold text-white shadow-md shadow-slate-900/20 transition active:scale-[0.98]">
+                                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                            Iniciar Instalación
+                                        </button>
+                                    ` : status.isInProgress ? `
+                                        <button onclick="window.handleOpenCompleteModal('${service.service_id}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-md shadow-emerald-500/30 transition active:scale-[0.98] animate-pulse">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+                                            Marcar como Terminado
+                                        </button>
+                                    ` : `
+                                        <div class="flex w-full items-center justify-center gap-2 py-1 text-sm font-bold text-emerald-600">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            Servicio completado
                                         </div>
-                                        <a href="tel:${customer?.phone}" class="text-blue-600 font-bold hover:underline">${customer?.phone || 'Sin teléfono'}</a>
-                                    </div>
+                                        ${service.notes ? `
+                                            <div class="mt-3 rounded-xl bg-slate-50 p-3 border border-slate-100">
+                                                <p class="text-xs font-bold text-slate-400 mb-1">OBSERVACIONES:</p>
+                                                <p class="text-sm font-medium text-slate-700 italic">"${service.notes}"</p>
+                                            </div>
+                                        ` : ''}
+                                    `}
                                 </div>
                             </div>
-                            
-                            <!-- ZONA DE ACCIÓN -->
-                            <div class="p-4 pl-5 ${status.isCompleted ? 'bg-white' : 'bg-slate-50'}">
-                                ${status.isPending ? `
-                                    <button onclick="window.handleStartService('${route.id}', '${service.service_id}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-4 text-sm font-bold text-white shadow-md shadow-slate-900/20 transition active:scale-[0.98]">
-                                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                        Iniciar Instalación
-                                    </button>
-                                ` : status.isInProgress ? `
-                                    <button onclick="window.handleOpenCompleteModal('${service.service_id}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-md shadow-emerald-500/30 transition active:scale-[0.98] animate-pulse">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                                        Marcar como Terminado
-                                    </button>
-                                ` : `
-                                    <div class="flex w-full items-center justify-center gap-2 py-1 text-sm font-bold text-emerald-600">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Servicio completado
-                                    </div>
-                                    ${service.notes ? `
-                                        <div class="mt-3 rounded-xl bg-slate-50 p-3 border border-slate-100">
-                                            <p class="text-xs font-bold text-slate-400 mb-1">OBSERVACIONES:</p>
-                                            <p class="text-sm font-medium text-slate-700 italic">"${service.notes}"</p>
-                                        </div>
-                                    ` : ''}
-                                `}
-                            </div>
-                        </div>
-                        `;
-                            }).join('');
-                        } else {
+                            `;
+                        }).join('');
+                    } else {
                         container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white p-10 text-center">
-                            <span class="text-3xl mb-3">📁</span>
-                            <p class="text-slate-500 font-medium">No hay servicios asignados.</p>
+                            <div class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white p-10 text-center">
+                                <span class="text-3xl mb-3">📁</span>
+                                <p class="text-slate-500 font-medium">No hay servicios asignados.</p>
+                            </div>
+                        `;
+                    }
+
+                } catch (error) {
+                    container.innerHTML = `
+                        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
+                            <p class="text-sm font-bold text-red-700">Error al descargar datos</p>
+                            <button onclick="window.location.reload()" class="mt-3 text-xs font-bold underline text-red-600">Intentar de nuevo</button>
                         </div>
                     `;
-                        }
-
-                    } catch (error) {
-                    container.innerHTML = `
-                    <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
-                        <p class="text-sm font-bold text-red-700">Error al descargar datos</p>
-                        <button onclick="window.location.reload()" class="mt-3 text-xs font-bold underline text-red-600">Intentar de nuevo</button>
-                    </div>
-                `;
-                    }
                 }
+            }
 
             // =====================================
             // ACCIONES DE BOTONES

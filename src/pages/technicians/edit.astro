@@ -126,7 +126,7 @@ import Layout from "../../layouts/Layout.astro";
                         <div class="sm:col-span-2 my-2 border-t border-slate-100"></div>
 
                         <!-- CORREO -->
-                        <div class="sm:col-span-2">
+                        <div class="sm:col-span-1">
                             <label
                                     for="email"
                                     class="mb-2 block text-sm font-bold text-slate-700"
@@ -137,9 +137,26 @@ import Layout from "../../layouts/Layout.astro";
                                     id="email"
                                     type="email"
                                     required
-                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                             />
-                            <p class="mt-2 text-xs font-medium text-slate-400">El técnico usará este correo para iniciar sesión en la aplicación móvil.</p>
+                        </div>
+
+                        <!-- NUEVO: CAMPO DE CONTRASEÑA OPCIONAL -->
+                        <div class="sm:col-span-1">
+                            <label
+                                    for="password"
+                                    class="mb-2 block text-sm font-bold text-slate-700"
+                            >
+                                Restablecer Contraseña
+                            </label>
+                            <input
+                                    id="password"
+                                    type="text"
+                                    minlength="6"
+                                    placeholder="Dejar en blanco para conservar actual"
+                                    class="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                            />
+                            <p class="mt-2 text-[11px] font-medium text-slate-400 leading-tight">Si el técnico olvidó su acceso, escribe una nueva clave (mínimo 6 caracteres).</p>
                         </div>
                     </div>
 
@@ -178,218 +195,240 @@ import Layout from "../../layouts/Layout.astro";
             updateTechnician,
             uploadTechnicianPhoto,
             deleteTechnicianPhoto,
-        } from "../../services/api";
+            } from "../../services/api";
 
-        import type {
-            TechnicianUpdate,
-        } from "../../types/technician";
+            import type {
+                TechnicianUpdate,
+                } from "../../types/technician";
 
-        const technicianId = new URLSearchParams(window.location.search).get("id");
+            const technicianId = new URLSearchParams(window.location.search).get("id");
 
-        const form = document.querySelector<HTMLFormElement>("#technician-form");
-        const nameInput = document.querySelector<HTMLInputElement>("#name");
-        const phoneInput = document.querySelector<HTMLInputElement>("#phone");
-        const emailInput = document.querySelector<HTMLInputElement>("#email");
+            const form = document.querySelector<HTMLFormElement>("#technician-form");
+            const nameInput = document.querySelector<HTMLInputElement>("#name");
+            const phoneInput = document.querySelector<HTMLInputElement>("#phone");
+            const emailInput = document.querySelector<HTMLInputElement>("#email");
+            const passwordInput = document.querySelector<HTMLInputElement>("#password");
 
-        const photoInput = document.querySelector<HTMLInputElement>("#photo");
-        const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
-        const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
-        const undoPhotoButton = document.querySelector<HTMLButtonElement>("#undo-photo");
-        const submitButton = document.querySelector<HTMLButtonElement>("#submit");
-        const error = document.querySelector<HTMLDivElement>("#error");
+            const photoInput = document.querySelector<HTMLInputElement>("#photo");
+            const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
+            const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
+            const undoPhotoButton = document.querySelector<HTMLButtonElement>("#undo-photo");
+            const submitButton = document.querySelector<HTMLButtonElement>("#submit");
+            const errorContainer = document.querySelector<HTMLDivElement>("#error");
 
-        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+            const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
 
-        let selectedPhoto: File | null = null;
-        let previewUrl: string | null = null;
-        let hasOriginalPhoto = false;
-        let deletePhotoRequested = false;
+            let selectedPhoto: File | null = null;
+            let previewUrl: string | null = null;
+            let hasOriginalPhoto = false;
+            let deletePhotoRequested = false;
 
-        const defaultSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
+            const defaultSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
 
-        function showError(message: string) {
-            if (!error) return;
-            error.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p>${message}</p>
-                </div>
-            `;
-            error.classList.remove("hidden");
-        }
+            function showMessage(message: string, isSuccess: boolean = false) {
+                if (!errorContainer) return;
 
-        function hideError() {
-            error?.classList.add("hidden");
-        }
+                const icon = isSuccess
+                    ? `<svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+                    : `<svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
-        async function loadTechnician() {
-            try {
-                if (!technicianId) {
-                    throw new Error("No se encontró el ID del técnico.");
+                errorContainer.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${icon}
+                        <p>${message}</p>
+                    </div>
+                `;
+
+                // Cambiar clases dependiendo de si es éxito o error
+                errorContainer.className = isSuccess
+                    ? "rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800"
+                    : "rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700";
+
+                errorContainer.classList.remove("hidden");
                 }
 
-                // Usamos `any` para evitar advertencias de TypeScript si `email` no está en tu interfaz local todavía
-                const technician = await getTechnician(technicianId) as any;
-
-                if (nameInput) nameInput.value = technician.name;
-                if (phoneInput) phoneInput.value = technician.phone ?? "";
-                if (emailInput) emailInput.value = technician.email ?? "";
-
-                const photoUrl = technician.photo_url || technician.photo;
-
-                if (photoPreview && photoUrl) {
-                    photoPreview.src = photoUrl;
-                    hasOriginalPhoto = true;
-                    removePhotoButton?.classList.remove("hidden");
-                } else if (photoPreview) {
-                    hasOriginalPhoto = false;
-                    photoPreview.src = defaultSvg;
-                    removePhotoButton?.classList.add("hidden");
+            function hideError() {
+                errorContainer?.classList.add("hidden");
                 }
 
-            } catch (err) {
-                showError(
-                    err instanceof Error ? err.message : "No se pudo cargar la información del técnico.",
-                );
-            }
-        }
+            async function loadTechnician() {
+                try {
+                    if (!technicianId) throw new Error("No se encontró el ID del técnico.");
 
-        photoInput?.addEventListener("change", () => {
-            const file = photoInput.files?.[0];
+                    const technician = await getTechnician(technicianId) as any;
 
-            if (!file) return;
+                    if (nameInput) nameInput.value = technician.name;
+                    if (phoneInput) phoneInput.value = technician.phone ?? "";
+                    if (emailInput) emailInput.value = technician.email ?? "";
 
-            const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-            if (!allowedTypes.includes(file.type)) {
-                showError("Selecciona una imagen válida (JPG, PNG o WEBP).");
-                photoInput.value = "";
-                return;
-            }
+                    const photoUrl = technician.photo_url || technician.photo;
 
-            if (file.size > 5 * 1024 * 1024) {
-                showError("La fotografía no debe superar los 5 MB.");
-                photoInput.value = "";
-                return;
-            }
+                    if (photoPreview && photoUrl) {
+                        photoPreview.src = photoUrl;
+                        hasOriginalPhoto = true;
+                        removePhotoButton?.classList.remove("hidden");
+                        } else if (photoPreview) {
+                        hasOriginalPhoto = false;
+                        photoPreview.src = defaultSvg;
+                        removePhotoButton?.classList.add("hidden");
+                        }
+                    } catch (err) {
+                    showMessage(err instanceof Error ? err.message : "No se pudo cargar la información del técnico.");
+                    }
+                }
 
-            hideError();
-            selectedPhoto = file;
-            deletePhotoRequested = false;
+            photoInput?.addEventListener("change", () => {
+                const file = photoInput.files?.[0];
+                if (!file) return;
 
-            if (previewUrl) URL.revokeObjectURL(previewUrl);
-            previewUrl = URL.createObjectURL(file);
-            if (photoPreview) photoPreview.src = previewUrl;
+                const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+                if (!allowedTypes.includes(file.type)) {
+                    showMessage("Selecciona una imagen válida (JPG, PNG o WEBP).");
+                    photoInput.value = "";
+                    return;
+                    }
 
-            removePhotoButton?.classList.add("hidden");
-            undoPhotoButton?.classList.remove("hidden");
-        });
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage("La fotografía no debe superar los 5 MB.");
+                    photoInput.value = "";
+                    return;
+                    }
 
-        removePhotoButton?.addEventListener("click", () => {
-            selectedPhoto = null;
-            if (photoInput) photoInput.value = "";
-            deletePhotoRequested = true;
+                hideError();
+                selectedPhoto = file;
+                deletePhotoRequested = false;
 
-            if (photoPreview) photoPreview.src = defaultSvg;
-            removePhotoButton.classList.add("hidden");
-            undoPhotoButton?.classList.remove("hidden");
-            hideError();
-        });
+                if (previewUrl) URL.revokeObjectURL(previewUrl);
+                previewUrl = URL.createObjectURL(file);
+                if (photoPreview) photoPreview.src = previewUrl;
 
-        undoPhotoButton?.addEventListener("click", () => {
-            selectedPhoto = null;
-            if (photoInput) photoInput.value = "";
-            deletePhotoRequested = false;
-
-            if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
-                previewUrl = null;
-            }
-
-            if (technicianId && hasOriginalPhoto) {
-                // Forzamos un bypass de caché en la URL de la imagen
-                photoPreview!.src = `${API_URL}/technicians/${technicianId}/photo?t=${new Date().getTime()}`;
                 removePhotoButton?.classList.remove("hidden");
-            } else {
-                photoPreview!.src = defaultSvg;
-                removePhotoButton?.classList.add("hidden");
-            }
+                undoPhotoButton?.classList.remove("hidden");
+                });
 
-            undoPhotoButton.classList.add("hidden");
-            hideError();
-        });
+            removePhotoButton?.addEventListener("click", () => {
+                selectedPhoto = null;
+                if (photoInput) photoInput.value = "";
+                deletePhotoRequested = true;
 
-        form?.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            hideError();
+                if (photoPreview) photoPreview.src = defaultSvg;
+                removePhotoButton.classList.add("hidden");
+                undoPhotoButton?.classList.remove("hidden");
+                hideError();
+                });
 
-            if (!technicianId) {
-                showError("No se encontró el ID del técnico.");
-                return;
-            }
+            undoPhotoButton?.addEventListener("click", () => {
+                selectedPhoto = null;
+                if (photoInput) photoInput.value = "";
+                deletePhotoRequested = false;
 
-            if (!nameInput?.value.trim()) {
-                showError("El nombre del técnico es obligatorio.");
-                return;
-            }
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    previewUrl = null;
+                    }
 
-            if (!emailInput?.value.trim() || !emailInput?.value.includes('@')) {
-                showError("Ingresa un correo electrónico válido.");
-                return;
-            }
+                if (technicianId && hasOriginalPhoto) {
+                    photoPreview!.src = `${API_URL}/technicians/${technicianId}/photo?t=${new Date().getTime()}`;
+                    removePhotoButton?.classList.remove("hidden");
+                    } else {
+                    photoPreview!.src = defaultSvg;
+                    removePhotoButton?.classList.add("hidden");
+                    }
 
-            const technicianData: TechnicianUpdate = {
-                name: nameInput.value.trim(),
-                phone: phoneInput?.value.trim() || null,
-                email: emailInput.value.trim(),
-            };
+                undoPhotoButton.classList.add("hidden");
+                hideError();
+                });
 
-            try {
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = `
+            form?.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                hideError();
+
+                if (!technicianId) {
+                    showMessage("No se encontró el ID del técnico.");
+                    return;
+                    }
+
+                if (!nameInput?.value.trim()) {
+                    showMessage("El nombre del técnico es obligatorio.");
+                    return;
+                    }
+
+                if (!emailInput?.value.trim() || !emailInput?.value.includes('@')) {
+                    showMessage("Ingresa un correo electrónico válido.");
+                    return;
+                    }
+
+                const newPassword = passwordInput?.value.trim() || null;
+                if (newPassword && newPassword.length < 6) {
+                    showMessage("Si vas a establecer una nueva contraseña, debe tener al menos 6 caracteres.");
+                    return;
+                    }
+
+                // Construimos el objeto con tipado flexible para inyectar password si existe
+                const technicianData: any = {
+                    name: nameInput.value.trim(),
+                    phone: phoneInput?.value.trim() || null,
+                    email: emailInput.value.trim(),
+                    };
+
+                if (newPassword) {
+                    technicianData.password = newPassword;
+                    }
+
+                try {
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = `
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Actualizando datos...
+                        Guardando...
                     `;
-                }
-
-                await updateTechnician(technicianId, technicianData);
-
-                if (deletePhotoRequested) {
-                    try {
-                        await deleteTechnicianPhoto(technicianId);
-                    } catch {
-                        console.warn("No se pudo eliminar la foto del servidor.");
-                    }
-                } else if (selectedPhoto) {
-                    try {
-                        await uploadTechnicianPhoto(technicianId, selectedPhoto);
-                    } catch {
-                        showError("Los datos se guardaron, pero ocurrió un error al subir la nueva fotografía.");
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.textContent = "Reintentar foto";
                         }
-                        return;
+
+                    await updateTechnician(technicianId, technicianData);
+
+                    if (deletePhotoRequested) {
+                        try {
+                            await deleteTechnicianPhoto(technicianId);
+                            } catch {
+                            console.warn("No se pudo eliminar la foto.");
+                            }
+                        } else if (selectedPhoto) {
+                        try {
+                            await uploadTechnicianPhoto(technicianId, selectedPhoto);
+                            } catch {
+                            showMessage("Datos guardados, pero ocurrió un error al subir la nueva fotografía.");
+                            if (submitButton) {
+                                submitButton.disabled = false;
+                                submitButton.textContent = "Reintentar foto";
+                                }
+                            return;
+                            }
+                        }
+
+                    // ÉXITO TOTAL: Mostrar mensaje verde y esperar 1.5 segundos antes de saltar
+                    showMessage("¡Perfil del técnico actualizado con éxito!", true);
+
+                    // Si se cambió la contraseña, lo notificamos para dar certidumbre
+                    if(newPassword) {
+                        showMessage("¡Perfil y contraseña actualizados con éxito!", true);
+                        }
+
+                    setTimeout(() => {
+                        window.location.href = "/technicians";
+                        }, 1500);
+
+                    } catch (err) {
+                    showMessage(err instanceof Error ? err.message : "Hubo un error al intentar actualizar el perfil.");
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = "Guardar cambios";
+                        }
                     }
-                }
+                });
 
-                window.location.href = "/technicians";
-
-            } catch (err) {
-                showError(
-                    err instanceof Error ? err.message : "Hubo un error al intentar actualizar el perfil.",
-                );
-
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = "Guardar cambios";
-                }
-            }
-        });
-
-        loadTechnician();
+            loadTechnician();
     </script>
 </Layout>
