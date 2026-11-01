@@ -445,58 +445,25 @@ function createServiceCard(
     routeStatus: RouteDetail["status"],
 ): string {
 
-    const customer =
-        service.customer;
+    const customer = service.customer;
+    const customerName = customer?.name ?? "Cliente no encontrado";
+    const location = customer?.location ?? "Sin localidad";
+    const phone = customer?.phone ?? "Sin teléfono";
+    const reference = customer?.reference ?? "Sin referencia";
 
+    const routeIsCanceled = routeStatus === "canceled";
 
-    const customerName =
-        customer?.name ??
-        "Cliente no encontrado";
-
-
-    const location =
-        customer?.location ??
-        "Sin localidad";
-
-
-    const phone =
-        customer?.phone ??
-        "Sin teléfono";
-
-
-    const reference =
-        customer?.reference ??
-        "Sin referencia";
-
-
-    const routeIsCanceled =
-        routeStatus === "canceled";
-
-    // Compatibilidad visual con rutas antiguas que fueron canceladas
-    // antes de que el backend cambiara sus servicios pendientes.
+    // Compatibilidad visual con rutas antiguas
     const effectiveServiceStatus =
-        routeIsCanceled &&
-        (service.status === "pending" || service.status === "in_progress")
+        routeIsCanceled && (service.status === "pending" || service.status === "in_progress")
             ? "canceled"
             : service.status;
 
-    const canEdit =
-        routeStatus === "assigned" &&
-        service.status === "pending";
-
+    const canEdit = routeStatus === "assigned" && service.status === "pending";
     const canDelete = canEdit;
-
-    const canStart =
-        (routeStatus === "assigned" || routeStatus === "in_progress") &&
-        service.status === "pending";
-
-    const canComplete =
-        routeStatus === "in_progress" &&
-        service.status === "in_progress";
-
-    const showActionBar =
-        canEdit || canDelete || canStart || canComplete;
-
+    const canStart = (routeStatus === "assigned" || routeStatus === "in_progress") && service.status === "pending";
+    const canComplete = routeStatus === "in_progress" && service.status === "in_progress";
+    const showActionBar = canEdit || canDelete || canStart || canComplete;
 
     return `
         <article
@@ -504,142 +471,82 @@ function createServiceCard(
         >
 
             <!-- CONTENIDO PRINCIPAL -->
-
             <div class="p-5 sm:p-6">
-
                 <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
 
                     <!-- CLIENTE -->
-
                     <div class="flex min-w-0 gap-4">
 
                         <!-- NÚMERO -->
-
                         <div
                             class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white"
                         >
                             ${String(index + 1).padStart(2, "0")}
                         </div>
 
-
                         <!-- INFORMACIÓN -->
-
                         <div class="min-w-0">
-
                             <div class="flex flex-wrap items-center gap-2">
-
                                 <h3 class="truncate text-base font-bold text-slate-900 sm:text-lg">
                                     ${escapeHtml(customerName)}
                                 </h3>
-
                             </div>
 
-
                             <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
-
                                 <span class="inline-flex items-center gap-1.5">
-
-                                    <svg
-                                        class="h-4 w-4 shrink-0"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
+                                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
                                         <circle cx="12" cy="10" r="2.5" />
                                     </svg>
-
                                     ${escapeHtml(location)}
-
                                 </span>
-
 
                                 <span class="inline-flex items-center gap-1.5">
-
-                                    <svg
-                                        class="h-4 w-4 shrink-0"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
+                                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z" />
                                     </svg>
-
                                     ${escapeHtml(phone)}
-
                                 </span>
-
                             </div>
-
 
                             <div class="mt-2 flex items-start gap-1.5 text-sm text-slate-400">
-
-                                <svg
-                                    class="mt-0.5 h-4 w-4 shrink-0"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
+                                <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M20 11.5a8.38 8.38 0 0 1-9 8.5 8.5 8.5 0 0 1-7.5-4.5L2 20l1.5-3.5A8.5 8.5 0 1 1 20 11.5Z" />
                                 </svg>
-
-                                <span>
-                                    ${escapeHtml(reference)}
-                                </span>
-
+                                <span>${escapeHtml(reference)}</span>
                             </div>
-
                         </div>
-
                     </div>
-
 
                     <!-- TIPO + ESTADO -->
-
                     <div class="flex shrink-0 flex-wrap items-center gap-2 lg:justify-end">
-
                         ${renderServiceType(service.service_type)}
-
                         ${renderServiceStatus(effectiveServiceStatus)}
-
                     </div>
-
                 </div>
 
-
                 <!-- OBSERVACIONES -->
-
                 ${
         service.notes
             ? `
                         <div class="mt-5 rounded-xl bg-slate-50 px-4 py-3">
-
                             <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
                                 Observaciones
                             </p>
-
                             <p class="mt-1 text-sm leading-6 text-slate-700">
                                 ${escapeHtml(service.notes)}
                             </p>
-
                         </div>
                         `
             : ""
     }
-
             </div>
 
-
             <!-- ACCIONES -->
-
             ${
         showActionBar
             ? `
                     <div class="border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
                             ${
@@ -659,8 +566,8 @@ function createServiceCard(
                                     `
             }
 
-
-                            <div class="flex shrink-0 flex-wrap gap-2">
+                            <!-- BOTONES DE ACCIÓN (Estilo Dashboard) -->
+                            <div class="flex shrink-0 flex-wrap gap-2 transition-opacity">
 
                                 ${
                 canEdit && canDelete
@@ -669,23 +576,28 @@ function createServiceCard(
                                             type="button"
                                             data-action="edit-service"
                                             data-service-id="${service.service_id}"
-                                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95"
+                                            title="Editar servicio"
                                         >
-                                            ✏️ Editar
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
                                         </button>
 
                                         <button
                                             type="button"
                                             data-action="delete-service"
                                             data-service-id="${service.service_id}"
-                                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95"
+                                            title="Eliminar servicio"
                                         >
-                                            🗑️ Eliminar
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
                                         </button>
                                         `
                     : ""
             }
-
 
                                 ${
                 canStart
@@ -694,14 +606,13 @@ function createServiceCard(
                                             type="button"
                                             data-action="start"
                                             data-service-id="${service.service_id}"
-                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-400 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-700"
+                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 active:scale-95"
                                         >
                                             ▶ Iniciar visita
                                         </button>
                                         `
                     : ""
             }
-
 
                                 ${
                 canComplete
@@ -710,7 +621,7 @@ function createServiceCard(
                                             type="button"
                                             data-action="complete"
                                             data-service-id="${service.service_id}"
-                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
+                                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95"
                                         >
                                             ✓ Completar visita
                                         </button>
@@ -719,54 +630,36 @@ function createServiceCard(
             }
 
                             </div>
-
                         </div>
-
                     </div>
                     `
             : ""
     }
 
-
             <!-- COMPLETADO -->
-
             ${
         service.status === "completed"
             ? `
-                    <div class="flex items-center gap-3 border-t border-green-100 bg-green-50 px-5 py-3.5 sm:px-6">
-
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-
-                            <svg
-                                class="h-4 w-4"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="3"
-                            >
-                                <path d="m5 12 4 4L19 6" />
+                    <div class="flex items-center gap-3 border-t border-emerald-100 bg-emerald-50 px-5 py-3.5 sm:px-6">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m5 12 4 4L19 6" />
                             </svg>
-
                         </span>
-
                         <div>
-
-                            <p class="text-sm font-semibold text-green-800">
+                            <p class="text-sm font-semibold text-emerald-800">
                                 Visita completada
                             </p>
-
                             ${
                 service.completed_at
                     ? `
-                                    <p class="text-xs text-green-700/70">
+                                    <p class="text-xs text-emerald-700/70">
                                         ${formatDateTime(service.completed_at)}
                                     </p>
                                     `
                     : ""
             }
-
                         </div>
-
                     </div>
                     `
             : ""
@@ -775,24 +668,21 @@ function createServiceCard(
         </article>
     `;
 }
+/*
+ * ==========================================
+ * FORMATEAR FECHA Y HORA
+ * ==========================================
+ */
+function formatDateTime(value: string): string {
+    const date = new Date(value);
 
-function formatDateTime(
-    value: string,
-): string {
-
-    const date =
-        new Date(value);
-
-    return date.toLocaleString(
-        "es-MX",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        },
-    );
+    return date.toLocaleString("es-MX", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).replace('.', ''); // El replace es opcional, solo para quitar el punto del mes abreviado
 }
 
 
@@ -1142,17 +1032,15 @@ async function handleComplete(
 
 /*
  * ==========================================
- * ABRIR MODAL EDITAR SERVICIO
+ * ABRIR MODAL EDITAR/AGREGAR SERVICIO
  * ==========================================
  */
 function populateEditServiceCustomers(
     selectedCustomerId?: string,
 ) {
-
     if (!editServiceCustomer) {
         return;
     }
-
 
     editServiceCustomer.innerHTML = `
         <option value="">
@@ -1160,79 +1048,101 @@ function populateEditServiceCustomers(
         </option>
     `;
 
-
-    const activeCustomers =
-        customers.filter(
-            (customer) =>
-                customer.active !== false,
-        );
-
+    // 1. Solo tomar clientes activos
+    const activeCustomers = customers.filter(
+        (customer) => customer.active !== false,
+    );
 
     /*
-     * No hay clientes activos
+     * Si no hay ningún cliente activo en la base de datos
      */
-
     if (activeCustomers.length === 0) {
+        editServiceCustomer.disabled = true;
+        editServiceCustomerEmpty?.classList.remove("hidden");
 
-        editServiceCustomer.disabled =
-            true;
-
-        editServiceCustomerEmpty?.classList.remove(
-            "hidden",
-        );
+        // Cambiar el mensaje para ser más claros
+        if (editServiceCustomerEmpty) {
+            editServiceCustomerEmpty.innerHTML = `
+                 <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                 <span>No hay clientes activos en la base de datos para asignar.</span>
+             `;
+        }
 
         if (saveEditServiceButton) {
-
-            saveEditServiceButton.disabled =
-                true;
+            saveEditServiceButton.disabled = true;
         }
 
         return;
     }
 
-
-    editServiceCustomer.disabled =
-        false;
-
-    editServiceCustomerEmpty?.classList.add(
-        "hidden",
-    );
-
+    editServiceCustomer.disabled = false;
+    editServiceCustomerEmpty?.classList.add("hidden");
 
     if (saveEditServiceButton) {
-
-        saveEditServiceButton.disabled =
-            false;
+        saveEditServiceButton.disabled = false;
     }
 
+    // ==========================================
+    // LÓGICA DE EXCLUSIÓN MUTUA
+    // ==========================================
 
-    activeCustomers.forEach(
-        (customer) => {
+    // 2. Extraer los IDs de los clientes que YA están en la ruta actual
+    const occupiedCustomerIds = new Set<string>();
 
-            const option =
-                document.createElement(
-                    "option",
-                );
+    if (currentRoute && currentRoute.services) {
+        currentRoute.services.forEach(service => {
+            // Solo nos importan los clientes que realmente están en un servicio
+            const cId = service.customer?.id ?? service.customer_id;
+            if (cId) {
+                occupiedCustomerIds.add(cId);
+            }
+        });
+    }
 
+    // 3. Contar cuántos clientes quedan realmente libres
+    let availableCount = 0;
 
-            option.value =
-                customer.id;
+    activeCustomers.forEach((customer) => {
+        const option = document.createElement("option");
+        option.value = customer.id;
 
+        // Comprobar si el cliente está ocupado en esta ruta
+        const isOccupied = occupiedCustomerIds.has(customer.id);
 
-            option.textContent =
-                `${customer.name} — ${customer.location}`;
+        // El cliente está ocupado PERO es el que estamos editando en este momento (modo editar)
+        const isCurrentCustomer = customer.id === selectedCustomerId;
 
+        if (isOccupied && !isCurrentCustomer) {
+            // BLOQUEADO: El cliente ya está en otra visita de esta ruta
+            option.disabled = true;
+            option.textContent = `🚫 ${customer.name} — ${customer.location} (Ya asignado a esta ruta)`;
+        } else {
+            // LIBRE: O bien no está en la ruta, o es el que estamos editando
+            option.disabled = false;
+            option.textContent = `${customer.name} — ${customer.location}`;
+            availableCount++;
+        }
 
-            option.selected =
-                customer.id ===
-                selectedCustomerId;
+        option.selected = isCurrentCustomer;
+        editServiceCustomer.appendChild(option);
+    });
 
+    // 4. Si después de procesar todos, resulta que TODOS están ocupados y estamos agregando uno nuevo
+    if (availableCount === 0 && serviceModalMode === "add") {
+        editServiceCustomer.disabled = true;
+        editServiceCustomerEmpty?.classList.remove("hidden");
 
-            editServiceCustomer.appendChild(
-                option,
-            );
-        },
-    );
+        if (editServiceCustomerEmpty) {
+            editServiceCustomerEmpty.innerHTML = `
+                 <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                 <span>Todos los clientes disponibles ya fueron agregados a esta ruta.</span>
+             `;
+        }
+
+        if (saveEditServiceButton) {
+            saveEditServiceButton.disabled = true;
+        }
+    }
 }
 
 /*
@@ -1984,3 +1894,5 @@ document.addEventListener(
         }
     },
 );
+
+

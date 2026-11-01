@@ -3,12 +3,12 @@
 import Layout from "../../layouts/Layout.astro";
 ---
 
-<Layout title="Mi Panel - Rutas Digitales">
+<Layout title="Detalle de Instalación - Rutas Digitales" hideMenu={true}>
     <!-- El fondo grisáceo cubrirá toda la pantalla, pero limitaremos el contenido a max-w-xl para pantallas grandes -->
     <main class="min-h-screen bg-slate-50/80 pb-24 md:bg-slate-100 md:py-12 md:flex md:justify-center">
 
-        <!-- ENVOLTORIO PRINCIPAL (Restringe el ancho en PC para dar apariencia de app) -->
-        <div class="w-full md:max-w-xl md:bg-white md:shadow-2xl md:ring-1 md:ring-slate-200 md:rounded-[2.5rem] md:overflow-hidden md:pb-8">
+        <!-- ENVOLTORIO PRINCIPAL -->
+        <div class="w-full md:max-w-xl md:bg-white md:shadow-2xl md:ring-1 md:ring-slate-200 md:rounded-[2.5rem] md:overflow-hidden md:pb-8 relative">
 
             <!-- CABECERA FIJA ESTILO APP NATIVA -->
             <header class="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200/80 bg-white/90 px-5 py-4 backdrop-blur-md shadow-sm md:static md:bg-white md:px-8 md:py-6 md:shadow-none">
@@ -45,7 +45,6 @@ import Layout from "../../layouts/Layout.astro";
 
                 <!-- Aquí se inyectarán las rutas -->
                 <div id="routes-container" class="space-y-5">
-
                     <!-- Skeleton Loading Inicial -->
                     <div class="animate-pulse overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
                         <div class="p-5">
@@ -63,6 +62,33 @@ import Layout from "../../layouts/Layout.astro";
                 </div>
             </div>
 
+            <!-- MODAL DE CIERRE DE SESIÓN -->
+            <div id="logout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm md:absolute md:inset-0 md:rounded-[2.5rem] transition-opacity">
+                <!-- Contenedor blanco del modal -->
+                <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 transform transition-all text-center">
+
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </div>
+
+                    <h3 class="text-xl font-black tracking-tight text-slate-900">¿Cerrar sesión?</h3>
+                    <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+                        Tendrás que volver a ingresar tu correo y contraseña para ver tus asignaciones.
+                    </p>
+
+                    <div class="mt-8 flex flex-col gap-3">
+                        <button id="confirm-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
+                            Sí, cerrar sesión
+                        </button>
+                        <button id="cancel-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -75,6 +101,12 @@ import Layout from "../../layouts/Layout.astro";
         if (!token) {
             window.location.href = "/login";
         }
+
+        // ELEMENTOS DEL MODAL DE LOGOUT
+        const logoutModal = document.getElementById("logout-modal");
+        const logoutBtn = document.getElementById("logout-btn");
+        const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
+        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
 
         function decodeJWT(token: string) {
             try {
@@ -118,12 +150,19 @@ import Layout from "../../layouts/Layout.astro";
 
         loadTechnicianAvatar();
 
-        document.getElementById("logout-btn")?.addEventListener("click", () => {
-            if(confirm("¿Seguro que deseas salir de la aplicación?")) {
-                localStorage.removeItem("auth_token");
-                localStorage.removeItem("user_role");
-                window.location.href = "/login";
-            }
+        // LOGICA DE EVENTOS DEL MODAL
+        logoutBtn?.addEventListener("click", () => {
+            logoutModal?.classList.remove("hidden");
+        });
+
+        cancelLogoutBtn?.addEventListener("click", () => {
+            logoutModal?.classList.add("hidden");
+        });
+
+        confirmLogoutBtn?.addEventListener("click", () => {
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("user_role");
+            window.location.href = "/login";
         });
 
         function formatDate(dateString: string) {
@@ -151,17 +190,13 @@ import Layout from "../../layouts/Layout.astro";
             `;
         }
 
-        // 7. Cargar Rutas
         async function loadMyRoutes() {
             const container = document.getElementById("routes-container");
             const countBadge = document.getElementById("routes-count");
             if (!container) return;
 
             try {
-                // Traemos TODAS las rutas de la API
                 const allRoutes = await getRoutes();
-
-                // 🔥 FILTRO VITAL: Solo nos quedamos con las rutas que coincidan con el ID del técnico actual
                 const myRoutes = allRoutes.filter(route => route.technician_id === userData?.id);
 
                 if(countBadge) {
@@ -184,7 +219,6 @@ import Layout from "../../layouts/Layout.astro";
                     return;
                 }
 
-                // Dibujamos usando 'myRoutes' en lugar de 'routes'
                 container.innerHTML = myRoutes.map(route => {
                     const totalServices = route.services ? route.services.length : 0;
                     const serviceText = totalServices === 1 ? '1 servicio' : `${totalServices} servicios`;
@@ -238,7 +272,6 @@ import Layout from "../../layouts/Layout.astro";
                 }).join('');
 
             } catch (error) {
-                // ... (tu código de error que ya tienes se queda igual)
                 container.innerHTML = `
                     <div class="mt-4 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-red-200 bg-white p-8 text-center shadow-sm">
                         <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">

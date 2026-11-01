@@ -1,74 +1,48 @@
 ---
+// src/layouts/Layout.astro
 import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
 import MobileMenuButton from "../components/MobileMenuButton.astro";
 
 interface Props {
     title?: string;
+    // Ya no usamos hideMenu, lo controlaremos de forma segura con tu JS original
 }
 
-const {
-    title = "Rutas Digitales",
-} = Astro.props;
+const { title = "Rutas Digitales" } = Astro.props;
 ---
 
 <!doctype html>
-
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8" />
-
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-    />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-
 </head>
-
-
 <body class="min-h-screen bg-slate-100 text-slate-900">
 
+<!-- BARRA LATERAL (Admin) -->
 <Sidebar />
 
+<!-- ÁREA PRINCIPAL -->
+<div id="main-content" class="lg:pl-64">
 
-<!-- Área principal -->
-
-<div class="lg:pl-64">
-
-    <!-- Header móvil -->
-
-    <header
-            class="sticky top-0 z-30 border-b border-slate-200 bg-white"
-    >
-
+    <!-- CABECERA MÓVIL (Menú hamburguesa) -->
+    <header id="mobile-header" class="sticky top-0 z-30 border-b border-slate-200 bg-white">
         <div class="flex items-center gap-4 px-6 py-4">
-
             <MobileMenuButton />
-
             <div>
-
-                <p class="text-sm font-semibold text-slate-900">
-                    {title}
-                </p>
-
-                <p class="text-xs text-slate-500">
-                    Sistema de rutas técnicas
-                </p>
-
+                <p class="text-sm font-semibold text-slate-900">{title}</p>
+                <p class="text-xs text-slate-500">Sistema de rutas técnicas</p>
             </div>
-
         </div>
-
     </header>
 
-
+    <!-- CONTENIDO DE LA PÁGINA (Login, Panel o Dashboard) -->
     <slot />
 
 </div>
+
 <script>
     import { protectAdminRoute } from "../utils/auth";
 
@@ -79,27 +53,40 @@ const {
         protectAdminRoute();
     }
 
-    // 2. Controlar la visibilidad del Sidebar y el Layout
+    // 2. Controlar la visibilidad
     const sidebar = document.getElementById("sidebar");
-    const mainContent = document.querySelector('.lg\\:pl-64') || document.querySelector('.lg\\:ml-64');
+    const mainContent = document.getElementById("main-content");
+    const mobileHeader = document.getElementById("mobile-header"); // <-- Seleccionamos el header móvil
 
     const isLogin = currentPath.startsWith("/login");
     const isPanel = currentPath.startsWith("/panel");
 
     if (isLogin || isPanel) {
-        // SI ES LOGIN O PANEL TÉCNICO: Ocultamos menú
+        // SI ES LOGIN O TÉCNICO: Ocultamos menú lateral y la hamburguesa
         if (sidebar) {
             sidebar.classList.add("hidden");
-            sidebar.style.display = 'none'; // Reforzamos ocultarlo
+            sidebar.style.display = 'none';
         }
-        if (mainContent) mainContent.classList.remove("lg:pl-64", "lg:ml-64");
+        if (mobileHeader) {
+            mobileHeader.classList.add("hidden");
+            mobileHeader.style.display = 'none'; // <-- Esto quita la hamburguesa del Login
+        }
+        if (mainContent) {
+            mainContent.classList.remove("lg:pl-64", "lg:ml-64");
+        }
     } else {
-        // SI ES ADMINISTRADOR (Dashboard, Rutas, Clientes...): Mostramos menú
+        // SI ES ADMIN (Dashboard): Mostramos menús normales
         if (sidebar) {
             sidebar.classList.remove("hidden");
-            sidebar.style.display = 'block'; // Reforzamos mostrarlo
+            sidebar.style.display = 'block';
         }
-        if (mainContent) mainContent.classList.add("lg:pl-64");
+        if (mobileHeader) {
+            mobileHeader.classList.remove("hidden");
+            mobileHeader.style.display = 'block'; // <-- Esto devuelve la hamburguesa al Admin
+        }
+        if (mainContent) {
+            mainContent.classList.add("lg:pl-64");
+        }
     }
 
     // 3. Evento para botones de cerrar sesión
@@ -112,7 +99,5 @@ const {
         });
     });
 </script>
-
 </body>
-
 </html>

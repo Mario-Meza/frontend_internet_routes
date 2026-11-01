@@ -8,7 +8,7 @@ import Layout from "../layouts/Layout.astro";
 
         <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
-            <!-- MENSAJE DE NOTIFICACIÓN -->
+            <!-- MENSAJE DE NOTIFICACIÓN TOAST -->
             <div
                     id="message"
                     class="mb-6 hidden rounded-2xl p-4 text-sm font-medium shadow-sm transition-all"
@@ -38,10 +38,10 @@ import Layout from "../layouts/Layout.astro";
                 </div>
             </header>
 
-            <!-- TARJETAS RÁPIDAS DE RESUMEN (MÉTRICAS INTUITIVAS) -->
+            <!-- TARJETAS RÁPIDAS DE RESUMEN -->
             <div class="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Tarjeta: Total -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200/50 transition-all hover:shadow-lg">
+                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Rutas</span>
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-inset ring-indigo-100">
@@ -54,7 +54,7 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <!-- Tarjeta: Asignadas -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200/50 transition-all hover:shadow-lg">
+                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Asignadas</span>
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-100">
@@ -67,7 +67,7 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <!-- Tarjeta: En Proceso -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200/50 transition-all hover:shadow-lg hover:ring-orange-200">
+                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg hover:ring-orange-200">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-500">En Proceso</span>
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-600 ring-1 ring-inset ring-orange-100">
@@ -80,7 +80,7 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <!-- Tarjeta: Completadas -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200/50 transition-all hover:shadow-lg hover:ring-green-200">
+                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg hover:ring-green-200">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Completadas</span>
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-green-600 ring-1 ring-inset ring-green-100">
@@ -104,8 +104,8 @@ import Layout from "../layouts/Layout.astro";
                     <input
                             id="search"
                             type="search"
-                            placeholder="Buscar por técnico o fecha (Ej. Mario o 2026)..."
-                            class="w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+                            placeholder="Buscar por técnico o fecha..."
+                            class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm font-medium text-slate-800 placeholder-slate-400 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                     />
                 </div>
 
@@ -117,7 +117,7 @@ import Layout from "../layouts/Layout.astro";
                     </span>
                     <select
                             id="status-filter"
-                            class="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 pl-11 pr-10 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
+                            class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-10 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
                     >
                         <option value="">Todos los estados</option>
                         <option value="assigned">Asignadas</option>
@@ -133,11 +133,11 @@ import Layout from "../layouts/Layout.astro";
                 </div>
             </div>
 
-            <!-- TABLA PRINCIPAL -->
-            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ring-1 ring-slate-200/50">
+            <!-- TABLA PRINCIPAL (Optimizada para Móvil) -->
+            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50 border-b border-slate-200">
+                        <thead class="hidden bg-slate-50 border-b border-slate-200 md:table-header-group">
                         <tr>
                             <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
                                 Fecha Programada
@@ -158,7 +158,7 @@ import Layout from "../layouts/Layout.astro";
                         </thead>
                         <tbody
                                 id="routes-body"
-                                class="divide-y divide-slate-100 bg-white"
+                                class="block divide-y divide-slate-100 bg-white md:table-row-group"
                         >
                         </tbody>
                     </table>
@@ -168,7 +168,7 @@ import Layout from "../layouts/Layout.astro";
             <!-- ESTADO VACÍO AMIGABLE -->
             <div
                     id="empty"
-                    class="mt-8 hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-16 text-center shadow-sm"
+                    class="mt-8 hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center shadow-sm sm:p-16"
             >
                 <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 ring-8 ring-slate-50/50">
                     <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,15 +181,87 @@ import Layout from "../layouts/Layout.astro";
                 <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
                     Intenta cambiar los términos de búsqueda, ajustar los filtros o crear una nueva asignación para tu equipo.
                 </p>
-                <button onclick="document.getElementById('search').focus()" class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700">
+                <button onclick="document.getElementById('search').value=''; document.getElementById('search').dispatchEvent(new Event('input'))" class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
                     Limpiar filtros <span aria-hidden="true" class="ml-1">→</span>
                 </button>
             </div>
 
         </section>
 
-    </main>
+        <!-- ============================================== -->
+        <!-- MODALES DE CONFIRMACIÓN (Tailwind)             -->
+        <!-- ============================================== -->
 
+        <!-- MODAL DE CIERRE DE SESIÓN -->
+        <div id="logout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
+            <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Cerrar sesión?</h3>
+                <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+                    Saldrás del panel administrativo de Rutas Digitales.
+                </p>
+                <div class="mt-8 flex flex-col gap-3">
+                    <button id="confirm-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
+                        Sí, salir ahora
+                    </button>
+                    <button id="cancel-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CANCELAR RUTA -->
+        <div id="cancel-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
+            <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-500 ring-8 ring-amber-50/50">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Suspender ruta?</h3>
+                <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+                    Al confirmar, el técnico ya no podrá realizar ni terminar ninguna instalación de esta asignación.
+                </p>
+                <div class="mt-8 flex flex-col gap-3">
+                    <button id="confirm-cancel-btn" class="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600 active:scale-95">
+                        Sí, suspender
+                    </button>
+                    <button id="close-cancel-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE ELIMINAR RUTA -->
+        <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
+            <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Eliminar registro?</h3>
+                <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+                    Esta acción borrará la ruta permanentemente de la base de datos y no se podrá deshacer.
+                </p>
+                <div class="mt-8 flex flex-col gap-3">
+                    <button id="confirm-delete-btn" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
+                        Eliminar permanentemente
+                    </button>
+                    <button id="close-delete-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <script>
         import {
@@ -202,36 +274,53 @@ import Layout from "../layouts/Layout.astro";
         import type { Route } from "../types/route";
         import type { Technician } from "../types/technician";
 
-        // IMPORTANTE: Definimos la URL de la API para construir la ruta de la imagen
         const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
-
-        // LÓGICA DE BOTONES DINÁMICOS EN HEADER
-        const headerActions = document.getElementById("header-actions");
         const currentToken = localStorage.getItem("auth_token");
+
+        // ELEMENTOS DOM PARA MODALES
+        const headerActions = document.getElementById("header-actions");
+        const logoutModal = document.getElementById("logout-modal");
+        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
+        const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
+
+        const cancelModal = document.getElementById("cancel-modal");
+        const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
+        const closeCancelBtn = document.getElementById("close-cancel-btn");
+
+        const deleteModal = document.getElementById("delete-modal");
+        const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+        const closeDeleteBtn = document.getElementById("close-delete-btn");
+
+        let routeIdToActOn: string | null = null; // Guardará el ID temporalmente para la acción
 
         function renderHeaderButtons() {
             if (!headerActions) return;
 
             if (currentToken) {
-                // SI HAY SESIÓN: Mostrar botones de admin
                 headerActions.innerHTML = `
-                    <button id="btn-logout" class="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200" title="Cerrar sesión">
+                    <button id="btn-logout-header" class="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-600 shadow-sm ring-1 ring-inset ring-slate-300 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 sm:w-auto sm:py-2.5" title="Cerrar sesión">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>Cerrar sesión</span>
+                        <span>Salir</span>
                     </button>
 
-                    <a href="/routes/new" class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95">
+                    <a href="/routes/new" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95 sm:w-auto sm:py-2.5">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
-                        Crear Asignación
+                        Nueva Asignación
                     </a>
                 `;
 
-                // Asignar evento de cerrar sesión
-                document.getElementById("btn-logout")?.addEventListener("click", () => {
+                // Eventos Logout Modal
+                document.getElementById("btn-logout-header")?.addEventListener("click", () => {
+                    logoutModal?.classList.remove("hidden");
+                });
+                cancelLogoutBtn?.addEventListener("click", () => {
+                    logoutModal?.classList.add("hidden");
+                });
+                confirmLogoutBtn?.addEventListener("click", () => {
                     localStorage.removeItem("auth_token");
                     localStorage.removeItem("user_role");
                     window.location.href = "/login";
@@ -244,13 +333,13 @@ import Layout from "../layouts/Layout.astro";
         renderHeaderButtons();
 
 
+        // LOGICA TABLA Y DATOS
         const routesBody = document.querySelector<HTMLTableSectionElement>("#routes-body");
         const searchInput = document.querySelector<HTMLInputElement>("#search");
         const statusFilter = document.querySelector<HTMLSelectElement>("#status-filter");
         const emptyMessage = document.querySelector<HTMLDivElement>("#empty");
         const message = document.querySelector<HTMLDivElement>("#message");
 
-        // Elementos de Estadísticas
         const statTotal = document.getElementById("stat-total");
         const statAssigned = document.getElementById("stat-assigned");
         const statProgress = document.getElementById("stat-progress");
@@ -276,14 +365,10 @@ import Layout from "../layouts/Layout.astro";
 
         function getAvatarColor(name: string): string {
             const colors = [
-                'bg-blue-100 text-blue-700',
-                'bg-indigo-100 text-indigo-700',
-                'bg-violet-100 text-violet-700',
-                'bg-fuchsia-100 text-fuchsia-700',
-                'bg-pink-100 text-pink-700',
-                'bg-rose-100 text-rose-700'
+                'bg-blue-100 text-blue-700', 'bg-indigo-100 text-indigo-700',
+                'bg-violet-100 text-violet-700', 'bg-fuchsia-100 text-fuchsia-700',
+                'bg-pink-100 text-pink-700', 'bg-rose-100 text-rose-700'
             ];
-            // Lógica simple para que siempre le toque el mismo color al mismo técnico basado en la primera letra
             const charCode = name.charCodeAt(0) || 0;
             return colors[charCode % colors.length];
         }
@@ -345,17 +430,15 @@ import Layout from "../layouts/Layout.astro";
 
             emptyMessage.classList.add("hidden");
             routesBody.innerHTML = filtered.map((route) => routeRow(route)).join("");
-            addEvents();
+            addTableEvents();
         }
 
         function routeRow(route: Route): string {
-            // Mapeamos el técnico permitiendo campos opcionales de foto
             const technician = technicians.find((item) => item.id === route.technician_id) as Technician & { photo_url?: string | null; photo?: string | null } | undefined;
             const technicianName = technician?.name ?? "Técnico no encontrado";
             const servicesCount = route.services.length;
             const avatarColor = getAvatarColor(technicianName);
 
-            // Construir la URL de la foto o usar el fallback de colores
             let avatarHtml = '';
             if (technician) {
                 const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
@@ -376,11 +459,11 @@ import Layout from "../layouts/Layout.astro";
             }
 
             return `
-                <tr class="group transition-colors hover:bg-slate-50">
-                    <!-- FECHA -->
-                    <td class="px-6 py-5">
+                <tr class="group block border-b border-slate-100 p-4 transition-colors hover:bg-slate-50 md:table-row md:border-b-0 md:p-0">
+                    
+                    <td data-label="Fecha" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                            <div class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 md:flex">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -391,8 +474,7 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                     </td>
 
-                    <!-- TÉCNICO CON FOTO O INICIALES -->
-                    <td class="px-6 py-5">
+                    <td data-label="Técnico" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                         <div class="flex items-center gap-3">
                             ${avatarHtml}
                             <span class="text-sm font-bold text-slate-800">
@@ -401,25 +483,22 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                     </td>
 
-                    <!-- SERVICIOS -->
-                    <td class="px-6 py-5">
+                    <td data-label="Servicios" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                         <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-inset ring-slate-200">
                             <span class="text-slate-900">${servicesCount}</span>
                             <span>${servicesCount === 1 ? "Visita" : "Visitas"}</span>
                         </span>
                     </td>
 
-                    <!-- ESTADO -->
-                    <td class="px-6 py-5">
+                    <td data-label="Estado" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                         ${renderStatus(route.status)}
                     </td>
 
-                    <!-- ACCIONES -->
-                    <td class="px-6 py-5">
-                        <div class="flex items-center justify-end gap-2 opacity-80 transition-opacity group-hover:opacity-100">
+                    <td class="mt-4 flex justify-end border-t border-slate-100 pt-4 md:mt-0 md:table-cell md:border-0 md:px-6 md:py-5 md:pt-5">
+                        <div class="flex items-center gap-2 transition-opacity md:opacity-80 md:group-hover:opacity-100">
                             <a
                                 href="/routes/detail?id=${route.id}"
-                                class="inline-flex items-center justify-center rounded-xl bg-white p-2 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-indigo-600 active:scale-95"
+                                class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-indigo-600 active:scale-95 md:p-2"
                                 title="Ver detalles completos"
                             >
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -433,7 +512,7 @@ import Layout from "../layouts/Layout.astro";
                     ? `
                                         <a
                                             href="/routes/edit?id=${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95 md:p-2"
                                             title="Editar asignación"
                                         >
                                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -451,7 +530,7 @@ import Layout from "../layouts/Layout.astro";
                                             type="button"
                                             data-action="cancel"
                                             data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
                                             title="Suspender/Cancelar ruta"
                                         >
                                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -469,7 +548,7 @@ import Layout from "../layouts/Layout.astro";
                                             type="button"
                                             data-action="delete"
                                             data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
                                             title="Eliminar permanentemente"
                                         >
                                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -487,97 +566,75 @@ import Layout from "../layouts/Layout.astro";
 
         function renderStatus(status: string): string {
             const config: Record<string, { label: string; bg: string; dot: string; text: string; border: string }> = {
-                assigned: {
-                    label: "Asignada",
-                    bg: "bg-blue-50",
-                    dot: "bg-blue-500",
-                    text: "text-blue-700",
-                    border: "ring-blue-600/20"
-                },
-                in_progress: {
-                    label: "En proceso",
-                    bg: "bg-orange-50",
-                    dot: "bg-orange-500 animate-pulse",
-                    text: "text-orange-700",
-                    border: "ring-orange-600/20"
-                },
-                completed: {
-                    label: "Completada",
-                    bg: "bg-green-50",
-                    dot: "bg-green-500",
-                    text: "text-green-700",
-                    border: "ring-green-600/20"
-                },
-                canceled: {
-                    label: "Cancelada",
-                    bg: "bg-red-50",
-                    dot: "bg-red-500",
-                    text: "text-red-700",
-                    border: "ring-red-600/20"
-                },
+                assigned: { label: "Asignada", bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700", border: "ring-blue-600/20" },
+                in_progress: { label: "En proceso", bg: "bg-orange-50", dot: "bg-orange-500 animate-pulse", text: "text-orange-700", border: "ring-orange-600/20" },
+                completed: { label: "Completada", bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700", border: "ring-green-600/20" },
+                canceled: { label: "Cancelada", bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700", border: "ring-red-600/20" },
             };
-
-            const current = config[status] ?? {
-                label: status,
-                bg: "bg-slate-100",
-                dot: "bg-slate-400",
-                text: "text-slate-600",
-                border: "ring-slate-500/20"
-            };
+            const current = config[status] ?? { label: status, bg: "bg-slate-100", dot: "bg-slate-400", text: "text-slate-600", border: "ring-slate-500/20" };
 
             return `
-                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold ${current.bg} ${current.text} ring-1 ring-inset ${current.border}">
+                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-bold md:text-xs ${current.bg} ${current.text} ring-1 ring-inset ${current.border}">
                     <span class="h-1.5 w-1.5 rounded-full ${current.dot}"></span>
                     ${current.label}
                 </span>
             `;
         }
 
-        function addEvents() {
+        // ==============================================
+        // LÓGICA DE EVENTOS DE BOTONES Y MODALES DE LA TABLA
+        // ==============================================
+        function addTableEvents() {
             document.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
-                button.addEventListener("click", () => cancelRoute(button.dataset.id));
+                button.addEventListener("click", () => {
+                    routeIdToActOn = button.dataset.id || null;
+                    cancelModal?.classList.remove("hidden");
+                });
             });
 
             document.querySelectorAll<HTMLButtonElement>("[data-action='delete']").forEach((button) => {
-                button.addEventListener("click", () => removeRoute(button.dataset.id));
+                button.addEventListener("click", () => {
+                    routeIdToActOn = button.dataset.id || null;
+                    deleteModal?.classList.remove("hidden");
+                });
             });
         }
 
-        async function cancelRoute(routeId?: string) {
-            if (!routeId) return;
+        // Eventos para ocultar modales
+        closeCancelBtn?.addEventListener("click", () => cancelModal?.classList.add("hidden"));
+        closeDeleteBtn?.addEventListener("click", () => deleteModal?.classList.add("hidden"));
 
-            const confirmed = window.confirm("¿Seguro que deseas cancelar esta asignación?\n\nEl técnico ya no podrá trabajar en ella.");
-            if (!confirmed) return;
+        // Evento: Confirmar Cancelar
+        confirmCancelBtn?.addEventListener("click", async () => {
+            if (!routeIdToActOn) return;
+            cancelModal?.classList.add("hidden");
 
             try {
-                await updateRouteStatus(routeId, "canceled");
-                routes = routes.map((route) => (route.id === routeId ? { ...route, status: "canceled" } : route));
+                await updateRouteStatus(routeIdToActOn, "canceled");
+                routes = routes.map((route) => (route.id === routeIdToActOn ? { ...route, status: "canceled" } : route));
                 updateStats();
                 renderRoutes();
                 showMessage("Ruta suspendida correctamente.", false);
             } catch (error) {
                 showMessage(error instanceof Error ? error.message : "No se pudo cancelar la ruta.", true);
             }
-        }
+        });
 
-        async function removeRoute(routeId?: string) {
-            if (!routeId) return;
-
-            const confirmed = window.confirm(
-                "¿Estás completamente seguro de eliminar este registro?\n\nEsta acción es destructiva y no se puede recuperar la información.",
-            );
-            if (!confirmed) return;
+        // Evento: Confirmar Eliminar
+        confirmDeleteBtn?.addEventListener("click", async () => {
+            if (!routeIdToActOn) return;
+            deleteModal?.classList.add("hidden");
 
             try {
-                await deleteRoute(routeId);
-                routes = routes.filter((route) => route.id !== routeId);
+                await deleteRoute(routeIdToActOn);
+                routes = routes.filter((route) => route.id !== routeIdToActOn);
                 updateStats();
                 renderRoutes();
-                showMessage("Asignación eliminada de la base de datos.", false);
+                showMessage("Asignación eliminada permanentemente.", false);
             } catch (error) {
                 showMessage(error instanceof Error ? error.message : "Error al intentar eliminar.", true);
             }
-        }
+        });
 
         function showMessage(text: string, isError: boolean) {
             if (!message) return;
@@ -595,7 +652,6 @@ import Layout from "../layouts/Layout.astro";
                 : "mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 shadow-sm";
             message.classList.remove("hidden");
 
-            // Ocultar mensaje automáticamente después de 4 segundos
             setTimeout(() => {
                 message.classList.add("hidden");
             }, 4000);
@@ -604,25 +660,12 @@ import Layout from "../layouts/Layout.astro";
         function formatDate(value: string): string {
             const [year, month, day] = value.split("-");
             const date = new Date(Number(year), Number(month) - 1, Number(day));
-            // Formateamos corto para la tabla (ej. 24 Oct)
-            return date.toLocaleDateString("es-MX", {
-                day: "2-digit",
-                month: "short",
-            }).replace('.', ''); // Quitar punto si abrevia el mes
+            return date.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }).replace('.', '');
         }
 
-        searchInput?.addEventListener("input", () => {
-            renderRoutes();
-        });
+        searchInput?.addEventListener("input", () => renderRoutes());
+        statusFilter?.addEventListener("change", () => renderRoutes());
 
-        statusFilter?.addEventListener("change", () => {
-            renderRoutes();
-        });
-
-        // Aseguramos que la tabla solo se llene si hay token de admin
-        if (currentToken) {
-            loadData();
-        }
+        if (currentToken) loadData();
     </script>
-
 </Layout>
