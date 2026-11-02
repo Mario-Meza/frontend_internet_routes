@@ -27,13 +27,22 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
 <!-- ÁREA PRINCIPAL -->
 <div id="main-content" class={hideMenu ? "" : "lg:pl-64"}>
 
-    <!-- CABECERA MÓVIL (Menú hamburguesa) -->
-    <header id="mobile-header" class={`sticky top-0 z-30 border-b border-slate-200 bg-white ${hideMenu ? "hidden" : ""}`}>
-        <div class="flex items-center gap-4 px-6 py-4">
-            <MobileMenuButton />
-            <div>
-                <p class="text-sm font-semibold text-slate-900">{title}</p>
-                <p class="text-xs text-slate-500">Sistema de rutas técnicas</p>
+    <!-- CABECERA MÓVIL (Menú hamburguesa estilizado) -->
+    <header
+            id="mobile-header"
+            class={`sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md shadow-sm lg:hidden ${hideMenu ? "hidden" : ""}`}
+    >
+        <div class="flex items-center justify-between px-4 py-3.5 sm:px-6">
+            <div class="flex items-center gap-3.5">
+                <MobileMenuButton />
+                <div>
+                    <p class="text-base font-black tracking-tight text-slate-900 leading-none">
+                        {title}
+                    </p>
+                    <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-orange-600">
+                        Rutas Digitales
+                    </p>
+                </div>
             </div>
         </div>
     </header>

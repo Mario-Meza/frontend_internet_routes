@@ -1,90 +1,196 @@
 ---
+// src/components/Sidebar.astro
 ---
+
+<!-- FONDO OSCURO PARA CERRAR AL TOCAR FUERA (Solo móvil) -->
+<div
+        id="sidebar-backdrop"
+        class="fixed inset-0 z-40 hidden bg-slate-900/40 backdrop-blur-sm transition-opacity lg:hidden"
+        aria-hidden="true"
+></div>
 
 <aside
         id="sidebar"
-        class="fixed inset-y-0 left-0 z-40 w-64 -translate-x-full border-r border-slate-200 bg-white transition-transform duration-300 lg:translate-x-0 hidden"
+        class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full border-r border-slate-200/80 bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:z-40 lg:w-64 lg:translate-x-0 lg:shadow-none hidden"
 >
-
     <div class="flex h-full flex-col">
 
-        <!-- Logo -->
+        <!-- CABECERA / LOGO + BOTÓN CERRAR MÓVIL -->
+        <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-orange-600 to-orange-400 text-white shadow-md shadow-orange-500/25 ring-2 ring-orange-50">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight text-slate-900 leading-none">
+                        Rutas Digitales
+                    </h1>
+                    <p class="mt-1 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                        Gestión técnica
+                    </p>
+                </div>
+            </div>
 
-        <div class="border-b border-slate-200 px-6 py-6">
-
-            <h1 class="text-xl font-bold text-slate-900">
-                Rutas Digitales
-            </h1>
-
-            <p class="mt-1 text-xs text-slate-500">
-                Gestión técnica
-            </p>
-
+            <!-- Botón X para cerrar el menú en vista móvil -->
+            <button
+                    id="close-sidebar"
+                    type="button"
+                    aria-label="Cerrar menú"
+                    class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-red-50 hover:text-red-600 active:scale-95 lg:hidden"
+            >
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
 
-
-        <!-- Navegación -->
-
-        <nav class="flex-1 space-y-1 p-4">
+        <!-- NAVEGACIÓN -->
+        <nav class="flex-1 space-y-1.5 overflow-y-auto px-4 py-6">
+            <p class="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Menú Principal
+            </p>
 
             <a
                     href="/"
-                    class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                    data-nav-link
+                    class="nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
-                🏠 Dashboard
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                </span>
+                <span>Dashboard</span>
             </a>
-
 
             <a
                     href="/routes"
-                    class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                    data-nav-link
+                    class="nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
-                🗺️ Rutas
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                </span>
+                <span>Rutas</span>
             </a>
-
 
             <a
                     href="/customers"
-                    class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                    data-nav-link
+                    class="nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
-                👥 Clientes
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </span>
+                <span>Clientes</span>
             </a>
-
 
             <a
                     href="/technicians"
-                    class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                    data-nav-link
+                    class="nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
-                👨‍🔧 Técnicos
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                    </svg>
+                </span>
+                <span>Técnicos</span>
             </a>
+
             <a
                     href="/profile"
-                    class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                    data-nav-link
+                    class="nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100/80 hover:text-slate-900"
             >
-                ⚙️ Configuración
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </span>
+                <span>Configuración</span>
             </a>
-
         </nav>
 
-
-        <!-- Footer -->
-
-        <div class="border-t border-slate-200 p-4">
-
-            <div class="rounded-xl bg-slate-50 p-4">
-
-                <p class="text-xs font-medium text-slate-500">
-                    Sistema
-                </p>
-
-                <p class="mt-1 text-sm font-semibold text-slate-700">
-                    v0.1.0
-                </p>
-
+        <!-- FOOTER -->
+        <div class="border-t border-slate-100 p-4">
+            <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3.5 ring-1 ring-inset ring-slate-200/60">
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        Sistema
+                    </p>
+                    <p class="mt-0.5 text-sm font-black text-slate-800">
+                        v0.1.0
+                    </p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                    Activo
+                </span>
             </div>
-
         </div>
 
     </div>
-
 </aside>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const closeBtn = document.getElementById("close-sidebar");
+
+    function closeSidebar() {
+        sidebar?.classList.add("-translate-x-full");
+        backdrop?.classList.add("hidden");
+        document.body.classList.remove("overflow-hidden");
+    }
+
+    function syncBackdrop() {
+        if (!sidebar || !backdrop) return;
+        const isOpen = !sidebar.classList.contains("-translate-x-full") && !sidebar.classList.contains("hidden");
+        backdrop.classList.toggle("hidden", !isOpen);
+        document.body.classList.toggle("overflow-hidden", isOpen && window.innerWidth < 1024);
+    }
+
+    // 1. Cerrar al presionar el botón "X" o tocar el fondo oscuro
+    closeBtn?.addEventListener("click", closeSidebar);
+    backdrop?.addEventListener("click", closeSidebar);
+
+    // 2. Cerrar con la tecla Escape
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeSidebar();
+    });
+
+    // 3. Observar cuando el botón hamburguesa abre el sidebar para mostrar el fondo oscuro
+    if (sidebar) {
+        const observer = new MutationObserver(syncBackdrop);
+        observer.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
+    }
+
+    // 4. Resaltar el enlace activo automáticamente según la ruta actual
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]");
+
+    navLinks.forEach((link) => {
+        const href = link.getAttribute("href") || "";
+        const isActive = href === "/"
+            ? currentPath === "/"
+            : currentPath.startsWith(href);
+
+        if (isActive) {
+            link.classList.remove("text-slate-600", "hover:bg-slate-100/80");
+            link.classList.add("bg-orange-50", "text-orange-600", "ring-1", "ring-inset", "ring-orange-200/70", "shadow-sm");
+
+            const iconBox = link.querySelector(".nav-icon");
+            iconBox?.classList.remove("bg-slate-100", "text-slate-500");
+            iconBox?.classList.add("bg-orange-600", "text-white", "shadow-sm", "shadow-orange-500/30");
+        }
+    });
+</script>

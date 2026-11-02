@@ -4,54 +4,65 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Mi Perfil - Administrador">
 
-    <main class="min-h-screen bg-slate-50/50">
+    <main class="min-h-screen bg-slate-50/50 pb-16">
 
-        <section class="mx-auto max-w-3xl px-6 py-10 sm:py-14">
+        <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
-            <!-- CABECERA -->
+            <!-- CABECERA HOMOLOGADA -->
             <header class="mb-8">
-                <a href="/" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors">
+                <a href="/" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Volver al Dashboard
+                    Volver a dashboard
                 </a>
-                <div class="flex items-center gap-3">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm ring-1 ring-inset ring-slate-800">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-3xl font-black tracking-tight text-slate-900">
-                            Configuración de Cuenta
-                        </h1>
-                        <p class="mt-1 text-sm text-slate-500">
-                            Administra tu información personal y la seguridad de tu acceso.
-                        </p>
-                    </div>
+
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                    </span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-orange-600">Cuenta Administrativa</span>
                 </div>
+
+                <h1 class="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+                    Configuración de cuenta
+                </h1>
+                <p class="mt-2 text-base text-slate-500 max-w-xl">
+                    Administra tu información personal, credenciales de acceso y parámetros de seguridad.
+                </p>
             </header>
 
             <!-- MENSAJES DE NOTIFICACIÓN -->
-            <div id="error-message" class="mb-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 shadow-sm"></div>
-            <div id="success-message" class="mb-6 hidden rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700 shadow-sm"></div>
+            <div id="error-message" class="mb-6 hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 shadow-sm"></div>
+            <div id="success-message" class="mb-6 hidden rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700 shadow-sm"></div>
 
-
+            <!-- FORMULARIO -->
             <form
                     id="profile-form"
                     class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50"
             >
                 <!-- SECCIÓN 1: DATOS PERSONALES -->
                 <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" /></svg>
-                        Información Básica
-                    </h2>
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                            </svg>
+                        </span>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">
+                                1. Información Básica
+                            </h2>
+                            <p class="text-xs font-medium text-slate-500">
+                                Datos principales de identificación del administrador.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid gap-6 px-6 py-8 md:grid-cols-2 border-b border-slate-100">
-                    <div class="sm:col-span-2">
+                    <div>
                         <label for="name" class="mb-2 block text-sm font-bold text-slate-700">
                             Nombre del Administrador
                         </label>
@@ -61,11 +72,11 @@ import Layout from "../layouts/Layout.astro";
                                 required
                                 maxlength="100"
                                 placeholder="Tu nombre..."
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div>
                         <label for="email" class="mb-2 block text-sm font-bold text-slate-700">
                             Correo Electrónico (Usuario de acceso)
                         </label>
@@ -74,36 +85,45 @@ import Layout from "../layouts/Layout.astro";
                                 type="email"
                                 required
                                 placeholder="admin@rutasdigitales.com"
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
                     </div>
                 </div>
 
                 <!-- SECCIÓN 2: SEGURIDAD Y CONTRASEÑA -->
                 <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        Seguridad
-                    </h2>
-                    <p class="mt-1 text-xs text-slate-500">Deja los campos de contraseña en blanco si no deseas cambiarla.</p>
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </span>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">
+                                2. Seguridad y Contraseña
+                            </h2>
+                            <p class="text-xs font-medium text-slate-500">
+                                Deja los campos de nueva contraseña en blanco si no deseas cambiarla.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid gap-6 px-6 py-8 md:grid-cols-2">
-
-                    <div class="sm:col-span-2">
+                    <div class="md:col-span-2">
                         <label for="current-password" class="mb-2 block text-sm font-bold text-slate-700">
-                            Contraseña Actual <span class="font-normal text-slate-400">(Requerida para guardar cambios)</span>
+                            Contraseña Actual <span class="font-normal text-slate-400">(Requerida para autorizar cambios)</span>
                         </label>
                         <input
                                 id="current-password"
                                 type="password"
                                 required
                                 placeholder="••••••••"
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div>
                         <label for="new-password" class="mb-2 block text-sm font-bold text-slate-700">
                             Nueva Contraseña
                         </label>
@@ -111,12 +131,12 @@ import Layout from "../layouts/Layout.astro";
                                 id="new-password"
                                 type="password"
                                 minlength="6"
-                                placeholder="Opcional"
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20"
+                                placeholder="Opcional (mínimo 6 caracteres)"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div>
                         <label for="confirm-password" class="mb-2 block text-sm font-bold text-slate-700">
                             Confirmar Nueva Contraseña
                         </label>
@@ -125,17 +145,24 @@ import Layout from "../layouts/Layout.astro";
                                 type="password"
                                 minlength="6"
                                 placeholder="Opcional"
-                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                         />
                     </div>
                 </div>
 
                 <!-- FOOTER / BOTONES DE ACCIÓN -->
-                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-6 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-10">
+                <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-5 sm:flex sm:items-center sm:justify-end sm:gap-3 sm:px-8">
+                    <a
+                            href="/"
+                            class="mb-3 inline-flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98] sm:mb-0 sm:w-auto"
+                    >
+                        Cancelar
+                    </a>
+
                     <button
                             id="save-btn"
                             type="submit"
-                            class="block w-full rounded-xl bg-slate-900 px-8 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-slate-900/20 transition hover:bg-slate-800 hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                     >
                         Guardar cambios
                     </button>
@@ -148,7 +175,6 @@ import Layout from "../layouts/Layout.astro";
     </main>
 
     <script>
-        // NOTA: Asegúrate de tener o crear las funciones getAdminProfile y updateAdminProfile en tu api.ts
         import { getAdminProfile, updateAdminProfile } from "../services/api";
 
         const form = document.querySelector<HTMLFormElement>("#profile-form");
@@ -186,7 +212,6 @@ import Layout from "../layouts/Layout.astro";
             `;
             successMessage.classList.remove("hidden");
 
-            // Ocultar tras 4 segundos
             setTimeout(() => {
                 successMessage.classList.add("hidden");
             }, 4000);
@@ -201,7 +226,6 @@ import Layout from "../layouts/Layout.astro";
 
         async function loadProfile() {
             try {
-                // Obtenemos los datos actuales del admin (asegúrate de que tu backend devuelva el nombre y email)
                 const profile = await getAdminProfile();
 
                 if (nameInput) nameInput.value = profile.name || "";
@@ -228,7 +252,6 @@ import Layout from "../layouts/Layout.astro";
                 return;
             }
 
-            // Si el usuario intentó escribir una contraseña nueva, validamos que coincidan
             if (newPassword || confirmPassword) {
                 if (newPassword.length < 6) {
                     showError("La nueva contraseña debe tener al menos 6 caracteres.");
@@ -252,21 +275,18 @@ import Layout from "../layouts/Layout.astro";
                     `;
                 }
 
-                // Construimos el objeto a enviar
                 const updateData: any = {
                     name,
                     email,
                     current_password: currentPassword
                 };
 
-                // Si escribió una nueva, la añadimos al payload
                 if (newPassword) {
                     updateData.new_password = newPassword;
                 }
 
                 await updateAdminProfile(updateData);
 
-                // Limpiar campos de contraseña tras guardar con éxito
                 if (currentPasswordInput) currentPasswordInput.value = "";
                 if (newPasswordInput) newPasswordInput.value = "";
                 if (confirmPasswordInput) confirmPasswordInput.value = "";
