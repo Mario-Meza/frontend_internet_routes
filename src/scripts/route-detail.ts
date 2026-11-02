@@ -18,6 +18,18 @@ import type { Customer } from "../types/customer";
  * ==========================================
  */
 
+// ... (Tus otros elementos del DOM)
+
+/*
+ * ==========================================
+ * MODAL ELIMINAR SERVICIO (Nuevo)
+ * ==========================================
+ */
+const deleteModal = document.querySelector<HTMLDialogElement>("#deleteModal");
+const confirmDeleteBtn = document.querySelector<HTMLButtonElement>("#confirmDeleteBtn");
+const cancelDeleteBtn = document.querySelector<HTMLButtonElement>("#cancelDeleteBtn");
+let serviceIdToDelete: string | null = null;
+
 const routeTitle =
     document.querySelector<HTMLElement>(
         "#route-title",
@@ -1649,89 +1661,77 @@ function hideEditServiceError() {
 
 /*
  * ==========================================
- * ELIMINAR SERVICIO
+ * ELIMINAR SERVICIO (Refactorizado con Modal)
  * ==========================================
  */
 
-async function handleDeleteService(
-    serviceId?: string,
-) {
-
+async function handleDeleteService(serviceId?: string) {
     if (!routeId || !serviceId || !currentRoute) {
         return;
     }
 
-
-    const service =
-        currentRoute.services.find(
-            (item) =>
-                item.service_id === serviceId,
-        );
-
+    const service = currentRoute.services.find(
+        (item) => item.service_id === serviceId,
+    );
 
     if (!service) {
-
-        showError(
-            "Servicio no encontrado.",
-        );
-
+        showError("Servicio no encontrado.");
         return;
     }
-
 
     if (
         currentRoute.status !== "assigned" ||
         service.status !== "pending"
     ) {
-
-        showError(
-            "Este servicio ya no puede eliminarse.",
-        );
-
+        showError("Este servicio ya no puede eliminarse.");
         return;
     }
 
+    // 1. Guardamos el ID en memoria
+    serviceIdToDelete = serviceId;
 
-    const confirmed =
-        window.confirm(
-            "¿Seguro que deseas eliminar este servicio?",
-        );
+    // 2. Abrimos el modal de Tailwind (HTMLDialogElement nativo)
+    deleteModal?.showModal();
+}
 
+// 3. Manejadores para cerrar el modal
+cancelDeleteBtn?.addEventListener("click", () => {
+    deleteModal?.close();
+    serviceIdToDelete = null;
+});
 
-    if (!confirmed) {
-        return;
-    }
+// 4. Manejador para ejecutar la eliminación
+confirmDeleteBtn?.addEventListener("click", async () => {
+    if (!routeId || !serviceIdToDelete) return;
 
+    // Cambiar estado visual del botón de confirmación
+    const originalText = confirmDeleteBtn.textContent || "Sí, eliminar";
+    confirmDeleteBtn.textContent = "Eliminando...";
+    confirmDeleteBtn.disabled = true;
+    disableServiceButtons();
 
     try {
+        await deleteRouteService(routeId, serviceIdToDelete);
 
-        disableServiceButtons();
-
-
-        await deleteRouteService(
-            routeId,
-            serviceId,
-        );
-
-
-        currentRoute =
-            await getRoute(routeId);
-
-
+        // Recargar información
+        currentRoute = await getRoute(routeId);
         renderRoute();
 
-
     } catch (error) {
-
         showError(
             error instanceof Error
                 ? error.message
                 : "No se pudo eliminar el servicio.",
         );
-
+    } finally {
+        // Restaurar estado visual y cerrar modal
+        deleteModal?.close();
+        serviceIdToDelete = null;
+        confirmDeleteBtn.textContent = originalText;
+        confirmDeleteBtn.disabled = false;
         enableServiceButtons();
     }
-}
+});
 
 
 /*

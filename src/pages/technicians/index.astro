@@ -159,6 +159,29 @@ import Layout from "../../layouts/Layout.astro";
                 </button>
             </div>
 
+            <!-- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+            <dialog id="deleteModal" class="m-auto fixed inset-0 backdrop:bg-slate-900/50 rounded-2xl shadow-2xl border border-slate-100 p-0 w-full max-w-md backdrop-blur-sm transition-all open:animate-in open:fade-in open:zoom-in-95">
+                <div class="p-6 text-center bg-white">
+                    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
+                        <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="mb-2 text-lg font-bold text-slate-900">
+                        ¿Eliminar técnico?
+                    </h3>
+                    <p class="mb-6 text-sm text-slate-500">Esta acción no se puede deshacer. El técnico será borrado permanentemente del sistema.</p>
+                    <div class="flex justify-center gap-3">
+                        <button id="cancelDeleteBtn" type="button" class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95">
+                            Cancelar
+                        </button>
+                        <button id="confirmDeleteBtn" type="button" class="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-red-500/30 transition-all hover:bg-red-700 hover:shadow-red-500/40 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Sí, eliminar
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+
         </section>
 
     </main>
@@ -177,6 +200,12 @@ import Layout from "../../layouts/Layout.astro";
         const searchInput = document.querySelector<HTMLInputElement>("#search");
         const empty = document.querySelector<HTMLDivElement>("#empty");
         const message = document.querySelector<HTMLDivElement>("#message");
+
+        // Elementos del Modal
+        const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement;
+        const confirmDeleteBtn = document.getElementById("confirmDeleteBtn") as HTMLButtonElement;
+        const cancelDeleteBtn = document.getElementById("cancelDeleteBtn") as HTMLButtonElement;
+        let technicianIdToDelete: string | null = null;
 
         // Elementos de Estadísticas
         const statTotal = document.getElementById("stat-total");
@@ -258,7 +287,6 @@ import Layout from "../../layouts/Layout.astro";
             addEvents();
         }
 
-        // Switch estilo iOS con Tailwind
         function statusSwitch(technician: Technician): string {
             const active = technician.active;
 
@@ -296,7 +324,6 @@ import Layout from "../../layouts/Layout.astro";
             const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
             const avatarColor = getAvatarColor(technician.name);
 
-            // La lógica de la foto se mantiene igual de robusta
             const avatarHtml = `
                 <img
                     src="${escapeHtml(photoUrl)}"
@@ -309,7 +336,6 @@ import Layout from "../../layouts/Layout.astro";
             return `
                 <tr class="group transition-colors hover:bg-slate-50">
 
-                    <!-- TÉCNICO (FOTO + NOMBRE) -->
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-4">
                             ${avatarHtml}
@@ -319,7 +345,6 @@ import Layout from "../../layouts/Layout.astro";
                         </div>
                     </td>
 
-                    <!-- TELÉFONO -->
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-2 text-sm font-medium text-slate-600">
                             <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -329,12 +354,10 @@ import Layout from "../../layouts/Layout.astro";
                         </div>
                     </td>
 
-                    <!-- ESTADO -->
                     <td class="px-6 py-5">
                         ${statusSwitch(technician)}
                     </td>
 
-                    <!-- ACCIONES -->
                     <td class="px-6 py-5">
                         <div class="flex items-center justify-end gap-2 opacity-80 transition-opacity group-hover:opacity-100">
                             <a
@@ -377,11 +400,47 @@ import Layout from "../../layouts/Layout.astro";
             });
 
             document.querySelectorAll<HTMLButtonElement>("[data-action='delete']").forEach((button) => {
-                button.addEventListener("click", () =>
-                    removeTechnician(button.dataset.id),
-                );
+                button.addEventListener("click", () => {
+                    technicianIdToDelete = button.dataset.id || null;
+                    if (technicianIdToDelete) {
+                        deleteModal.showModal();
+                    }
+                });
             });
         }
+
+        // Lógica del Modal
+        cancelDeleteBtn?.addEventListener("click", () => {
+            deleteModal.close();
+            technicianIdToDelete = null;
+        });
+
+        confirmDeleteBtn?.addEventListener("click", async () => {
+            if (!technicianIdToDelete) return;
+
+            const originalText = confirmDeleteBtn.textContent || "Sí, eliminar";
+            confirmDeleteBtn.textContent = "Eliminando...";
+            confirmDeleteBtn.disabled = true;
+
+            try {
+                await deleteTechnician(technicianIdToDelete);
+                technicians = technicians.filter((technician) => technician.id !== technicianIdToDelete);
+
+                updateStats();
+                renderTechnicians(searchInput?.value ?? "");
+                showMessage("Técnico eliminado de la base de datos.", false);
+            } catch (error) {
+                showMessage(
+                    error instanceof Error ? error.message : "No se pudo eliminar el técnico.",
+                    true,
+                );
+            } finally {
+                deleteModal.close();
+                technicianIdToDelete = null;
+                confirmDeleteBtn.textContent = originalText;
+                confirmDeleteBtn.disabled = false;
+            }
+        });
 
         async function toggleTechnician(button: HTMLButtonElement, technicianId?: string, currentActive = false) {
             if (!technicianId) return;
@@ -398,27 +457,6 @@ import Layout from "../../layouts/Layout.astro";
                 button.disabled = false;
                 showMessage(
                     error instanceof Error ? error.message : "No se pudo actualizar el estado.",
-                    true,
-                );
-            }
-        }
-
-        async function removeTechnician(technicianId?: string) {
-            if (!technicianId) return;
-
-            const confirmed = window.confirm("¿Estás seguro de eliminar este técnico?\n\nEsta acción no se puede deshacer.");
-            if (!confirmed) return;
-
-            try {
-                await deleteTechnician(technicianId);
-                technicians = technicians.filter((technician) => technician.id !== technicianId);
-
-                updateStats();
-                renderTechnicians(searchInput?.value ?? "");
-                showMessage("Técnico eliminado de la base de datos.", false);
-            } catch (error) {
-                showMessage(
-                    error instanceof Error ? error.message : "No se pudo eliminar el técnico.",
                     true,
                 );
             }
