@@ -277,20 +277,21 @@ import Layout from "../../layouts/Layout.astro";
                     }
                 }
 
-            // =========================================================
-            // LÓGICA DE DIBUJADO DE LAS TARJETAS
-            // =========================================================
-            function addService() {
-                if (!servicesContainer) return;
-                if (customers.length === 0 || activeTechniciansCount === 0) {
-                    updateServiceNumbers();
-                    return;
-                    }
+        // 1. Validar límite antes de crear una tarjeta nueva
+        function addService() {
+            if (!servicesContainer) return;
 
-                const serviceCard = document.createElement("div");
-                serviceCard.className = "service-card relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-orange-200";
+            const currentCardsCount = servicesContainer.querySelectorAll(".service-card").length;
+            if (customers.length === 0 || activeTechniciansCount === 0 || currentCardsCount >= customers.length) {
+                updateServiceNumbers();
+                updateFormAvailability();
+                return;
+            }
 
-                serviceCard.innerHTML = `
+            const serviceCard = document.createElement("div");
+            serviceCard.className = "service-card relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-orange-200";
+
+            serviceCard.innerHTML = `
                 <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
                     <div class="flex items-center gap-3">
                         <span class="service-number flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-sm font-black text-white shadow-sm ring-2 ring-slate-100">
@@ -326,42 +327,43 @@ import Layout from "../../layouts/Layout.astro";
                 </div>
             `;
 
-                const customerSelect = serviceCard.querySelector<HTMLSelectElement>(".customer-select");
-                const serviceTypeSelect = serviceCard.querySelector<HTMLSelectElement>(".service-type-select");
+            const customerSelect = serviceCard.querySelector<HTMLSelectElement>(".customer-select");
+            const serviceTypeSelect = serviceCard.querySelector<HTMLSelectElement>(".service-type-select");
 
-                if (customerSelect) {
-                    customers.forEach((customer) => {
-                        const option = document.createElement("option");
-                        option.value = customer.id;
-                        option.textContent = `${customer.name} — ${customer.location}`;
-                        customerSelect.appendChild(option);
-                        });
-                    }
+            if (customerSelect) {
+                customers.forEach((customer) => {
+                    const option = document.createElement("option");
+                    option.value = customer.id;
+                    option.textContent = `${customer.name} — ${customer.location}`;
+                    customerSelect.appendChild(option);
+                });
+            }
 
-                if (serviceTypeSelect) {
-                    serviceTypes.forEach((serviceType) => {
-                        const option = document.createElement("option");
-                        option.value = serviceType.value;
-                        option.textContent = serviceType.label;
-                        serviceTypeSelect.appendChild(option);
-                        });
-                    }
+            if (serviceTypeSelect) {
+                serviceTypes.forEach((serviceType) => {
+                    const option = document.createElement("option");
+                    option.value = serviceType.value;
+                    option.textContent = serviceType.label;
+                    serviceTypeSelect.appendChild(option);
+                });
+            }
 
-                const removeButton = serviceCard.querySelector<HTMLButtonElement>(".remove-service");
-                removeButton?.addEventListener("click", () => {
-                    serviceCard.remove();
-                    updateServiceNumbers();
-                    updateAvailableCustomers(); // Liberamos al cliente al borrar la tarjeta
-                    });
-
-                servicesContainer.appendChild(serviceCard);
+            const removeButton = serviceCard.querySelector<HTMLButtonElement>(".remove-service");
+            removeButton?.addEventListener("click", () => {
+                serviceCard.remove();
                 updateServiceNumbers();
+                updateAvailableCustomers();
+                updateFormAvailability(); // Reactiva el botón "+ Añadir Visita" al borrar una tarjeta
+            });
 
-                // 🔥 CLAVE: Forzamos la actualización de todos los selects INMEDIATAMENTE después de añadir uno nuevo
-                setTimeout(() => {
-                    updateAvailableCustomers();
-                    }, 0);
-                }
+            servicesContainer.appendChild(serviceCard);
+            updateServiceNumbers();
+            updateFormAvailability(); // Evalúa si quedan más clientes disponibles
+
+            setTimeout(() => {
+                updateAvailableCustomers();
+            }, 0);
+        }
 
             // =========================================================
             // 🔥 DELEGACIÓN DE EVENTOS PARA EL CONTENEDOR (NUEVO)
@@ -527,19 +529,25 @@ import Layout from "../../layouts/Layout.astro";
                     }
                 }
 
-            function updateFormAvailability() {
-                const hasActiveCustomers = customers.length > 0;
-                const hasActiveTechnicians = activeTechniciansCount > 0;
-                const canAddService = hasActiveCustomers && hasActiveTechnicians;
+        function updateFormAvailability() {
+            const hasActiveCustomers = customers.length > 0;
+            const hasActiveTechnicians = activeTechniciansCount > 0;
+            const canUseForm = hasActiveCustomers && hasActiveTechnicians;
 
-                if (addServiceButton) {
-                    addServiceButton.disabled = !canAddService;
-                    }
+            const currentCardsCount = servicesContainer?.querySelectorAll(".service-card").length ?? 0;
+            const hasRemainingCustomers = currentCardsCount < customers.length;
 
-                if (createRouteButton) {
-                    createRouteButton.disabled = isSubmitting || !canAddService;
-                    }
-                }
+            if (addServiceButton) {
+                addServiceButton.disabled = !canUseForm || !hasRemainingCustomers;
+                addServiceButton.textContent = (!hasRemainingCustomers && hasActiveCustomers)
+                    ? "+ Añadir Visita"
+                    : "+ Añadir Visita";
+            }
+
+            if (createRouteButton) {
+                createRouteButton.disabled = isSubmitting || !canUseForm;
+            }
+        }
 
             function setLoading(loading: boolean) {
                 isSubmitting = loading;

@@ -6,10 +6,10 @@ import MobileMenuButton from "../components/MobileMenuButton.astro";
 
 interface Props {
     title?: string;
-    // Ya no usamos hideMenu, lo controlaremos de forma segura con tu JS original
+    hideMenu?: boolean; // <-- Agregamos esta línea para que TypeScript no marque error
 }
 
-const { title = "Rutas Digitales" } = Astro.props;
+const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,10 +25,10 @@ const { title = "Rutas Digitales" } = Astro.props;
 <Sidebar />
 
 <!-- ÁREA PRINCIPAL -->
-<div id="main-content" class="lg:pl-64">
+<div id="main-content" class={hideMenu ? "" : "lg:pl-64"}>
 
     <!-- CABECERA MÓVIL (Menú hamburguesa) -->
-    <header id="mobile-header" class="sticky top-0 z-30 border-b border-slate-200 bg-white">
+    <header id="mobile-header" class={`sticky top-0 z-30 border-b border-slate-200 bg-white ${hideMenu ? "hidden" : ""}`}>
         <div class="flex items-center gap-4 px-6 py-4">
             <MobileMenuButton />
             <div>
@@ -38,7 +38,7 @@ const { title = "Rutas Digitales" } = Astro.props;
         </div>
     </header>
 
-    <!-- CONTENIDO DE LA PÁGINA (Login, Panel o Dashboard) -->
+    <!-- CONTENIDO DE LA PÁGINA -->
     <slot />
 
 </div>
@@ -53,36 +53,34 @@ const { title = "Rutas Digitales" } = Astro.props;
         protectAdminRoute();
     }
 
-    // 2. Controlar la visibilidad
+    // 2. Controlar la visibilidad del Sidebar y Cabecera Móvil
     const sidebar = document.getElementById("sidebar");
     const mainContent = document.getElementById("main-content");
-    const mobileHeader = document.getElementById("mobile-header"); // <-- Seleccionamos el header móvil
+    const mobileHeader = document.getElementById("mobile-header");
 
     const isLogin = currentPath.startsWith("/login");
     const isPanel = currentPath.startsWith("/panel");
 
     if (isLogin || isPanel) {
-        // SI ES LOGIN O TÉCNICO: Ocultamos menú lateral y la hamburguesa
         if (sidebar) {
             sidebar.classList.add("hidden");
-            sidebar.style.display = 'none';
+            sidebar.style.display = "none";
         }
         if (mobileHeader) {
             mobileHeader.classList.add("hidden");
-            mobileHeader.style.display = 'none'; // <-- Esto quita la hamburguesa del Login
+            mobileHeader.style.display = "none";
         }
         if (mainContent) {
             mainContent.classList.remove("lg:pl-64", "lg:ml-64");
         }
     } else {
-        // SI ES ADMIN (Dashboard): Mostramos menús normales
         if (sidebar) {
             sidebar.classList.remove("hidden");
-            sidebar.style.display = 'block';
+            sidebar.style.display = "";
         }
         if (mobileHeader) {
             mobileHeader.classList.remove("hidden");
-            mobileHeader.style.display = 'block'; // <-- Esto devuelve la hamburguesa al Admin
+            mobileHeader.style.display = "";
         }
         if (mainContent) {
             mainContent.classList.add("lg:pl-64");
@@ -90,9 +88,9 @@ const { title = "Rutas Digitales" } = Astro.props;
     }
 
     // 3. Evento para botones de cerrar sesión
-    const logoutBtns = document.querySelectorAll('.logout-button');
-    logoutBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+    const logoutBtns = document.querySelectorAll(".logout-button");
+    logoutBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user_role");
             window.location.href = "/login";

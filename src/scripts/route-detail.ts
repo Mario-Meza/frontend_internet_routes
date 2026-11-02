@@ -300,11 +300,22 @@ function renderRoute() {
 
     if (addServiceButton) {
         if (currentRoute.status === "assigned") {
-            // Mostrar el botón
+            const occupiedCustomerIds = new Set(
+                currentRoute.services
+                    .map((s) => s.customer?.id ?? s.customer_id)
+                    .filter(Boolean)
+            );
+            const availableCustomersCount = customers.filter(
+                (c) => c.active !== false && !occupiedCustomerIds.has(c.id)
+            ).length;
+
             addServiceButton.classList.remove("hidden");
             addServiceButton.classList.add("inline-flex");
+            addServiceButton.disabled = availableCustomersCount === 0;
+            addServiceButton.textContent = availableCustomersCount === 0
+                ? "Sin clientes disponibles"
+                : "Añadir Visita";
         } else {
-            // Ocultar el botón por completo
             addServiceButton.classList.remove("inline-flex");
             addServiceButton.classList.add("hidden");
         }
@@ -1053,25 +1064,17 @@ function populateEditServiceCustomers(
         (customer) => customer.active !== false,
     );
 
-    /*
-     * Si no hay ningún cliente activo en la base de datos
-     */
     if (activeCustomers.length === 0) {
         editServiceCustomer.disabled = true;
         editServiceCustomerEmpty?.classList.remove("hidden");
 
-        // Cambiar el mensaje para ser más claros
         if (editServiceCustomerEmpty) {
             editServiceCustomerEmpty.innerHTML = `
                  <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                  <span>No hay clientes activos en la base de datos para asignar.</span>
              `;
         }
-
-        if (saveEditServiceButton) {
-            saveEditServiceButton.disabled = true;
-        }
-
+        if (saveEditServiceButton) saveEditServiceButton.disabled = true;
         return;
     }
 
@@ -1091,11 +1094,8 @@ function populateEditServiceCustomers(
 
     if (currentRoute && currentRoute.services) {
         currentRoute.services.forEach(service => {
-            // Solo nos importan los clientes que realmente están en un servicio
             const cId = service.customer?.id ?? service.customer_id;
-            if (cId) {
-                occupiedCustomerIds.add(cId);
-            }
+            if (cId) occupiedCustomerIds.add(cId);
         });
     }
 
@@ -1109,13 +1109,13 @@ function populateEditServiceCustomers(
         // Comprobar si el cliente está ocupado en esta ruta
         const isOccupied = occupiedCustomerIds.has(customer.id);
 
-        // El cliente está ocupado PERO es el que estamos editando en este momento (modo editar)
+        // El cliente está ocupado PERO es el que estamos editando en este momento
         const isCurrentCustomer = customer.id === selectedCustomerId;
 
         if (isOccupied && !isCurrentCustomer) {
             // BLOQUEADO: El cliente ya está en otra visita de esta ruta
             option.disabled = true;
-            option.textContent = `🚫 ${customer.name} — ${customer.location} (Ya asignado a esta ruta)`;
+            option.textContent = `🚫 ${customer.name} — ${customer.location} (Ya en la ruta)`;
         } else {
             // LIBRE: O bien no está en la ruta, o es el que estamos editando
             option.disabled = false;
@@ -1127,7 +1127,7 @@ function populateEditServiceCustomers(
         editServiceCustomer.appendChild(option);
     });
 
-    // 4. Si después de procesar todos, resulta que TODOS están ocupados y estamos agregando uno nuevo
+    // 4. Bloqueo total si todos los clientes están ocupados y tratas de agregar uno nuevo
     if (availableCount === 0 && serviceModalMode === "add") {
         editServiceCustomer.disabled = true;
         editServiceCustomerEmpty?.classList.remove("hidden");
@@ -1138,10 +1138,7 @@ function populateEditServiceCustomers(
                  <span>Todos los clientes disponibles ya fueron agregados a esta ruta.</span>
              `;
         }
-
-        if (saveEditServiceButton) {
-            saveEditServiceButton.disabled = true;
-        }
+        if (saveEditServiceButton) saveEditServiceButton.disabled = true;
     }
 }
 

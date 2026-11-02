@@ -210,7 +210,7 @@ import Layout from "../../layouts/Layout.astro";
                                     ${status.isCanceled ? `
                                         <div class="flex w-full items-center justify-center gap-2 py-1 text-sm font-bold text-red-600">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            Ruta suspendida por administración
+                                            Ruta suspendida por oficina
                                         </div>
                                     ` : status.isPending ? `
                                         <button onclick="window.handleStartService('${route.id}', '${service.service_id}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-4 text-sm font-bold text-white shadow-md shadow-slate-900/20 transition active:scale-[0.98]">
