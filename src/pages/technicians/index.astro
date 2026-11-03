@@ -242,7 +242,7 @@ import Layout from "../../layouts/Layout.astro";
         let technicianIdToDelete: string | null = null;
         let technicians: Technician[] = [];
         let currentPage = 1;
-        const itemsPerPage = 5; // <--- Cambia a 10 o 20 según lo necesites
+        const itemsPerPage = 5;
 
         // Elementos de Estadísticas
         const statTotal = document.getElementById("stat-total");
@@ -286,7 +286,6 @@ import Layout from "../../layouts/Layout.astro";
         async function loadTechnicians() {
             try {
                 technicians = await getTechnicians();
-                console.log("Técnicos recibidos:", technicians); // VERIFICA AQUÍ EL OBJETO
                 updateStats();
                 renderTechnicians();
             } catch (error) {
@@ -410,10 +409,25 @@ import Layout from "../../layouts/Layout.astro";
                 />
             `;
 
+            // OBTENER ARREGLO DE ESPECIALIDADES O DEFAULT
+            const specialtiesArray = technician.specialties && technician.specialties.length > 0
+                ? technician.specialties
+                : ["General"];
+
+            // CREAR ETIQUETAS HTML PARA CADA ESPECIALIDAD
+            const badgesHtml = specialtiesArray.map(spec => `
+                <div class="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
+                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    ${escapeHtml(spec)}
+                </div>
+            `).join('');
+
             return `
                 <tr class="group transition-colors hover:bg-slate-50">
 
-                    <!-- TÉCNICO (FOTO + NOMBRE + ESPECIALIDAD) -->
+                    <!-- TÉCNICO (FOTO + NOMBRE + ESPECIALIDAD MÚLTIPLE) -->
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-4">
                             ${avatarHtml}
@@ -421,11 +435,8 @@ import Layout from "../../layouts/Layout.astro";
                                 <div class="font-bold text-slate-800">
                                     ${escapeHtml(technician.name)}
                                 </div>
-                                <div class="mt-1 inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
-                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    ${escapeHtml(technician.specialty ?? 'General')}
+                                <div class="mt-1.5 flex flex-wrap gap-1.5">
+                                    ${badgesHtml}
                                 </div>
                             </div>
                         </div>

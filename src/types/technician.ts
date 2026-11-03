@@ -4,7 +4,7 @@ export interface Technician {
     email: string;
     phone: string | null;
     active: boolean;
-    specialty?: string;
+    specialties?: string[];
     photo_url?: string | null;
 }
 
@@ -13,7 +13,7 @@ export interface TechnicianCreate {
     email: string;
     password: string;
     phone?: string | null;
-    specialty?: string;
+    specialties?: string[];
     photo_url?: string | null;
 }
 

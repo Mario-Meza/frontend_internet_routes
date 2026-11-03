@@ -118,27 +118,45 @@ import Layout from "../../layouts/Layout.astro";
                                 />
                             </div>
                         </div>
-                        <!-- SELECT DE ESPECIALIDAD -->
-                        <div class="mt-4">
-                            <label for="specialty" class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">
-                                Especialidad Principal
+
+                        <!-- CHECKBOXES DE ESPECIALIDADES -->
+                        <div class="sm:col-span-2 mt-2">
+                            <label class="mb-3 block text-xs font-bold uppercase tracking-widest text-slate-500">
+                                Especialidades del Técnico
                             </label>
-                            <div class="relative">
-                                <select id="specialty" name="specialty" class="w-full appearance-none rounded-xl border border-slate-300 bg-slate-50/50 py-3.5 pl-4 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20">
-                                    <option value="General">General / Multipropósito</option>
-                                    <option value="Fibra Óptica">Fibra Óptica</option>
-                                    <option value="Fusión y Empalme">Fusión y Empalme</option>
-                                    <option value="Antena Wireless">Antena Wireless</option>
-                                    <option value="Torrero">Torrero (Trabajo en alturas)</option>
-                                    <option value="Soporte Residencial">Soporte Residencial (Routers/UTP)</option>
-                                    <option value="Construcción">Construcción / Obra Civil</option>
-                                </select>
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Fibra Óptica" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Fibra Óptica</span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Fusión y Empalme" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Fusión y Empalme</span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Antena Wireless" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Antena Wireless</span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Torrero" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Torrero</span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Soporte Residencial" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Soporte Residencial</span>
+                                </label>
+
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:bg-slate-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/50 has-[:checked]:ring-1 has-[:checked]:ring-orange-500">
+                                    <input type="checkbox" name="specialties" value="Construcción" class="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-600" />
+                                    <span class="text-sm font-bold text-slate-700">Construcción</span>
+                                </label>
                             </div>
+                            <p class="mt-3 text-[11px] font-medium text-slate-400">Puedes seleccionar varias. Si no marcas ninguna, se asignará "General".</p>
                         </div>
 
                         <div class="sm:col-span-2 my-2 border-t border-slate-100"></div>
@@ -205,224 +223,227 @@ import Layout from "../../layouts/Layout.astro";
         import {
             createTechnician,
             uploadTechnicianPhoto,
-        } from "../../services/api";
+            } from "../../services/api";
 
-        const form = document.querySelector<HTMLFormElement>("#form");
-        const nameInput = document.querySelector<HTMLInputElement>("#name");
-        const phoneCountrySelect = document.querySelector<HTMLSelectElement>("#phone-country");
-        const phoneDigitsInput = document.querySelector<HTMLInputElement>("#phone-digits");
+            const form = document.querySelector<HTMLFormElement>("#form");
+            const nameInput = document.querySelector<HTMLInputElement>("#name");
+            const phoneCountrySelect = document.querySelector<HTMLSelectElement>("#phone-country");
+            const phoneDigitsInput = document.querySelector<HTMLInputElement>("#phone-digits");
 
-        // NUEVOS SELECTORES
-        const emailInput = document.querySelector<HTMLInputElement>("#email");
-        const passwordInput = document.querySelector<HTMLInputElement>("#password");
+            const emailInput = document.querySelector<HTMLInputElement>("#email");
+            const passwordInput = document.querySelector<HTMLInputElement>("#password");
 
-        const photoInput = document.querySelector<HTMLInputElement>("#photo");
-        const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
-        const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
-        const button = document.querySelector<HTMLButtonElement>("#submit");
-        const error = document.querySelector<HTMLDivElement>("#error");
+            const photoInput = document.querySelector<HTMLInputElement>("#photo");
+            const photoPreview = document.querySelector<HTMLImageElement>("#photo-preview");
+            const removePhotoButton = document.querySelector<HTMLButtonElement>("#remove-photo");
+            const button = document.querySelector<HTMLButtonElement>("#submit");
+            const error = document.querySelector<HTMLDivElement>("#error");
 
-        let selectedPhoto: File | null = null;
-        let previewUrl: string | null = null;
+            let selectedPhoto: File | null = null;
+            let previewUrl: string | null = null;
 
-        // Custom file input logic
-        photoInput?.addEventListener("change", () => {
-            const file = photoInput.files?.[0];
+            // Custom file input logic
+            photoInput?.addEventListener("change", () => {
+                const file = photoInput.files?.[0];
 
-            if (!file) {
+                if (!file) {
+                    selectedPhoto = null;
+                    return;
+                    }
+
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    ];
+
+                if (!allowedTypes.includes(file.type)) {
+                    showError("Selecciona una imagen JPG, PNG o WEBP.");
+                    photoInput.value = "";
+                    return;
+                    }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showError("La fotografía no debe superar los 5 MB.");
+                    photoInput.value = "";
+                    return;
+                    }
+
+                hideError();
+                selectedPhoto = file;
+
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    }
+
+                previewUrl = URL.createObjectURL(file);
+
+                if (photoPreview) {
+                    photoPreview.src = previewUrl;
+                    }
+
+                removePhotoButton?.classList.remove("hidden");
+                });
+
+            removePhotoButton?.addEventListener("click", () => {
                 selectedPhoto = null;
-                return;
-            }
 
-            const allowedTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/webp",
-            ];
+                if (photoInput) {
+                    photoInput.value = "";
+                    }
 
-            if (!allowedTypes.includes(file.type)) {
-                showError("Selecciona una imagen JPG, PNG o WEBP.");
-                photoInput.value = "";
-                return;
-            }
+                if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl);
+                    previewUrl = null;
+                    }
 
-            if (file.size > 5 * 1024 * 1024) {
-                showError("La fotografía no debe superar los 5 MB.");
-                photoInput.value = "";
-                return;
-            }
+                if (photoPreview) {
+                    photoPreview.src =
+                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
+                    }
 
-            hideError();
-            selectedPhoto = file;
+                removePhotoButton.classList.add("hidden");
+                hideError();
+                });
 
-            if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
-            }
-
-            previewUrl = URL.createObjectURL(file);
-
-            if (photoPreview) {
-                photoPreview.src = previewUrl;
-            }
-
-            removePhotoButton?.classList.remove("hidden");
-        });
-
-        removePhotoButton?.addEventListener("click", () => {
-            selectedPhoto = null;
-
-            if (photoInput) {
-                photoInput.value = "";
-            }
-
-            if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
-                previewUrl = null;
-            }
-
-            if (photoPreview) {
-                photoPreview.src =
-                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23f1f5f9'/%3E%3Ccircle cx='60' cy='43' r='21' fill='%23cbd5e1'/%3E%3Cpath d='M20 108c3-25 18-38 40-38s37 13 40 38' fill='%23cbd5e1'/%3E%3C/svg%3E";
-            }
-
-            removePhotoButton.classList.add("hidden");
-            hideError();
-        });
-
-        function showError(message: string) {
-            if (!error) return;
-            error.innerHTML = `
+            function showError(message: string) {
+                if (!error) return;
+                error.innerHTML = `
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <p>${message}</p>
                 </div>
             `;
-            error.classList.remove("hidden");
-        }
-
-        function hideError() {
-            error?.classList.add("hidden");
-        }
-
-        function validateTechnician(
-            name: string,
-            phone: string,
-            email: string,
-            password: string
-        ): string | null {
-            if (!name.trim()) {
-                return "El nombre del técnico es obligatorio.";
-            }
-
-            if (name.trim().length < 3) {
-                return "El nombre debe tener al menos 3 caracteres.";
-            }
-
-            if (!email.trim() || !email.includes('@')) {
-                return "Ingresa un correo electrónico válido.";
-            }
-
-            if (password.length < 6) {
-                return "La contraseña debe tener al menos 6 caracteres.";
-            }
-
-            if (phone.trim()) {
-                const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
-                const digitsOnly = cleanPhone.replace("+", "");
-                const pureNumber = digitsOnly.slice(-10);
-                const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);
-
-                if (isAllSameDigits) {
-                    return "El número de teléfono no puede tener todos sus dígitos iguales.";
+                error.classList.remove("hidden");
                 }
 
-                const phoneRegex = /^(\+52|\+1)\d{10}$/;
-                if (!phoneRegex.test(cleanPhone)) {
-                    return "Introduce un número de teléfono de 10 dígitos válido.";
+            function hideError() {
+                error?.classList.add("hidden");
                 }
-            }
 
-            return null;
-        }
+            function validateTechnician(
+                name: string,
+                phone: string,
+                email: string,
+                password: string
+                ): string | null {
+                if (!name.trim()) {
+                    return "El nombre del técnico es obligatorio.";
+                    }
 
-        form?.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            hideError();
+                if (name.trim().length < 3) {
+                    return "El nombre debe tener al menos 3 caracteres.";
+                    }
 
-            const countryCode = phoneCountrySelect?.value ?? "+52";
-            const digits = phoneDigitsInput?.value.trim() ?? "";
-            const fullPhone = digits ? `${countryCode}${digits}` : "";
+                if (!email.trim() || !email.includes('@')) {
+                    return "Ingresa un correo electrónico válido.";
+                    }
 
-            const emailValue = emailInput?.value.trim() ?? "";
-            const passwordValue = passwordInput?.value ?? "";
-            const specialtySelect = document.querySelector<HTMLSelectElement>("#specialty");
+                if (password.length < 6) {
+                    return "La contraseña debe tener al menos 6 caracteres.";
+                    }
 
-            const validationError = validateTechnician(
-                nameInput?.value ?? "",
-                fullPhone,
-                emailValue,
-                passwordValue
-            );
+                if (phone.trim()) {
+                    const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
+                    const digitsOnly = cleanPhone.replace("+", "");
+                    const pureNumber = digitsOnly.slice(-10);
+                    const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);
 
-            if (validationError) {
-                showError(validationError);
-                return;
-            }
+                    if (isAllSameDigits) {
+                        return "El número de teléfono no puede tener todos sus dígitos iguales.";
+                        }
 
-            if (button) {
-                button.disabled = true;
-                button.innerHTML = `
+                    const phoneRegex = /^(\+52|\+1)\d{10}$/;
+                    if (!phoneRegex.test(cleanPhone)) {
+                        return "Introduce un número de teléfono de 10 dígitos válido.";
+                        }
+                    }
+
+                return null;
+                }
+
+            form?.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                hideError();
+
+                const countryCode = phoneCountrySelect?.value ?? "+52";
+                const digits = phoneDigitsInput?.value.trim() ?? "";
+                const fullPhone = digits ? `${countryCode}${digits}` : "";
+
+                const emailValue = emailInput?.value.trim() ?? "";
+                const passwordValue = passwordInput?.value ?? "";
+
+                // OBTENER CHECKBOXES SELECCIONADOS
+                const checkedSpecialties = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="specialties"]:checked')).map(input => input.value);
+                const specialtiesArray = checkedSpecialties.length > 0 ? checkedSpecialties : ["General"];
+
+
+                const validationError = validateTechnician(
+                    nameInput?.value ?? "",
+                    fullPhone,
+                    emailValue,
+                    passwordValue
+                    );
+
+                if (validationError) {
+                    showError(validationError);
+                    return;
+                    }
+
+                if (button) {
+                    button.disabled = true;
+                    button.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     ${selectedPhoto ? "Guardando técnico..." : "Creando acceso..."}
-                `;
-            }
+                        `;
+                    }
 
-            try {
-                const technician = await createTechnician({
-                    name: nameInput!.value.trim(),
-                    phone: fullPhone || null,
-                    email: emailValue,
-                    password: passwordValue,
-                    specialty: specialtySelect?.value ?? "General"
-                });
+                try {
+                    const technician = await createTechnician({
+                        name: nameInput!.value.trim(),
+                        phone: fullPhone || null,
+                        email: emailValue,
+                        password: passwordValue,
+                        specialties: specialtiesArray // <--- MANDAMOS EL ARRAY
+                        });
 
-                if (selectedPhoto) {
-                    try {
-                        await uploadTechnicianPhoto(
-                            technician.id,
-                            selectedPhoto
-                        );
-                    } catch {
-                        showError(
-                            "El técnico se creó, pero no se pudo subir su fotografía. Puedes intentarlo de nuevo desde la edición."
-                        );
+                    if (selectedPhoto) {
+                        try {
+                            await uploadTechnicianPhoto(
+                                technician.id,
+                                selectedPhoto
+                                );
+                            } catch {
+                            showError(
+                                "El técnico se creó, pero no se pudo subir su fotografía. Puedes intentarlo de nuevo desde la edición."
+                                );
 
-                        if (button) {
-                            button.disabled = false;
-                            button.textContent = "Finalizar";
-                            button.onclick = () => window.location.href = "/technicians";
+                            if (button) {
+                                button.disabled = false;
+                                button.textContent = "Finalizar";
+                                button.onclick = () => window.location.href = "/technicians";
+                                }
+
+                            return;
+                            }
                         }
 
-                        return;
+                    window.location.href = "/technicians";
+                    } catch (err) {
+                    showError(
+                        err instanceof Error
+                            ? err.message
+                            : "No se pudo crear el técnico."
+                        );
+
+                    if (button) {
+                        button.disabled = false;
+                        button.textContent = "Guardar técnico";
+                        }
                     }
-                }
-
-                window.location.href = "/technicians";
-            } catch (err) {
-                showError(
-                    err instanceof Error
-                        ? err.message
-                        : "No se pudo crear el técnico."
-                );
-
-                if (button) {
-                    button.disabled = false;
-                    button.textContent = "Guardar técnico";
-                }
-            }
-        });
+                });
     </script>
 </Layout>
