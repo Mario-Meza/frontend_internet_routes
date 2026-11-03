@@ -34,7 +34,7 @@ import Layout from "../../layouts/Layout.astro";
                         Técnicos registrados
                     </h1>
                     <p class="mt-2 text-base text-slate-500 max-w-xl">
-                        Administra y monitorea al personal técnico. Gestiona sus perfiles y estado operativo.
+                        Administra y monitorea al personal técnico.
                     </p>
                 </div>
 
@@ -109,22 +109,22 @@ import Layout from "../../layouts/Layout.astro";
                 </div>
             </div>
 
-            <!-- TABLA -->
-            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ring-1 ring-slate-200/50">
-                <div class="overflow-x-auto">
+            <!-- TABLA Y PAGINACIÓN -->
+            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] ring-1 ring-slate-200/50 flex flex-col">
+                <div class="overflow-x-auto overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
                     <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50 border-b border-slate-200">
+                        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-sm">
                         <tr>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500 backdrop-blur-sm">
                                 Técnico
                             </th>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500 backdrop-blur-sm">
                                 Teléfono
                             </th>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500 backdrop-blur-sm">
                                 Estado
                             </th>
-                            <th class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-slate-500">
+                            <th class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-slate-500 backdrop-blur-sm">
                                 Acciones
                             </th>
                         </tr>
@@ -135,6 +135,31 @@ import Layout from "../../layouts/Layout.astro";
                         >
                         </tbody>
                     </table>
+                </div>
+
+                <!-- CONTROLES DE PAGINACIÓN -->
+                <div id="pagination-wrapper" class="hidden flex items-center justify-between border-t border-slate-100 bg-slate-50/80 px-6 py-4">
+                    <div class="hidden sm:block">
+                        <p class="text-sm text-slate-500">
+                            Mostrando <span id="page-start" class="font-bold text-slate-900">0</span> a <span id="page-end" class="font-bold text-slate-900">0</span> de <span id="page-total" class="font-bold text-slate-900">0</span> técnicos
+                        </p>
+                    </div>
+                    <div class="flex flex-1 justify-between sm:justify-end gap-3">
+                        <button
+                                id="prev-page"
+                                type="button"
+                                class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-slate-900 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Anterior
+                        </button>
+                        <button
+                                id="next-page"
+                                type="button"
+                                class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-slate-900 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -154,7 +179,7 @@ import Layout from "../../layouts/Layout.astro";
                 <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
                     Intenta cambiar los términos de búsqueda o registra a tu primer técnico en el sistema para comenzar a asignar rutas.
                 </p>
-                <button onclick="document.getElementById('search').focus()" class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700">
+                <button onclick="document.getElementById('search').value=''; document.getElementById('search').dispatchEvent(new Event('input'))" class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700">
                     Limpiar búsqueda <span aria-hidden="true" class="ml-1">→</span>
                 </button>
             </div>
@@ -201,11 +226,23 @@ import Layout from "../../layouts/Layout.astro";
         const empty = document.querySelector<HTMLDivElement>("#empty");
         const message = document.querySelector<HTMLDivElement>("#message");
 
+        // Elementos de Paginación
+        const paginationWrapper = document.getElementById("pagination-wrapper");
+        const prevPageBtn = document.getElementById("prev-page") as HTMLButtonElement;
+        const nextPageBtn = document.getElementById("next-page") as HTMLButtonElement;
+        const pageStartEl = document.getElementById("page-start");
+        const pageEndEl = document.getElementById("page-end");
+        const pageTotalEl = document.getElementById("page-total");
+
         // Elementos del Modal
         const deleteModal = document.getElementById("deleteModal") as HTMLDialogElement;
         const confirmDeleteBtn = document.getElementById("confirmDeleteBtn") as HTMLButtonElement;
         const cancelDeleteBtn = document.getElementById("cancelDeleteBtn") as HTMLButtonElement;
+
         let technicianIdToDelete: string | null = null;
+        let technicians: Technician[] = [];
+        let currentPage = 1;
+        const itemsPerPage = 5; // <--- Cambia a 10 o 20 según lo necesites
 
         // Elementos de Estadísticas
         const statTotal = document.getElementById("stat-total");
@@ -214,7 +251,6 @@ import Layout from "../../layouts/Layout.astro";
 
         const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
 
-        let technicians: Technician[] = [];
 
         function escapeHtml(value: string): string {
             const div = document.createElement("div");
@@ -250,6 +286,7 @@ import Layout from "../../layouts/Layout.astro";
         async function loadTechnicians() {
             try {
                 technicians = await getTechnicians();
+                console.log("Técnicos recibidos:", technicians); // VERIFICA AQUÍ EL OBJETO
                 updateStats();
                 renderTechnicians();
             } catch (error) {
@@ -267,6 +304,7 @@ import Layout from "../../layouts/Layout.astro";
 
             const query = search.trim().toLowerCase();
 
+            // 1. Filtrar los técnicos
             const filtered = technicians.filter(
                 (technician) =>
                     technician.name.toLowerCase().includes(query) ||
@@ -277,15 +315,54 @@ import Layout from "../../layouts/Layout.astro";
 
             if (filtered.length === 0) {
                 empty.classList.remove("hidden");
+                paginationWrapper?.classList.add("hidden");
                 return;
             }
 
             empty.classList.add("hidden");
+            paginationWrapper?.classList.remove("hidden");
 
-            body.innerHTML = filtered.map((technician) => technicianRow(technician)).join("");
+            // 2. Lógica de Paginación
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+
+            const paginatedTechnicians = filtered.slice(startIndex, endIndex);
+
+            // 3. Renderizar
+            body.innerHTML = paginatedTechnicians.map((technician) => technicianRow(technician)).join("");
+
+            // 4. Controles de Paginación
+            if (pageStartEl) pageStartEl.textContent = String(startIndex + 1);
+            if (pageEndEl) pageEndEl.textContent = String(endIndex);
+            if (pageTotalEl) pageTotalEl.textContent = String(totalItems);
+
+            if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+            if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
 
             addEvents();
         }
+
+        // --- Eventos de Paginación ---
+        prevPageBtn?.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTechnicians(searchInput?.value ?? "");
+                document.querySelector('.overflow-y-auto')?.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        nextPageBtn?.addEventListener("click", () => {
+            currentPage++;
+            renderTechnicians(searchInput?.value ?? "");
+            document.querySelector('.overflow-y-auto')?.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
 
         function statusSwitch(technician: Technician): string {
             const active = technician.active;
@@ -336,11 +413,20 @@ import Layout from "../../layouts/Layout.astro";
             return `
                 <tr class="group transition-colors hover:bg-slate-50">
 
+                    <!-- TÉCNICO (FOTO + NOMBRE + ESPECIALIDAD) -->
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-4">
                             ${avatarHtml}
-                            <div class="font-bold text-slate-800">
-                                ${escapeHtml(technician.name)}
+                            <div>
+                                <div class="font-bold text-slate-800">
+                                    ${escapeHtml(technician.name)}
+                                </div>
+                                <div class="mt-1 inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
+                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    ${escapeHtml(technician.specialty ?? 'General')}
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -427,6 +513,10 @@ import Layout from "../../layouts/Layout.astro";
                 technicians = technicians.filter((technician) => technician.id !== technicianIdToDelete);
 
                 updateStats();
+                const totalItems = technicians.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+
                 renderTechnicians(searchInput?.value ?? "");
                 showMessage("Técnico eliminado de la base de datos.", false);
             } catch (error) {
@@ -485,6 +575,7 @@ import Layout from "../../layouts/Layout.astro";
         }
 
         searchInput?.addEventListener("input", () => {
+            currentPage = 1;
             renderTechnicians(searchInput.value);
         });
 

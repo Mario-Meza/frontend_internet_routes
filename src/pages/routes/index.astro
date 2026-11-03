@@ -284,6 +284,7 @@ import Layout from "../../layouts/Layout.astro";
                 .map((route) => {
                     const technician = technicianMap.get(route.technician_id) as any;
                     const technicianName = technician?.name ?? "Técnico desconocido";
+                    const technicianSpecialty = technician?.specialty ?? "General";
                     const serviceCount = route.services.length;
                     const serviceLabel = serviceCount === 1 ? "Visita" : "Visitas";
                     const avatarColor = getAvatarColor(technicianName);
@@ -324,13 +325,21 @@ import Layout from "../../layouts/Layout.astro";
                                 </div>
                             </td>
 
-                            <!-- TÉCNICO -->
+                            <!-- TÉCNICO + ESPECIALIDAD -->
                             <td data-label="Técnico" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-4">
                                     ${avatarHtml}
-                                    <span class="text-sm font-bold text-slate-800">
-                                        ${escapeHtml(technicianName)}
-                                    </span>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">
+                                            ${escapeHtml(technicianName)}
+                                        </div>
+                                        <div class="mt-1 inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
+                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            </svg>
+                                            ${escapeHtml(technicianSpecialty)}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
 
@@ -368,7 +377,7 @@ import Layout from "../../layouts/Layout.astro";
                             ? `
                                                 <a
                                                     href="/routes/edit?id=${route.id}"
-                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95 md:p-2"
+                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-orange-600 active:scale-95 md:p-2"
                                                     title="Editar asignación"
                                                 >
                                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -425,7 +434,7 @@ import Layout from "../../layouts/Layout.astro";
         }
 
         // ==============================================
-        // EVENTOS DE BOTONES Y MODALES (Sin window.confirm)
+        // EVENTOS DE BOTONES Y MODALES
         // ==============================================
         function addTableEvents(technicianMap: Map<string, any>) {
             document.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
@@ -442,7 +451,6 @@ import Layout from "../../layouts/Layout.astro";
                 });
             });
 
-            // Asignar los métodos a los botones de los modales de Tailwind
             if (confirmCancelBtn) {
                 const newCancelBtn = confirmCancelBtn.cloneNode(true) as HTMLButtonElement;
                 confirmCancelBtn.parentNode?.replaceChild(newCancelBtn, confirmCancelBtn);

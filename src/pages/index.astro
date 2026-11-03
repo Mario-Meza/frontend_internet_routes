@@ -2,188 +2,97 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Dashboard - Rutas">
+<Layout title="Rutas">
 
     <main class="min-h-screen bg-slate-50/50 pb-16">
 
         <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
-            <!-- MENSAJE DE NOTIFICACIÓN TOAST -->
-            <div
-                    id="message"
-                    class="mb-6 hidden rounded-2xl p-4 text-sm font-medium shadow-sm transition-all"
-            ></div>
-
-            <!-- CABECERA PRINCIPAL -->
-            <header class="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <!-- CABECERA -->
+            <header class="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
+                    <a href="/" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-orange-600 transition-colors">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Volver a dashboard
+                    </a>
                     <div class="flex items-center gap-2 mb-2">
                         <span class="relative flex h-3 w-3">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                           <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
                         </span>
-                        <span class="text-xs font-bold uppercase tracking-widest text-orange-600">Panel de Control</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-orange-600">Gestión de Campo</span>
                     </div>
                     <h1 class="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
-                        Rutas digitales
+                        Listado de Rutas
                     </h1>
                     <p class="mt-2 text-base text-slate-500 max-w-xl">
-                        Administra, asigna y monitorea el progreso del equipo en campo en tiempo real.
+                        Consulta y administra todas las rutas programadas y sus técnicos asignados.
                     </p>
                 </div>
 
-                <!-- CONTENEDOR DINÁMICO DE BOTONES -->
-                <div id="header-actions" class="flex flex-wrap items-center gap-3">
-                    <!-- Los botones se inyectarán aquí mediante JavaScript -->
-                </div>
+                <a
+                        href="/routes/new"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95 shrink-0"
+                >
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span>Nueva asignación</span>
+                </a>
             </header>
 
-            <!-- TARJETAS RÁPIDAS DE RESUMEN -->
-            <div class="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                <!-- Tarjeta: Total -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Rutas</span>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-inset ring-indigo-100">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div id="stat-total" class="mt-4 text-4xl font-black text-slate-900">0</div>
-                </div>
-
-                <!-- Tarjeta: Asignadas -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Asignadas</span>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-100">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div id="stat-assigned" class="mt-4 text-4xl font-black text-slate-900">0</div>
-                </div>
-
-                <!-- Tarjeta: En Proceso -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg hover:ring-orange-200">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">En Proceso</span>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-600 ring-1 ring-inset ring-orange-100">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div id="stat-progress" class="mt-4 text-4xl font-black text-slate-900">0</div>
-                </div>
-
-                <!-- Tarjeta: Completadas -->
-                <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200/60 transition-transform hover:-translate-y-1 hover:shadow-lg hover:ring-green-200">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Completadas</span>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-green-600 ring-1 ring-inset ring-green-100">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div id="stat-completed" class="mt-4 text-4xl font-black text-slate-900">0</div>
+            <!-- Loading (skeleton) -->
+            <div id="loading" role="status" aria-live="polite" class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/50">
+                <span class="sr-only">Cargando rutas...</span>
+                <div class="animate-pulse divide-y divide-slate-100" aria-hidden="true">
+                    {Array.from({ length: 5 }).map(() => (
+                            <div class="flex flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between">
+                                <div class="h-4 w-28 rounded-md bg-slate-200"></div>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-full bg-slate-200"></div>
+                                    <div class="h-4 w-32 rounded-md bg-slate-200"></div>
+                                </div>
+                                <div class="h-6 w-24 rounded-full bg-slate-200"></div>
+                                <div class="h-6 w-24 rounded-full bg-slate-200"></div>
+                                <div class="h-9 w-32 rounded-xl bg-slate-200"></div>
+                            </div>
+                    ))}
                 </div>
             </div>
 
-            <!-- FILTROS Y BÚSQUEDA -->
-            <div class="mb-6 flex flex-col gap-4 sm:flex-row">
-                <div class="relative flex-1">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </span>
-                    <input
-                            id="search"
-                            type="search"
-                            placeholder="Buscar por técnico o fecha..."
-                            class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm font-medium text-slate-800 placeholder-slate-400 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
-                    />
-                </div>
+            <!-- Toast Messages -->
+            <div id="message" class="mb-6 hidden rounded-2xl p-4 text-sm font-medium shadow-sm transition-all"></div>
+            <div id="error" role="alert" class="hidden rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-700 shadow-sm"></div>
 
-                <div class="relative sm:w-64 shrink-0">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                        </svg>
-                    </span>
-                    <select
-                            id="status-filter"
-                            class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-10 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
-                    >
-                        <option value="">Todos los estados</option>
-                        <option value="assigned">Asignadas</option>
-                        <option value="in_progress">En proceso</option>
-                        <option value="completed">Completadas</option>
-                        <option value="canceled">Canceladas</option>
-                    </select>
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </span>
-                </div>
+            <!-- Tabla -->
+            <div id="routes-container" class="hidden overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/50">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="hidden bg-slate-50 border-b border-slate-200 md:table-header-group">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">Fecha</th>
+                        <th scope="col" class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">Técnico</th>
+                        <th scope="col" class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">Servicios</th>
+                        <th scope="col" class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">Estado</th>
+                        <th scope="col" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-slate-500">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="routes-body" class="block divide-y divide-slate-100 md:table-row-group bg-white"></tbody>
+                </table>
             </div>
 
-            <!-- TABLA PRINCIPAL (Optimizada para Móvil) -->
-            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="hidden bg-slate-50 border-b border-slate-200 md:table-header-group">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                Fecha Programada
-                            </th>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                Técnico Asignado
-                            </th>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                Servicios
-                            </th>
-                            <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                Estado
-                            </th>
-                            <th class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-slate-500">
-                                Acciones
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody
-                                id="routes-body"
-                                class="block divide-y divide-slate-100 bg-white md:table-row-group"
-                        >
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ESTADO VACÍO AMIGABLE -->
-            <div
-                    id="empty"
-                    class="mt-8 hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center shadow-sm sm:p-16"
-            >
+            <!-- Empty State -->
+            <div id="empty" class="hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-16 text-center shadow-sm">
                 <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 ring-8 ring-slate-50/50">
                     <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                     </svg>
                 </div>
-                <h3 class="mt-6 text-xl font-bold text-slate-900">
-                    No encontramos ninguna ruta
-                </h3>
+                <h3 class="mt-6 text-xl font-bold text-slate-900">Aún no hay rutas programadas</h3>
                 <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
-                    Intenta cambiar los términos de búsqueda, ajustar los filtros o crear una nueva asignación para tu equipo.
+                    Crea la primera asignación para organizar las visitas y el trabajo de tu equipo de técnicos.
                 </p>
-                <button onclick="document.getElementById('search').value=''; document.getElementById('search').dispatchEvent(new Event('input'))" class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
-                    Limpiar filtros <span aria-hidden="true" class="ml-1">→</span>
-                </button>
             </div>
 
         </section>
@@ -241,24 +150,20 @@ import Layout from "../layouts/Layout.astro";
     </main>
 
     <script>
-        import {
-            getRoutes,
-            getTechnicians,
-            updateRouteStatus,
-            deleteRoute,
-        } from "../services/api";
-
+        import { getRoutes, getTechnicians, updateRouteStatus, deleteRoute } from "../services/api";
         import type { Route } from "../types/route";
         import type { Technician } from "../types/technician";
 
         const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
-        const currentToken = localStorage.getItem("auth_token");
 
-        // ELEMENTOS DOM PARA MODALES
-        const headerActions = document.getElementById("header-actions");
-        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
-        const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
+        const loading = document.getElementById("loading");
+        const errorContainer = document.getElementById("error");
+        const messageContainer = document.getElementById("message");
+        const container = document.getElementById("routes-container");
+        const empty = document.getElementById("empty");
+        const routesBody = document.getElementById("routes-body");
 
+        // MODALES DOM
         const cancelModal = document.getElementById("cancel-modal");
         const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
         const closeCancelBtn = document.getElementById("close-cancel-btn");
@@ -267,62 +172,26 @@ import Layout from "../layouts/Layout.astro";
         const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
         const closeDeleteBtn = document.getElementById("close-delete-btn");
 
-        let routeIdToActOn: string | null = null; // Guardará el ID temporalmente para la acción
+        let routeIdToActOn: string | null = null;
+        let routesData: Route[] = [];
 
-        function renderHeaderButtons() {
-            if (!headerActions) return;
-
-            if (currentToken) {
-                headerActions.innerHTML = `
-                    <a href="/routes/new" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95 sm:w-auto sm:py-2.5">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Nueva Asignación
-                    </a>
-                `;
-
-                confirmLogoutBtn?.addEventListener("click", () => {
-                    localStorage.removeItem("auth_token");
-                    localStorage.removeItem("user_role");
-                    window.location.href = "/login";
-                });
-            } else {
-                window.location.href = "/login";
-            }
-        }
-
-        renderHeaderButtons();
-
-
-        // LOGICA TABLA Y DATOS
-        const routesBody = document.querySelector<HTMLTableSectionElement>("#routes-body");
-        const searchInput = document.querySelector<HTMLInputElement>("#search");
-        const statusFilter = document.querySelector<HTMLSelectElement>("#status-filter");
-        const emptyMessage = document.querySelector<HTMLDivElement>("#empty");
-        const message = document.querySelector<HTMLDivElement>("#message");
-
-        const statTotal = document.getElementById("stat-total");
-        const statAssigned = document.getElementById("stat-assigned");
-        const statProgress = document.getElementById("stat-progress");
-        const statCompleted = document.getElementById("stat-completed");
-
-        let routes: Route[] = [];
-        let technicians: Technician[] = [];
-
-        function escapeHtml(value: string): string {
-            const div = document.createElement("div");
-            div.textContent = value;
-            return div.innerHTML;
+        function escapeHtml(value: unknown): string {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
         }
 
         function getInitials(name: string): string {
-            return name
-                .split(" ")
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((word) => word[0].toUpperCase())
-                .join("");
+            return name.split(" ").filter(Boolean).slice(0, 2).map((word) => word[0].toUpperCase()).join("");
+        }
+
+        function formatDate(value: string): string {
+            const [year, month, day] = value.split("-");
+            const date = new Date(Number(year), Number(month) - 1, Number(day));
+            return date.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" }).replace('.', '');
         }
 
         function getAvatarColor(name: string): string {
@@ -333,197 +202,6 @@ import Layout from "../layouts/Layout.astro";
             ];
             const charCode = name.charCodeAt(0) || 0;
             return colors[charCode % colors.length];
-        }
-
-        function updateStats() {
-            if (statTotal) statTotal.textContent = String(routes.length);
-            if (statAssigned) statAssigned.textContent = String(routes.filter(r => r.status === "assigned").length);
-            if (statProgress) statProgress.textContent = String(routes.filter(r => r.status === "in_progress").length);
-            if (statCompleted) statCompleted.textContent = String(routes.filter(r => r.status === "completed").length);
-        }
-
-        async function loadData() {
-            try {
-                const [routesResponse, techniciansResponse] = await Promise.all([
-                    getRoutes(),
-                    getTechnicians(),
-                ]);
-                routes = routesResponse;
-                technicians = techniciansResponse;
-                updateStats();
-                renderRoutes();
-            } catch (error) {
-                showMessage(
-                    error instanceof Error ? error.message : "No se pudieron cargar las rutas.",
-                    true,
-                );
-            }
-        }
-
-        function renderRoutes() {
-            if (!routesBody || !emptyMessage) return;
-
-            const query = searchInput?.value.trim().toLowerCase() ?? "";
-            const selectedStatus = statusFilter?.value ?? "";
-
-            const filtered = routes.filter((route) => {
-                const technician = technicians.find((item) => item.id === route.technician_id);
-                const technicianName = technician?.name.toLowerCase() ?? "";
-                const formattedDate = formatDate(route.route_date).toLowerCase();
-                const technicalDate = route.route_date.toLowerCase();
-
-                const matchesSearch =
-                    !query ||
-                    technicianName.includes(query) ||
-                    formattedDate.includes(query) ||
-                    technicalDate.includes(query);
-
-                const matchesStatus = !selectedStatus || route.status === selectedStatus;
-
-                return matchesSearch && matchesStatus;
-            });
-
-            routesBody.innerHTML = "";
-
-            if (filtered.length === 0) {
-                emptyMessage.classList.remove("hidden");
-                return;
-            }
-
-            emptyMessage.classList.add("hidden");
-            routesBody.innerHTML = filtered.map((route) => routeRow(route)).join("");
-            addTableEvents();
-        }
-
-        function routeRow(route: Route): string {
-            const technician = technicians.find((item) => item.id === route.technician_id) as Technician & { photo_url?: string | null; photo?: string | null } | undefined;
-            const technicianName = technician?.name ?? "Técnico no encontrado";
-            const servicesCount = route.services.length;
-            const avatarColor = getAvatarColor(technicianName);
-
-            let avatarHtml = '';
-            if (technician) {
-                const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
-                avatarHtml = `
-                    <img
-                        src="${escapeHtml(photoUrl)}"
-                        alt="${escapeHtml(technicianName)}"
-                        class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm"
-                        onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white', textContent: '${getInitials(technicianName)}'}));"
-                    />
-                `;
-            } else {
-                avatarHtml = `
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
-                        ${escapeHtml(getInitials(technicianName))}
-                    </span>
-                 `;
-            }
-
-            return `
-                <tr class="group block border-b border-slate-100 p-4 transition-colors hover:bg-slate-50 md:table-row md:border-b-0 md:p-0">
-                    
-                    <td data-label="Fecha" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
-                        <div class="flex items-center gap-3">
-                            <div class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 md:flex">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <span class="text-sm font-semibold text-slate-700 tabular-nums">
-                                ${escapeHtml(formatDate(route.route_date))}
-                            </span>
-                        </div>
-                    </td>
-
-                    <td data-label="Técnico" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
-                        <div class="flex items-center gap-3">
-                            ${avatarHtml}
-                            <span class="text-sm font-bold text-slate-800">
-                                ${escapeHtml(technicianName)}
-                            </span>
-                        </div>
-                    </td>
-
-                    <td data-label="Servicios" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
-                        <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-inset ring-slate-200">
-                            <span class="text-slate-900">${servicesCount}</span>
-                            <span>${servicesCount === 1 ? "Visita" : "Visitas"}</span>
-                        </span>
-                    </td>
-
-                    <td data-label="Estado" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
-                        ${renderStatus(route.status)}
-                    </td>
-
-                    <td class="mt-4 flex justify-end border-t border-slate-100 pt-4 md:mt-0 md:table-cell md:border-0 md:px-6 md:py-5 md:pt-5">
-                        <div class="flex items-center gap-2 transition-opacity md:opacity-80 md:group-hover:opacity-100">
-                            <a
-                                href="/routes/detail?id=${route.id}"
-                                class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-indigo-600 active:scale-95 md:p-2"
-                                title="Ver detalles completos"
-                            >
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </a>
-
-                            ${
-                route.status === "assigned"
-                    ? `
-                                        <a
-                                            href="/routes/edit?id=${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95 md:p-2"
-                                            title="Editar asignación"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                    `
-                    : ""
-            }
-
-                            ${
-                route.status === "assigned" || route.status === "in_progress"
-                    ? `
-                                        <button
-                                            type="button"
-                                            data-action="cancel"
-                                            data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
-                                            title="Suspender/Cancelar ruta"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                            </svg>
-                                        </button>
-                                    `
-                    : ""
-            }
-
-                            ${
-                route.status === "assigned"
-                    ? `
-                                        <button
-                                            type="button"
-                                            data-action="delete"
-                                            data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
-                                            title="Eliminar permanentemente"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    `
-                    : ""
-            }
-                        </div>
-                    </td>
-                </tr>
-            `;
         }
 
         function renderStatus(status: string): string {
@@ -543,10 +221,223 @@ import Layout from "../layouts/Layout.astro";
             `;
         }
 
+        function showMessage(text: string, isError: boolean = false) {
+            if (!messageContainer) return;
+            messageContainer.innerHTML = `
+                <div class="flex items-center gap-3">
+                    ${isError
+                ? `<svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+                : `<svg class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`}
+                    <p>${text}</p>
+                </div>
+            `;
+            messageContainer.className = isError
+                ? "mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800 shadow-sm"
+                : "mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 shadow-sm";
+            messageContainer.classList.remove("hidden");
+
+            setTimeout(() => {
+                messageContainer.classList.add("hidden");
+            }, 4000);
+        }
+
+        async function loadRoutes() {
+            try {
+                const [routesResponse, technicians] = await Promise.all([
+                    getRoutes(),
+                    getTechnicians(),
+                ]);
+
+                routesData = routesResponse;
+                loading?.classList.add("hidden");
+
+                if (routesData.length === 0) {
+                    empty?.classList.remove("hidden");
+                    return;
+                }
+
+                container?.classList.remove("hidden");
+
+                const technicianMap = new Map(
+                    technicians.map((technician) => [technician.id, technician])
+                );
+
+                renderTable(technicianMap);
+
+            } catch (err) {
+                loading?.classList.add("hidden");
+                if (errorContainer) {
+                    errorContainer.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <p>${err instanceof Error ? err.message : "No se pudieron cargar las rutas."}</p>
+                        </div>
+                    `;
+                    errorContainer.classList.remove("hidden");
+                }
+            }
+        }
+
+        function renderTable(technicianMap: Map<string, Technician>) {
+            if (!routesBody) return;
+
+            routesBody.innerHTML = routesData
+                .map((route) => {
+                    const technician = technicianMap.get(route.technician_id);
+                    const technicianName = technician?.name ?? "Técnico desconocido";
+                    const technicianSpecialty = technician?.specialty ?? "General";
+                    const serviceCount = route.services.length;
+                    const serviceLabel = serviceCount === 1 ? "Visita" : "Visitas";
+                    const avatarColor = getAvatarColor(technicianName);
+
+                    let avatarHtml = '';
+                    if (technician) {
+                        const photoUrl = technician.photo_url || `${API_URL}/technicians/${technician.id}/photo`;
+                        avatarHtml = `
+                            <img
+                                src="${escapeHtml(photoUrl)}"
+                                alt="${escapeHtml(technicianName)}"
+                                class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm"
+                                onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white', textContent: '${getInitials(technicianName)}'}));"
+                            />
+                        `;
+                    } else {
+                        avatarHtml = `
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
+                                ${escapeHtml(getInitials(technicianName))}
+                            </span>
+                        `;
+                    }
+
+                    return `
+                        <tr class="group block px-4 py-4 transition-colors hover:bg-slate-50 md:table-row md:px-0 md:py-0 border-b border-slate-100 md:border-b-0">
+                            
+                            <!-- FECHA -->
+                            <td data-label="Fecha" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
+                                <div class="flex items-center gap-3">
+                                    <div class="hidden md:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-slate-700 tabular-nums">
+                                        ${escapeHtml(formatDate(route.route_date))}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- TÉCNICO + ESPECIALIDAD -->
+                            <td data-label="Técnico" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
+                                <div class="flex items-center gap-4">
+                                    ${avatarHtml}
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">
+                                            ${escapeHtml(technicianName)}
+                                        </div>
+                                        <div class="mt-1 inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
+                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            </svg>
+                                            ${escapeHtml(technicianSpecialty)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- SERVICIOS -->
+                            <td data-label="Servicios" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
+                                <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-inset ring-slate-200">
+                                    <span class="text-slate-900">${serviceCount}</span>
+                                    <span>${serviceLabel}</span>
+                                </span>
+                            </td>
+
+                            <!-- ESTADO -->
+                            <td data-label="Estado" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
+                                ${renderStatus(route.status)}
+                            </td>
+
+                            <!-- ACCIONES COMPLETAS -->
+                            <td class="mt-4 flex justify-end pt-4 md:mt-0 md:table-cell md:px-6 md:py-5 border-t border-slate-100 md:border-0 md:pt-5">
+                                <div class="flex items-center gap-2 transition-opacity md:opacity-80 md:group-hover:opacity-100">
+                                    
+                                    <a
+                                        href="/routes/detail?id=${route.id}"
+                                        class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-indigo-600 active:scale-95 md:p-2"
+                                        title="Ver detalles completos"
+                                    >
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <span class="md:hidden text-sm font-bold ml-2 text-slate-600">Ver detalles</span>
+                                    </a>
+
+                                    ${
+                        route.status === "assigned"
+                            ? `
+                                                <a
+                                                    href="/routes/edit?id=${route.id}"
+                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-orange-600 active:scale-95 md:p-2"
+                                                    title="Editar asignación"
+                                                >
+                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </a>
+                                            `
+                            : ""
+                    }
+
+                                    ${
+                        route.status === "assigned" || route.status === "in_progress"
+                            ? `
+                                                <button
+                                                    type="button"
+                                                    data-action="cancel"
+                                                    data-id="${route.id}"
+                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
+                                                    title="Suspender/Cancelar ruta"
+                                                >
+                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                    </svg>
+                                                </button>
+                                            `
+                            : ""
+                    }
+
+                                    ${
+                        route.status === "assigned"
+                            ? `
+                                                <button
+                                                    type="button"
+                                                    data-action="delete"
+                                                    data-id="${route.id}"
+                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
+                                                    title="Eliminar permanentemente"
+                                                >
+                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            `
+                            : ""
+                    }
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                })
+                .join("");
+
+            addTableEvents(technicianMap);
+        }
+
         // ==============================================
-        // LÓGICA DE EVENTOS DE BOTONES Y MODALES DE LA TABLA
+        // EVENTOS DE BOTONES Y MODALES
         // ==============================================
-        function addTableEvents() {
+        function addTableEvents(technicianMap: Map<string, Technician>) {
             document.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
                 button.addEventListener("click", () => {
                     routeIdToActOn = button.dataset.id || null;
@@ -560,74 +451,55 @@ import Layout from "../layouts/Layout.astro";
                     deleteModal?.classList.remove("hidden");
                 });
             });
+
+            if (confirmCancelBtn) {
+                const newCancelBtn = confirmCancelBtn.cloneNode(true) as HTMLButtonElement;
+                confirmCancelBtn.parentNode?.replaceChild(newCancelBtn, confirmCancelBtn);
+
+                newCancelBtn.addEventListener("click", async () => {
+                    if (!routeIdToActOn) return;
+                    cancelModal?.classList.add("hidden");
+
+                    try {
+                        await updateRouteStatus(routeIdToActOn, "canceled");
+                        routesData = routesData.map((route) => (route.id === routeIdToActOn ? { ...route, status: "canceled" } : route));
+                        renderTable(technicianMap);
+                        showMessage("Ruta suspendida correctamente.", false);
+                    } catch (error) {
+                        showMessage(error instanceof Error ? error.message : "No se pudo cancelar la ruta.", true);
+                    }
+                });
+            }
+
+            if (confirmDeleteBtn) {
+                const newDeleteBtn = confirmDeleteBtn.cloneNode(true) as HTMLButtonElement;
+                confirmDeleteBtn.parentNode?.replaceChild(newDeleteBtn, confirmDeleteBtn);
+
+                newDeleteBtn.addEventListener("click", async () => {
+                    if (!routeIdToActOn) return;
+                    deleteModal?.classList.add("hidden");
+
+                    try {
+                        await deleteRoute(routeIdToActOn);
+                        routesData = routesData.filter((route) => route.id !== routeIdToActOn);
+
+                        if(routesData.length === 0) {
+                            document.getElementById("routes-container")?.classList.add("hidden");
+                            document.getElementById("empty")?.classList.remove("hidden");
+                        } else {
+                            renderTable(technicianMap);
+                        }
+                        showMessage("Asignación eliminada permanentemente.", false);
+                    } catch (error) {
+                        showMessage(error instanceof Error ? error.message : "Error al intentar eliminar.", true);
+                    }
+                });
+            }
         }
 
-        // Eventos para ocultar modales
         closeCancelBtn?.addEventListener("click", () => cancelModal?.classList.add("hidden"));
         closeDeleteBtn?.addEventListener("click", () => deleteModal?.classList.add("hidden"));
 
-        // Evento: Confirmar Cancelar
-        confirmCancelBtn?.addEventListener("click", async () => {
-            if (!routeIdToActOn) return;
-            cancelModal?.classList.add("hidden");
-
-            try {
-                await updateRouteStatus(routeIdToActOn, "canceled");
-                routes = routes.map((route) => (route.id === routeIdToActOn ? { ...route, status: "canceled" } : route));
-                updateStats();
-                renderRoutes();
-                showMessage("Ruta suspendida correctamente.", false);
-            } catch (error) {
-                showMessage(error instanceof Error ? error.message : "No se pudo cancelar la ruta.", true);
-            }
-        });
-
-        // Evento: Confirmar Eliminar
-        confirmDeleteBtn?.addEventListener("click", async () => {
-            if (!routeIdToActOn) return;
-            deleteModal?.classList.add("hidden");
-
-            try {
-                await deleteRoute(routeIdToActOn);
-                routes = routes.filter((route) => route.id !== routeIdToActOn);
-                updateStats();
-                renderRoutes();
-                showMessage("Asignación eliminada permanentemente.", false);
-            } catch (error) {
-                showMessage(error instanceof Error ? error.message : "Error al intentar eliminar.", true);
-            }
-        });
-
-        function showMessage(text: string, isError: boolean) {
-            if (!message) return;
-            message.innerHTML = `
-                <div class="flex items-center gap-3">
-                    ${isError
-                ? `<svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
-                : `<svg class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
-            }
-                    <p>${text}</p>
-                </div>
-            `;
-            message.className = isError
-                ? "mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800 shadow-sm"
-                : "mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 shadow-sm";
-            message.classList.remove("hidden");
-
-            setTimeout(() => {
-                message.classList.add("hidden");
-            }, 4000);
-        }
-
-        function formatDate(value: string): string {
-            const [year, month, day] = value.split("-");
-            const date = new Date(Number(year), Number(month) - 1, Number(day));
-            return date.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }).replace('.', '');
-        }
-
-        searchInput?.addEventListener("input", () => renderRoutes());
-        statusFilter?.addEventListener("change", () => renderRoutes());
-
-        if (currentToken) loadData();
+        loadRoutes();
     </script>
 </Layout>

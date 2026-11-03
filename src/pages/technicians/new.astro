@@ -118,6 +118,28 @@ import Layout from "../../layouts/Layout.astro";
                                 />
                             </div>
                         </div>
+                        <!-- SELECT DE ESPECIALIDAD -->
+                        <div class="mt-4">
+                            <label for="specialty" class="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500">
+                                Especialidad Principal
+                            </label>
+                            <div class="relative">
+                                <select id="specialty" name="specialty" class="w-full appearance-none rounded-xl border border-slate-300 bg-slate-50/50 py-3.5 pl-4 pr-10 text-sm font-medium text-slate-700 outline-none transition focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/20">
+                                    <option value="General">General / Multipropósito</option>
+                                    <option value="Fibra Óptica">Fibra Óptica</option>
+                                    <option value="Fusión y Empalme">Fusión y Empalme</option>
+                                    <option value="Antena Wireless">Antena Wireless</option>
+                                    <option value="Torrero">Torrero (Trabajo en alturas)</option>
+                                    <option value="Soporte Residencial">Soporte Residencial (Routers/UTP)</option>
+                                    <option value="Construcción">Construcción / Obra Civil</option>
+                                </select>
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
 
                         <div class="sm:col-span-2 my-2 border-t border-slate-100"></div>
 
@@ -333,6 +355,7 @@ import Layout from "../../layouts/Layout.astro";
 
             const emailValue = emailInput?.value.trim() ?? "";
             const passwordValue = passwordInput?.value ?? "";
+            const specialtySelect = document.querySelector<HTMLSelectElement>("#specialty");
 
             const validationError = validateTechnician(
                 nameInput?.value ?? "",
@@ -362,7 +385,8 @@ import Layout from "../../layouts/Layout.astro";
                     name: nameInput!.value.trim(),
                     phone: fullPhone || null,
                     email: emailValue,
-                    password: passwordValue
+                    password: passwordValue,
+                    specialty: specialtySelect?.value ?? "General"
                 });
 
                 if (selectedPhoto) {
