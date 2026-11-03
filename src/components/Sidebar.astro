@@ -48,7 +48,7 @@
         </div>
 
         <!-- NAVEGACIÓN -->
-        <nav class="flex-1 space-y-1.5 overflow-y-auto px-4 py-6">
+        <nav class="flex-1 space-y-1.5 overflow-y-auto px-4 py-6 flex flex-col">
             <p class="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
                 Menú Principal
             </p>
@@ -118,6 +118,22 @@
                 </span>
                 <span>Configuración</span>
             </a>
+
+            <!-- SEPARADOR -->
+            <div class="my-4 border-t border-slate-100"></div>
+
+            <!-- BOTÓN DE CERRAR SESIÓN EN EL SIDEBAR -->
+            <button
+                    id="sidebar-logout-btn"
+                    class="nav-item group mt-auto flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-bold text-red-600 transition-all hover:bg-red-50 hover:text-red-700"
+            >
+                <span class="nav-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-500 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </span>
+                <span>Cerrar Sesión</span>
+            </button>
         </nav>
 
         <!-- FOOTER -->
@@ -141,10 +157,41 @@
     </div>
 </aside>
 
+<!-- MODAL GLOBAL DE CERRAR SESIÓN (Tailwind) -->
+<dialog id="global-logout-modal" class="m-auto fixed inset-0 backdrop:bg-slate-900/50 rounded-3xl shadow-2xl border border-slate-100 p-0 w-full max-w-sm backdrop-blur-sm transition-all open:animate-in open:fade-in open:zoom-in-95">
+    <div class="p-6 text-center bg-white">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+        </div>
+        <h3 class="mb-2 text-xl font-black tracking-tight text-slate-900">
+            ¿Cerrar sesión?
+        </h3>
+        <p class="mb-6 text-sm font-medium text-slate-500 leading-relaxed">
+            Saldrás del panel administrativo de Rutas Digitales.
+        </p>
+        <div class="flex flex-col gap-3">
+            <button id="global-confirm-logout-btn" type="button" class="rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition-all hover:bg-red-700 hover:shadow-red-500/40 active:scale-95">
+                Sí, salir ahora
+            </button>
+            <button id="global-cancel-logout-btn" type="button" class="rounded-xl border border-slate-200 bg-slate-50 px-5 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-100 active:scale-95">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</dialog>
+
 <script>
     const sidebar = document.getElementById("sidebar");
     const backdrop = document.getElementById("sidebar-backdrop");
     const closeBtn = document.getElementById("close-sidebar");
+
+    // Variables de Modal Logout Global
+    const sidebarLogoutBtn = document.getElementById("sidebar-logout-btn");
+    const globalLogoutModal = document.getElementById("global-logout-modal") as HTMLDialogElement;
+    const globalConfirmLogoutBtn = document.getElementById("global-confirm-logout-btn");
+    const globalCancelLogoutBtn = document.getElementById("global-cancel-logout-btn");
 
     function closeSidebar() {
         sidebar?.classList.add("-translate-x-full");
@@ -159,22 +206,40 @@
         document.body.classList.toggle("overflow-hidden", isOpen && window.innerWidth < 1024);
     }
 
-    // 1. Cerrar al presionar el botón "X" o tocar el fondo oscuro
+    // Cerrar Sidebar
     closeBtn?.addEventListener("click", closeSidebar);
     backdrop?.addEventListener("click", closeSidebar);
 
-    // 2. Cerrar con la tecla Escape
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeSidebar();
+    // Lógica Global Cerrar Sesión
+    sidebarLogoutBtn?.addEventListener("click", () => {
+        globalLogoutModal?.showModal();
+        closeSidebar(); // Ocultamos el menú móvil si estaba abierto
     });
 
-    // 3. Observar cuando el botón hamburguesa abre el sidebar para mostrar el fondo oscuro
+    globalCancelLogoutBtn?.addEventListener("click", () => {
+        globalLogoutModal?.close();
+    });
+
+    globalConfirmLogoutBtn?.addEventListener("click", () => {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user_role");
+        window.location.href = "/login";
+    });
+
+    // Cerrar con Escape
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeSidebar();
+            if(globalLogoutModal?.open) globalLogoutModal.close();
+        }
+    });
+
     if (sidebar) {
         const observer = new MutationObserver(syncBackdrop);
         observer.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
     }
 
-    // 4. Resaltar el enlace activo automáticamente según la ruta actual
+    // Resaltar ruta activa
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]");
 

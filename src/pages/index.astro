@@ -192,29 +192,6 @@ import Layout from "../layouts/Layout.astro";
         <!-- MODALES DE CONFIRMACIÓN (Tailwind)             -->
         <!-- ============================================== -->
 
-        <!-- MODAL DE CIERRE DE SESIÓN -->
-        <div id="logout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
-            <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
-                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Cerrar sesión?</h3>
-                <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
-                    Saldrás del panel administrativo de Rutas Digitales.
-                </p>
-                <div class="mt-8 flex flex-col gap-3">
-                    <button id="confirm-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
-                        Sí, salir ahora
-                    </button>
-                    <button id="cancel-logout-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- MODAL DE CANCELAR RUTA -->
         <div id="cancel-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
             <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
@@ -279,7 +256,6 @@ import Layout from "../layouts/Layout.astro";
 
         // ELEMENTOS DOM PARA MODALES
         const headerActions = document.getElementById("header-actions");
-        const logoutModal = document.getElementById("logout-modal");
         const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
         const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
 
@@ -298,13 +274,6 @@ import Layout from "../layouts/Layout.astro";
 
             if (currentToken) {
                 headerActions.innerHTML = `
-                    <button id="btn-logout-header" class="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-600 shadow-sm ring-1 ring-inset ring-slate-300 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 sm:w-auto sm:py-2.5" title="Cerrar sesión">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>Salir</span>
-                    </button>
-
                     <a href="/routes/new" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95 sm:w-auto sm:py-2.5">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -313,13 +282,6 @@ import Layout from "../layouts/Layout.astro";
                     </a>
                 `;
 
-                // Eventos Logout Modal
-                document.getElementById("btn-logout-header")?.addEventListener("click", () => {
-                    logoutModal?.classList.remove("hidden");
-                });
-                cancelLogoutBtn?.addEventListener("click", () => {
-                    logoutModal?.classList.add("hidden");
-                });
                 confirmLogoutBtn?.addEventListener("click", () => {
                     localStorage.removeItem("auth_token");
                     localStorage.removeItem("user_role");
