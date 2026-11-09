@@ -106,5 +106,104 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
         });
     });
 </script>
+<script lang="ts">
+    // JS Puro: Sin lang="ts" ni tipos
+    function initWebSocket() {
+        const token = localStorage.getItem('auth_token');
+        const role = localStorage.getItem('user_role');
+
+        console.log("🛠️ Inicializando WebSocket. Rol detectado:", role);
+
+        if (token && role === 'technician') {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                const decodedToken = JSON.parse(jsonPayload);
+
+                // 1. Imprimimos el token completo en la consola por si acaso
+                console.log("Token decodificado:", decodedToken);
+
+                // 2. FIX: Buscamos primero el ID de MongoDB, ignorando el correo electrónico
+                let technicianId = decodedToken._id || decodedToken.id || decodedToken.user_id;
+
+                // Si por alguna razón el ID estaba en 'sub' y NO es un correo, lo usamos
+                if (!technicianId && decodedToken.sub && !decodedToken.sub.includes('@')) {
+                    technicianId = decodedToken.sub;
+                }
+                console.log("🆔 ID de técnico detectado:", technicianId);
+
+                if (technicianId) {
+                    const host = window.location.hostname;
+
+                    // En JS puro podemos adjuntar variables a window directamente
+                    if (window.appWebSocket) {
+                        window.appWebSocket.close();
+                    }
+
+                    const wsUrl = `ws://${host}:8000/ws/dashboard/${technicianId}`;
+                    console.log("🔗 Conectando a:", wsUrl);
+
+                    window.appWebSocket = new WebSocket(wsUrl);
+
+                    window.appWebSocket.onopen = () => {
+                        console.log("🟢 Conectado exitosamente al WebSocket del Backend");
+                    };
+
+                    window.appWebSocket.onmessage = (event) => {
+                        console.log("📩 Mensaje recibido:", event.data);
+                        const data = JSON.parse(event.data);
+
+                        if (data.event === "NEW_ROUTE_ASSIGNED") {
+                            alert(`📢 ¡Nueva ruta asignada!`);
+                            window.location.reload();
+                        }
+                        else if (data.event === "NEW_SERVICE_ADDED") {
+                            alert(`⚠️ Se ha añadido un nuevo cliente a tu ruta actual.`);
+                            window.location.reload();
+                        }
+                        else if (data.event === "SERVICE_DELETED") {
+                            alert(`🗑️ Se ha cancelado y retirado un cliente de tu ruta.`);
+                            window.location.reload();
+                        }
+                        else if (data.event === "ROUTE_DELETED") {
+                            alert(`🚨 Tu ruta actual ha sido eliminada por la oficina.`);
+                            if (window.location.pathname.includes('/panel/ruta')) {
+                                window.location.href = '/panel';
+                            } else {
+                                window.location.reload();
+                            }
+                        }
+                        // ---> NUEVO EVENTO DE CANCELACIÓN <---
+                        else if (data.event === "ROUTE_CANCELED") {
+                            alert(`🚫 La oficina ha cancelado tu ruta actual.`);
+                            // Solo recargamos: tu vista panel/ruta.astro ya tiene la lógica para mostrar
+                            // los servicios de color rojo y deshabilitar los botones cuando está cancelada.
+                            window.location.reload();
+                        }
+                    };
+
+                    window.appWebSocket.onclose = () => {
+                        console.log("🔴 Conexión WebSocket cerrada.");
+                    };
+
+                    window.appWebSocket.onerror = (error) => {
+                        console.error("❌ Error en WebSocket:", error);
+                    };
+                }
+            } catch (e) {
+                console.error("❌ Error procesando el token para WebSocket:", e);
+            }
+        } else {
+            console.log("🛑 Conexión WebSocket cancelada: No hay token o el usuario no es técnico.");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initWebSocket);
+    document.addEventListener('astro:page-load', initWebSocket);
+</script>
 </body>
 </html>
