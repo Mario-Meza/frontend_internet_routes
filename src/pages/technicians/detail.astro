@@ -1,0 +1,304 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Perfil del Técnico - Rutas Digitales">
+    <main class="min-h-screen bg-slate-50/50 pb-8">
+
+        <!-- CABECERA FIJA DE NAVEGACIÓN -->
+        <header class="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 px-4 py-4 backdrop-blur-md shadow-sm sm:px-6 mb-6">
+            <div class="mx-auto max-w-5xl flex items-center gap-4">
+                <a href="/technicians" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-colors hover:bg-slate-200 active:scale-95" title="Volver a la lista">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight text-slate-900 leading-none">Expediente del Técnico</h1>
+                    <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-violet-600">Gestión de Personal</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="mx-auto max-w-5xl px-4 sm:px-6 h-[calc(100vh-140px)] flex flex-col justify-center">
+
+            <!-- ESTADO DE CARGA (SKELETON HORIZONTAL) -->
+            <div id="loading" class="animate-pulse w-full overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200/60">
+                <div class="flex flex-col md:flex-row">
+                    <!-- Esqueleto Izquierdo (Foto) -->
+                    <div class="flex shrink-0 flex-col items-center justify-center border-b border-slate-100 bg-slate-50/50 p-8 md:w-1/3 md:border-b-0 md:border-r">
+                        <div class="mb-4 h-32 w-32 rounded-full bg-slate-300 ring-4 ring-white"></div>
+                        <div class="h-6 w-32 rounded-full bg-slate-200"></div>
+                    </div>
+                    <!-- Esqueleto Derecho (Datos) -->
+                    <div class="flex flex-1 flex-col justify-center p-8">
+                        <div class="mb-4 h-8 w-48 rounded-lg bg-slate-200"></div>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="h-20 rounded-2xl bg-slate-100"></div>
+                            <div class="h-20 rounded-2xl bg-slate-100"></div>
+                        </div>
+                        <div class="h-24 w-full rounded-2xl bg-slate-100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TARJETA DE PERFIL HORIZONTAL (CONTENIDO PRINCIPAL) -->
+            <div id="profile-card" class="hidden w-full overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200/60">
+                <div class="flex flex-col md:flex-row h-full">
+
+                    <!-- COLUMNA IZQUIERDA: Identidad Visual -->
+                    <div class="relative flex shrink-0 flex-col items-center justify-center overflow-hidden bg-slate-900 p-8 md:w-[320px] lg:w-[380px]">
+                        <!-- Fondo Animado de Fibra Óptica (Rotado para ajustarse al panel lateral) -->
+                        <div class="absolute inset-0 bg-gradient-to-b from-indigo-900 via-violet-900 to-purple-900">
+                            <svg class="absolute inset-0 h-full w-full opacity-60" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50 -100 Q 150 200, 50 500 T 50 1100" fill="none" stroke="rgba(139, 92, 246, 0.4)" stroke-width="4" />
+                                <path d="M150 -100 Q 250 300, 150 600 T 150 1100" fill="none" stroke="rgba(56, 189, 248, 0.4)" stroke-width="3" />
+                                <path d="M250 -100 Q 350 400, 250 700 T 250 1100" fill="none" stroke="rgba(217, 70, 239, 0.4)" stroke-width="5" />
+                                <path d="M350 -100 Q 150 250, 350 550 T 350 1100" fill="none" stroke="rgba(167, 139, 250, 0.3)" stroke-width="2" />
+                                <g>
+                                    <circle r="6" fill="#60a5fa" filter="blur(2px)">
+                                        <animateMotion dur="4s" repeatCount="indefinite" path="M50 -100 Q 150 200, 50 500 T 50 1100" />
+                                    </circle>
+                                    <circle r="3" fill="#ffffff">
+                                        <animateMotion dur="4s" repeatCount="indefinite" path="M50 -100 Q 150 200, 50 500 T 50 1100" />
+                                    </circle>
+                                </g>
+                                <g>
+                                    <circle r="8" fill="#38bdf8" filter="blur(3px)">
+                                        <animateMotion dur="3s" repeatCount="indefinite" path="M150 -100 Q 250 300, 150 600 T 150 1100" />
+                                    </circle>
+                                    <circle r="4" fill="#ffffff">
+                                        <animateMotion dur="3s" repeatCount="indefinite" path="M150 -100 Q 250 300, 150 600 T 150 1100" />
+                                    </circle>
+                                </g>
+                                <g>
+                                    <circle r="7" fill="#d946ef" filter="blur(2px)">
+                                        <animateMotion dur="5s" repeatCount="indefinite" path="M250 -100 Q 350 400, 250 700 T 250 1100" />
+                                    </circle>
+                                    <circle r="3.5" fill="#ffffff">
+                                        <animateMotion dur="5s" repeatCount="indefinite" path="M250 -100 Q 350 400, 250 700 T 250 1100" />
+                                    </circle>
+                                </g>
+                            </svg>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+                        </div>
+
+                        <div class="relative z-10 flex flex-col items-center">
+                            <!-- Foto -->
+                            <div id="tech-photo-container" class="mb-5 flex h-36 w-36 items-center justify-center rounded-full bg-white/10 p-2 shadow-2xl backdrop-blur-sm">
+                                <!-- Inyectado por JS -->
+                            </div>
+                            <!-- Nombre -->
+                            <h2 id="tech-name" class="text-center text-2xl font-black tracking-tight text-white drop-shadow-md">Cargando...</h2>
+                            <!-- Estado -->
+                            <div id="tech-status" class="mt-4">
+                                <!-- Inyectado por JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: Datos del Expediente -->
+                    <div class="flex flex-1 flex-col justify-between p-8 bg-white">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                            <!-- Tarjeta de Teléfono -->
+                            <div class="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-colors hover:bg-slate-50">
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-100">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Celular / WhatsApp</p>
+                                    <a id="tech-phone" href="#" class="text-lg font-black text-slate-800 hover:text-blue-600 transition-colors">Cargando...</a>
+                                </div>
+                            </div>
+
+                            <!-- Tarjeta de Correo -->
+                            <div class="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-5 transition-colors hover:bg-slate-50">
+                                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 ring-1 ring-inset ring-violet-100">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <p class="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Email Profesional</p>
+                                    <a id="tech-email" href="#" class="truncate block text-lg font-black text-slate-800 hover:text-violet-600 transition-colors">Cargando...</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de Especialidades Larga -->
+                        <div class="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-6 mb-8 transition-colors hover:bg-slate-50">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 ring-1 ring-inset ring-orange-100">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </div>
+                                <span class="text-sm font-bold uppercase tracking-widest text-slate-600">Áreas de Especialidad Ténica</span>
+                            </div>
+                            <div id="tech-specialties" class="flex flex-wrap gap-2 mt-2">
+                                <!-- Inyectado por JS -->
+                            </div>
+                        </div>
+
+                        <!-- Botón de Acción Abajo a la Derecha -->
+                        <div class="flex justify-end pt-4 border-t border-slate-100">
+                            <a id="btn-edit" href="#" class="flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-900/10 transition hover:bg-blue-600 active:scale-95 w-full sm:w-auto">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Editar Información
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESTADO DE ERROR (ESTILO DASHBOARD) -->
+            <div id="error" class="hidden rounded-2xl border-2 border-dashed border-red-200 bg-white p-12 text-center shadow-sm mt-0">
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="mt-6 text-xl font-bold text-slate-900">Perfil no encontrado</h3>
+                <p id="error-message" class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
+                    No pudimos localizar la información del técnico solicitado.
+                </p>
+                <a href="/technicians" class="mt-6 inline-flex items-center text-sm font-semibold text-red-600 hover:text-red-700 transition-colors">
+                    Regresar a la lista <span aria-hidden="true" class="ml-1">→</span>
+                </a>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+
+        const loading = document.getElementById("loading");
+        const profileCard = document.getElementById("profile-card");
+        const errorContainer = document.getElementById("error");
+        const errorMessage = document.getElementById("error-message");
+
+        const photoContainer = document.getElementById("tech-photo-container");
+        const nameEl = document.getElementById("tech-name");
+        const statusEl = document.getElementById("tech-status");
+        const phoneEl = document.getElementById("tech-phone") as HTMLAnchorElement;
+        const emailEl = document.getElementById("tech-email") as HTMLAnchorElement;
+        const specialtiesEl = document.getElementById("tech-specialties");
+        const btnEdit = document.getElementById("btn-edit") as HTMLAnchorElement;
+
+        function getInitials(name: string): string {
+            return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+        }
+
+        function getAvatarColor(name: string): string {
+            const colors = ['bg-blue-100 text-blue-700', 'bg-cyan-100 text-cyan-700', 'bg-teal-100 text-teal-700', 'bg-emerald-100 text-emerald-700', 'bg-fuchsia-100 text-fuchsia-700', 'bg-indigo-100 text-indigo-700'];
+            return colors[(name.charCodeAt(0) || 0) % colors.length];
+        }
+
+        function escapeHtml(value: string): string {
+            const div = document.createElement("div");
+            div.textContent = value;
+            return div.innerHTML;
+        }
+
+        async function loadTechnician() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const techId = urlParams.get("id");
+
+            if (!techId) {
+                showError("No se especificó ningún técnico en la URL.");
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem("auth_token");
+                const res = await fetch(`${API_URL}/technicians/${techId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) throw new Error("No pudimos conectar con el servidor.");
+
+                const tech = await res.json();
+                renderTechnician(tech);
+            } catch (error) {
+                showError(error instanceof Error ? error.message : "Error de red al descargar los datos.");
+            }
+        }
+
+        function renderTechnician(tech: any) {
+            if (!profileCard || !loading) return;
+
+            // FOTO DE PERFIL
+            const photoUrl = tech.photo_url || tech.photo || `${API_URL}/technicians/${tech.id}/photo`;
+            const avatarColor = getAvatarColor(tech.name);
+            if (photoContainer) {
+                photoContainer.innerHTML = `
+                    <img
+                        src="${escapeHtml(photoUrl)}"
+                        alt="${escapeHtml(tech.name)}"
+                        class="h-full w-full rounded-full object-cover ring-4 ring-white/50"
+                        onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-full w-full items-center justify-center rounded-full ${avatarColor} text-[3rem] font-black ring-4 ring-white/50', textContent: '${getInitials(tech.name)}'}));"
+                    />
+                `;
+            }
+
+            // NOMBRE Y ESTADO
+            if (nameEl) nameEl.textContent = tech.name;
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    <span class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold ring-1 ring-inset ${tech.active ? 'bg-emerald-500/20 text-emerald-300 ring-emerald-400/30' : 'bg-slate-800 text-slate-300 ring-slate-600/50'} backdrop-blur-sm">
+                        <span class="relative flex h-2.5 w-2.5">
+                          ${tech.active ? '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>' : ''}
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 ${tech.active ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+                        </span>
+                        ${tech.active ? 'Activo en campo' : 'Inactivo temporalmente'}
+                    </span>
+                `;
+            }
+
+            // TELÉFONO
+            if (phoneEl) {
+                const phone = tech.phone || "No registrado";
+                phoneEl.textContent = phone;
+                phoneEl.href = phone !== "No registrado" ? `tel:${phone}` : "#";
+            }
+
+            // CORREO
+            if (emailEl) {
+                const email = tech.email || "No registrado";
+                emailEl.textContent = email;
+                emailEl.href = email !== "No registrado" ? `mailto:${email}` : "#";
+            }
+
+            // ESPECIALIDADES
+            if (specialtiesEl) {
+                const specs = tech.specialties && tech.specialties.length > 0 ? tech.specialties : ["General"];
+                specialtiesEl.innerHTML = specs.map((s: string) => `
+                    <span class="inline-flex items-center gap-1.5 rounded-lg bg-orange-50 px-3 py-2 text-xs font-bold text-orange-700 ring-1 ring-inset ring-orange-600/20">
+                        ${escapeHtml(s)}
+                    </span>
+                `).join("");
+            }
+
+            // LINK AL EDITOR
+            if (btnEdit) {
+                btnEdit.href = `/technicians/edit?id=${tech.id}`;
+            }
+
+            loading.classList.add("hidden");
+            profileCard.classList.remove("hidden");
+        }
+
+        function showError(msg: string) {
+            if (loading) loading.classList.add("hidden");
+            if (errorContainer) {
+                errorContainer.classList.remove("hidden");
+                if (errorMessage) errorMessage.textContent = msg;
+            }
+        }
+
+        loadTechnician();
+    </script>
+</Layout>
