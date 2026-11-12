@@ -84,6 +84,7 @@ import Layout from "../layouts/Layout.astro";
 
     <script>
         import { loginTechnician } from "../services/api";
+        import { saveSession } from "../utils/auth";
 
         const form = document.querySelector<HTMLFormElement>("#login-form");
         const emailInput = document.querySelector<HTMLInputElement>("#email");
@@ -125,8 +126,7 @@ import Layout from "../layouts/Layout.astro";
                 );
 
                 // Guardar el token y el rol
-                localStorage.setItem("auth_token", data.access_token);
-                localStorage.setItem("user_role", data.role);
+                saveSession(data.access_token, data.role);
 
                 // Redirigir estrictamente según el rol
                 if (data.role === "admin") {

@@ -12,10 +12,27 @@ import type {
     ServiceType,
 } from "../types/route";
 
+import { getToken, redirectToLogin } from "../utils/auth";
 
-const API_URL =
+
+export const API_URL =
     import.meta.env.PUBLIC_API_URL ??
     "http://127.0.0.1:8000/api/v1";
+
+
+/**
+ * URL del WebSocket de un técnico. Se deriva de la misma URL de la API
+ * (http -> ws, https -> wss) o de PUBLIC_WS_URL si se define.
+ * El JWT va como query param porque los navegadores no permiten enviar
+ * headers en un WebSocket. No imprimas esta URL en consola.
+ */
+export function getWebSocketUrl(technicianId: string, token: string): string {
+    const base =
+        import.meta.env.PUBLIC_WS_URL ??
+        API_URL.replace(/^http/, "ws").replace(/\/api\/v\d+\/?$/, "");
+
+    return `${base}/ws/dashboard/${encodeURIComponent(technicianId)}?token=${encodeURIComponent(token)}`;
+}
 
 
 async function apiRequest<T>(
@@ -25,8 +42,8 @@ async function apiRequest<T>(
 
     const isFormData = options?.body instanceof FormData;
 
-    // NUEVO: Obtenemos el token guardado del login
-    const token = typeof window !== "undefined" ? localStorage.getItem("technician_token") : null;
+    // Token guardado en el login (misma clave que usa el resto de la app)
+    const token = getToken();
 
     // Preparamos los headers
     const headers: Record<string, string> = {};
@@ -35,7 +52,7 @@ async function apiRequest<T>(
         headers["Content-Type"] = "application/json";
     }
 
-    // NUEVO: Si hay token, lo inyectamos en la petición
+    // Si hay token, lo inyectamos en la petición
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
@@ -50,6 +67,12 @@ async function apiRequest<T>(
             },
         },
     );
+
+    // Sesión vencida o token inválido: limpiamos y volvemos al login
+    if (response.status === 401 && token) {
+        redirectToLogin();
+        throw new Error("Tu sesión expiró. Inicia sesión de nuevo.");
+    }
 
 
     /*
@@ -545,31 +568,27 @@ export async function loginTechnician(email: string, password: string): Promise<
     return response.json();
 }
 
-// En src/services/api.ts
-export async function getAdminProfile() {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(`${API_URL}/admin/profile`, {
-        headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!response.ok) throw new Error("Error al obtener el perfil");
-    return response.json();
+export interface AdminProfile {
+    name: string;
+    email: string;
 }
 
-export async function updateAdminProfile(data: any) {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(`${API_URL}/admin/profile`, {
+export interface AdminProfileUpdate {
+    name: string;
+    email: string;
+    current_password: string;
+    new_password?: string;
+}
+
+export async function getAdminProfile(): Promise<AdminProfile> {
+    return apiRequest<AdminProfile>("/admin/profile");
+}
+
+export async function updateAdminProfile(
+    data: AdminProfileUpdate,
+): Promise<{ message: string }> {
+    return apiRequest<{ message: string }>("/admin/profile", {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
     });
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Error al actualizar perfil");
-    }
-    return response.json();
 }
-
-
