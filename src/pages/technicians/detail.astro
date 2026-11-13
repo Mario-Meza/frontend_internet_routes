@@ -171,7 +171,8 @@ import Layout from "../../layouts/Layout.astro";
     </main>
 
     <script>
-        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+        import { API_URL, getTechnicianById } from "../../services/api";
+        import type { Technician } from "../../types/technician";
 
         const loading = document.getElementById("loading");
         const profileCard = document.getElementById("profile-card");
@@ -211,23 +212,14 @@ import Layout from "../../layouts/Layout.astro";
             }
 
             try {
-                const token = localStorage.getItem("auth_token");
-                const res = await fetch(`${API_URL}/technicians/${techId}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (!res.ok) throw new Error("No pudimos conectar con el servidor.");
-
-                const tech = await res.json();
+                const tech = await getTechnicianById(techId);
                 renderTechnician(tech);
             } catch (error) {
                 showError(error instanceof Error ? error.message : "Error de red al descargar los datos.");
             }
         }
 
-        function renderTechnician(tech: any) {
+        function renderTechnician(tech: Technician & { photo_url?: string | null; photo?: string | null }) {
             if (!profileCard || !loading) return;
 
             // FOTO DE PERFIL

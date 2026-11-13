@@ -26,7 +26,7 @@ import Layout from "../../layouts/Layout.astro";
                         <p class="mt-1 text-xs font-semibold text-slate-500 md:text-sm">Asignaciones en campo</p>
                     </div>
                 </div>
-                <div class="mt-8 flex flex-col gap-3">
+                <div class="flex flex-col gap-3">
                     <button id="logout-btn" class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600 active:scale-95 md:h-11 md:w-11" title="Cerrar sesión">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -65,7 +65,6 @@ import Layout from "../../layouts/Layout.astro";
 
             <!-- MODAL DE CIERRE DE SESIÓN -->
             <div id="logout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm md:absolute md:inset-0 md:rounded-[2.5rem] transition-opacity">
-                <!-- Contenedor blanco del modal -->
                 <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 transform transition-all text-center">
 
                     <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
@@ -94,119 +93,110 @@ import Layout from "../../layouts/Layout.astro";
     </main>
 
     <script>
-        import { getRoutes } from "../../services/api";
+        import { API_URL, getRoutes, getTechnicianById } from "../../services/api";
+            import { clearSession, decodeToken, getToken } from "../../utils/auth";
+            import type { Technician } from "../../types/technician";
 
-        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
-        const token = localStorage.getItem("auth_token");
+            const token = getToken();
 
-        if (!token) {
-            window.location.href = "/login";
-        }
+            if (!token) {
+                window.location.href = "/login";
+                }
 
-        // ELEMENTOS DEL MODAL DE LOGOUT
-        const logoutModal = document.getElementById("logout-modal");
-        const logoutBtn = document.getElementById("logout-btn");
-        const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
-        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
+            // ELEMENTOS DEL MODAL DE LOGOUT
+            const logoutModal = document.getElementById("logout-modal");
+            const logoutBtn = document.getElementById("logout-btn");
+            const cancelLogoutBtn = document.getElementById("cancel-logout-btn");
+            const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
 
-        function decodeJWT(token: string) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                return JSON.parse(window.atob(base64));
-            } catch (e) {
-                return null;
-            }
-        }
+            const userData = token ? decodeToken(token) : null;
+            const technicianId = userData?.id || (userData?.sub && !userData.sub.includes("@") ? userData.sub : null);
+            const avatarContainer = document.getElementById("tech-avatar-container");
 
-        const userData = decodeJWT(token || "");
-        const avatarContainer = document.getElementById("tech-avatar-container");
+            function escapeHtml(value: string): string {
+                const div = document.createElement("div");
+                div.textContent = value;
+                return div.innerHTML;
+                }
 
-        async function loadTechnicianAvatar() {
-            if (!userData || !userData.id || !avatarContainer) return;
+            async function loadTechnicianAvatar() {
+                if (!technicianId || !avatarContainer) return;
 
-            try {
-                const res = await fetch(`${API_URL}/technicians/${userData.id}`, {
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-
-                if (res.ok) {
-                    const tech = await res.json();
+                try {
+                    const tech = (await getTechnicianById(technicianId)) as Technician & { photo_url?: string | null; photo?: string | null };
                     const photoUrl = tech.photo_url || tech.photo || `${API_URL}/technicians/${tech.id}/photo`;
-                    const initial = tech.name ? tech.name.charAt(0).toUpperCase() : 'T';
+                    const initial = tech.name ? escapeHtml(tech.name.charAt(0).toUpperCase()) : "T";
 
                     avatarContainer.innerHTML = `
-                        <img 
-                            src="${photoUrl}" 
-                            alt="Perfil del técnico" 
-                            class="h-full w-full object-cover"
-                            onerror="this.onerror=null; this.outerHTML='<div class=\\'flex h-full w-full shrink-0 items-center justify-center bg-blue-100 text-blue-700 text-lg font-black\\'>${initial}</div>';"
-                        />
-                    `;
+                    <img 
+                        src="${escapeHtml(photoUrl)}" 
+                        alt="Perfil del técnico" 
+                        class="h-full w-full object-cover"
+                        onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('div'), {className: 'flex h-full w-full shrink-0 items-center justify-center bg-blue-100 text-blue-700 text-lg font-black', textContent: '${initial}'}));"
+                    />
+                `;
+                    } catch (error) {
+                    console.error("No se pudo cargar la foto de perfil del técnico");
+                    }
                 }
-            } catch (error) {
-                console.error("No se pudo cargar la foto de perfil del técnico");
-            }
-        }
 
-        loadTechnicianAvatar();
+            loadTechnicianAvatar();
 
-        // LOGICA DE EVENTOS DEL MODAL
-        logoutBtn?.addEventListener("click", () => {
-            logoutModal?.classList.remove("hidden");
-        });
+            // LÓGICA DE EVENTOS DEL MODAL
+            logoutBtn?.addEventListener("click", () => {
+                logoutModal?.classList.remove("hidden");
+                });
 
-        cancelLogoutBtn?.addEventListener("click", () => {
-            logoutModal?.classList.add("hidden");
-        });
+            cancelLogoutBtn?.addEventListener("click", () => {
+                logoutModal?.classList.add("hidden");
+                });
 
-        confirmLogoutBtn?.addEventListener("click", () => {
-            localStorage.removeItem("auth_token");
-            localStorage.removeItem("user_role");
-            window.location.href = "/login";
-        });
+            confirmLogoutBtn?.addEventListener("click", () => {
+                clearSession();
+                window.location.href = "/login";
+                });
 
-        function formatDate(dateString: string) {
-            if (!dateString) return "Fecha sin definir";
-            const [year, month, day] = dateString.split("-");
-            const date = new Date(Number(year), Number(month) - 1, Number(day));
-            return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '');
-        }
+            function formatDate(dateString: string) {
+                if (!dateString) return "Fecha sin definir";
+                const [year, month, day] = dateString.split("-");
+                const date = new Date(Number(year), Number(month) - 1, Number(day));
+                return date.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }).replace(".", "");
+                }
 
-        function renderStatus(status: string) {
-            const config: Record<string, { label: string; bg: string; text: string; dot: string; }> = {
-                assigned: { label: "PENDIENTE", bg: "bg-orange-100", text: "text-orange-700", dot: "bg-orange-500" },
-                in_progress: { label: "EN PROCESO", bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-500 animate-pulse" },
-                completed: { label: "COMPLETADA", bg: "bg-emerald-100", text: "text-emerald-700", dot: "bg-emerald-500" },
-                canceled: { label: "CANCELADA", bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" }
-            };
+            function renderStatus(status: string) {
+                const config: Record<string, { label: string; bg: string; text: string; dot: string }> = {
+                    assigned: { label: "PENDIENTE", bg: "bg-orange-100", text: "text-orange-700", dot: "bg-orange-500" },
+                    in_progress: { label: "EN PROCESO", bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-500 animate-pulse" },
+                    completed: { label: "COMPLETADA", bg: "bg-emerald-100", text: "text-emerald-700", dot: "bg-emerald-500" },
+                    canceled: { label: "CANCELADA", bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" },
+                    };
 
-            const current = config[status] ?? { label: status || "N/A", bg: "bg-slate-100", text: "text-slate-600", dot: "bg-slate-400" };
+                const current = config[status] ?? { label: status || "N/A", bg: "bg-slate-100", text: "text-slate-600", dot: "bg-slate-400" };
 
-            return `
+                return `
                 <span class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-black tracking-wider ${current.bg} ${current.text}">
                     <span class="h-1.5 w-1.5 rounded-full ${current.dot}"></span>
-                    ${current.label}
+                    ${escapeHtml(current.label)}
                 </span>
             `;
-        }
-
-        async function loadMyRoutes() {
-            const container = document.getElementById("routes-container");
-            const countBadge = document.getElementById("routes-count");
-            if (!container) return;
-
-            try {
-                const allRoutes = await getRoutes();
-                const myRoutes = allRoutes.filter(route => route.technician_id === userData?.id);
-
-                if(countBadge) {
-                    countBadge.textContent = myRoutes.length.toString();
-                    countBadge.classList.remove("hidden");
                 }
 
-                if (myRoutes.length === 0) {
-                    container.innerHTML = `
+            async function loadMyRoutes() {
+                const container = document.getElementById("routes-container");
+                const countBadge = document.getElementById("routes-count");
+                if (!container) return;
+
+                try {
+                    const allRoutes = await getRoutes();
+                    const myRoutes = allRoutes.filter((route) => route.technician_id === technicianId);
+
+                    if (countBadge) {
+                        countBadge.textContent = myRoutes.length.toString();
+                        countBadge.classList.remove("hidden");
+                        }
+
+                    if (myRoutes.length === 0) {
+                        container.innerHTML = `
                         <div class="mt-8 overflow-hidden rounded-[2rem] bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
                             <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/50">
                                 <svg class="h-10 w-10 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,16 +207,17 @@ import Layout from "../../layouts/Layout.astro";
                             <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed max-w-[250px] mx-auto">No tienes asignaciones pendientes por el momento.</p>
                         </div>
                     `;
-                    return;
-                }
+                        return;
+                        }
 
-                container.innerHTML = myRoutes.map(route => {
-                    const totalServices = route.services ? route.services.length : 0;
-                    const serviceText = totalServices === 1 ? '1 servicio' : `${totalServices} servicios`;
-                    const shortId = route.id.substring(0, 8).toUpperCase();
-                    const isFinished = route.status === 'completed' || route.status === 'canceled';
+                    container.innerHTML = myRoutes
+                        .map((route) => {
+                        const totalServices = route.services ? route.services.length : 0;
+                        const serviceText = totalServices === 1 ? "1 servicio" : `${totalServices} servicios`;
+                        const shortId = escapeHtml(route.id.substring(0, 8).toUpperCase());
+                        const isFinished = route.status === "completed" || route.status === "canceled";
 
-                    return `
+                        return `
                         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-transform active:scale-[0.98] hover:shadow-md">
                             
                             <div class="p-5 md:p-6">
@@ -236,7 +227,7 @@ import Layout from "../../layouts/Layout.astro";
                                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        ${formatDate(route.route_date)}
+                                        ${escapeHtml(formatDate(route.route_date))}
                                     </span>
                                 </div>
                                 
@@ -254,14 +245,14 @@ import Layout from "../../layouts/Layout.astro";
                             
                             <div class="border-t border-slate-100 bg-slate-50 p-4 md:px-6">
                                 <a 
-                                    href="/panel/ruta?id=${route.id}" 
+                                    href="/panel/ruta?id=${encodeURIComponent(route.id)}" 
                                     class="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold transition-colors ${
-                        isFinished
-                            ? 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                            : 'bg-blue-600 text-white shadow-md shadow-blue-500/25 hover:bg-blue-700'
-                    }"
+                            isFinished
+                                ? "bg-slate-200 text-slate-600 hover:bg-slate-300"
+                                : "bg-blue-600 text-white shadow-md shadow-blue-500/25 hover:bg-blue-700"
+                            }"
                                 >
-                                    ${isFinished ? 'Ver resumen' : 'Revisar detalles'}
+                                    ${isFinished ? "Ver resumen" : "Revisar detalles"}
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
                                     </svg>
@@ -270,10 +261,10 @@ import Layout from "../../layouts/Layout.astro";
 
                         </div>
                     `;
-                }).join('');
-
-            } catch (error) {
-                container.innerHTML = `
+                        })
+                        .join("");
+                    } catch (error) {
+                    container.innerHTML = `
                     <div class="mt-4 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-red-200 bg-white p-8 text-center shadow-sm">
                         <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">
                             <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -282,14 +273,15 @@ import Layout from "../../layouts/Layout.astro";
                         </div>
                         <p class="text-sm font-bold text-slate-800">Error de conexión</p>
                         <p class="mt-1 text-xs text-slate-500">No pudimos descargar tus asignaciones.</p>
-                        <button onclick="window.location.reload()" class="mt-4 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-slate-800 active:scale-95">
+                        <button id="retry-routes-btn" class="mt-4 rounded-xl bg-slate-900 px-6 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-slate-800 active:scale-95">
                             Reintentar
                         </button>
                     </div>
                 `;
-            }
-        }
+                    document.getElementById("retry-routes-btn")?.addEventListener("click", () => window.location.reload());
+                    }
+                }
 
-        loadMyRoutes();
+            loadMyRoutes();
     </script>
 </Layout>

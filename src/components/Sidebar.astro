@@ -1,5 +1,6 @@
 ---
 // src/components/Sidebar.astro
+import { clearSession } from "../utils/auth.ts";
 ---
 
 <!-- FONDO OSCURO PARA CERRAR AL TOCAR FUERA (Solo móvil) -->
@@ -183,6 +184,8 @@
 </dialog>
 
 <script>
+    import { clearSession } from "../utils/auth";
+
     const sidebar = document.getElementById("sidebar");
     const backdrop = document.getElementById("sidebar-backdrop");
     const closeBtn = document.getElementById("close-sidebar");
@@ -206,14 +209,12 @@
         document.body.classList.toggle("overflow-hidden", isOpen && window.innerWidth < 1024);
     }
 
-    // Cerrar Sidebar
     closeBtn?.addEventListener("click", closeSidebar);
     backdrop?.addEventListener("click", closeSidebar);
 
-    // Lógica Global Cerrar Sesión
     sidebarLogoutBtn?.addEventListener("click", () => {
         globalLogoutModal?.showModal();
-        closeSidebar(); // Ocultamos el menú móvil si estaba abierto
+        closeSidebar();
     });
 
     globalCancelLogoutBtn?.addEventListener("click", () => {
@@ -221,16 +222,14 @@
     });
 
     globalConfirmLogoutBtn?.addEventListener("click", () => {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user_role");
+        clearSession();
         window.location.href = "/login";
     });
 
-    // Cerrar con Escape
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             closeSidebar();
-            if(globalLogoutModal?.open) globalLogoutModal.close();
+            if (globalLogoutModal?.open) globalLogoutModal.close();
         }
     });
 
@@ -239,7 +238,6 @@
         observer.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
     }
 
-    // Resaltar ruta activa
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]");
 

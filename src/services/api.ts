@@ -19,6 +19,9 @@ export const API_URL =
     import.meta.env.PUBLIC_API_URL ??
     "http://127.0.0.1:8000/api/v1";
 
+export async function getTechnicianById(id: string): Promise<Technician> {
+    return apiRequest<Technician>(`/technicians/${id}`);
+}
 
 /**
  * URL del WebSocket de un técnico. Se deriva de la misma URL de la API

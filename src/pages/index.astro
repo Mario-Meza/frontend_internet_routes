@@ -472,17 +472,18 @@ import Layout from "../layouts/Layout.astro";
 
     <script>
         import {
+            API_URL,
             getRoutes,
             getTechnicians,
             updateRouteStatus,
             deleteRoute,
         } from "../services/api";
+        import { clearSession, getToken } from "../utils/auth";
 
         import type { Route } from "../types/route";
         import type { Technician } from "../types/technician";
 
-        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
-        const currentToken = localStorage.getItem("auth_token");
+        const currentToken = getToken();
 
         // ELEMENTOS DOM PARA MODALES
         const headerActions = document.getElementById("header-actions");
@@ -512,8 +513,7 @@ import Layout from "../layouts/Layout.astro";
                 `;
 
                 confirmLogoutBtn?.addEventListener("click", () => {
-                    localStorage.removeItem("auth_token");
-                    localStorage.removeItem("user_role");
+                    clearSession();
                     window.location.href = "/login";
                 });
             } else {
@@ -522,7 +522,6 @@ import Layout from "../layouts/Layout.astro";
         }
 
         renderHeaderButtons();
-
 
         // LOGICA TABLA Y DATOS
         const routesBody = document.querySelector<HTMLTableSectionElement>("#routes-body");
@@ -649,12 +648,10 @@ import Layout from "../layouts/Layout.astro";
                  `;
             }
 
-            // OBTENER ARREGLO DE ESPECIALIDADES
             const specialtiesArray = technician?.specialties && technician.specialties.length > 0
                 ? technician.specialties
                 : ["General"];
 
-            // CREAR BADGES
             const badgesHtml = specialtiesArray.map(spec => `
                 <div class="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
                     <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -666,7 +663,6 @@ import Layout from "../layouts/Layout.astro";
 
             return `
                 <tr class="group block border-b border-slate-100 p-4 transition-colors hover:bg-slate-50 md:table-row md:border-b-0 md:p-0">
-                    
                     <td data-label="Fecha" class="flex items-center justify-between py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                         <div class="flex items-center gap-3">
                             <div class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 md:flex">
@@ -718,57 +714,45 @@ import Layout from "../layouts/Layout.astro";
                                 </svg>
                             </a>
 
-                            ${
-                route.status === "assigned"
-                    ? `
-                                        <a
-                                            href="/routes/edit?id=${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95 md:p-2"
-                                            title="Editar asignación"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                    `
-                    : ""
-            }
+                            ${route.status === "assigned" ? `
+                                <a
+                                    href="/routes/edit?id=${route.id}"
+                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-blue-600 active:scale-95 md:p-2"
+                                    title="Editar asignación"
+                                >
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </a>
+                            ` : ""}
 
-                            ${
-                route.status === "assigned" || route.status === "in_progress"
-                    ? `
-                                        <button
-                                            type="button"
-                                            data-action="cancel"
-                                            data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
-                                            title="Suspender/Cancelar ruta"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                            </svg>
-                                        </button>
-                                    `
-                    : ""
-            }
+                            ${route.status === "assigned" || route.status === "in_progress" ? `
+                                <button
+                                    type="button"
+                                    data-action="cancel"
+                                    data-id="${route.id}"
+                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
+                                    title="Suspender/Cancelar ruta"
+                                >
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                    </svg>
+                                </button>
+                            ` : ""}
 
-                            ${
-                route.status === "assigned"
-                    ? `
-                                        <button
-                                            type="button"
-                                            data-action="delete"
-                                            data-id="${route.id}"
-                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
-                                            title="Eliminar permanentemente"
-                                        >
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    `
-                    : ""
-            }
+                            ${route.status === "assigned" ? `
+                                <button
+                                    type="button"
+                                    data-action="delete"
+                                    data-id="${route.id}"
+                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
+                                    title="Eliminar permanentemente"
+                                >
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            ` : ""}
                         </div>
                     </td>
                 </tr>
@@ -776,18 +760,10 @@ import Layout from "../layouts/Layout.astro";
         }
 
         function renderStatus(status: string): string {
-
-
-            if (status === "completed") {
-                return `
-                    <span class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-[10px] font-bold text-green-700 ring-1 ring-inset ring-green-600/20 md:text-xs">
-                        
-                        <span>Completada</span>
-                    </span>
-                `;
-            }
-
             const config: Record<string, { label: string; bg: string; dot: string; text: string; border: string }> = {
+                assigned: { label: "Asignada", bg: "bg-blue-50", dot: "bg-blue-500", text: "text-blue-700", border: "ring-blue-600/20" },
+                in_progress: { label: "En proceso", bg: "bg-orange-50", dot: "bg-orange-500 animate-pulse", text: "text-orange-700", border: "ring-orange-600/20" },
+                completed: { label: "Completada", bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700", border: "ring-green-600/20" },
                 canceled: { label: "Cancelada", bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700", border: "ring-red-600/20" },
             };
             const current = config[status] ?? { label: status, bg: "bg-slate-100", dot: "bg-slate-400", text: "text-slate-600", border: "ring-slate-500/20" };
@@ -800,10 +776,6 @@ import Layout from "../layouts/Layout.astro";
             `;
         }
 
-
-        // ==============================================
-        // LÓGICA DE EVENTOS DE BOTONES Y MODALES DE LA TABLA
-        // ==============================================
         function addTableEvents() {
             document.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
                 button.addEventListener("click", () => {
@@ -820,11 +792,9 @@ import Layout from "../layouts/Layout.astro";
             });
         }
 
-        // Eventos para ocultar modales
         closeCancelBtn?.addEventListener("click", () => cancelModal?.classList.add("hidden"));
         closeDeleteBtn?.addEventListener("click", () => deleteModal?.classList.add("hidden"));
 
-        // Evento: Confirmar Cancelar
         confirmCancelBtn?.addEventListener("click", async () => {
             if (!routeIdToActOn) return;
             cancelModal?.classList.add("hidden");
@@ -840,7 +810,6 @@ import Layout from "../layouts/Layout.astro";
             }
         });
 
-        // Evento: Confirmar Eliminar
         confirmDeleteBtn?.addEventListener("click", async () => {
             if (!routeIdToActOn) return;
             deleteModal?.classList.add("hidden");
