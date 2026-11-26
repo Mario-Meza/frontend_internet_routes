@@ -1,48 +1,19 @@
-// En tu archivo de tipos (ej. route.ts)
-export type ServiceType =
-    | "S"
-    | "R"
-    | "A"
-    | "CF";
+import type { Customer } from "./customer";
 
-
-export type ServiceStatus =
-    | "pending"
-    | "in_progress"
-    | "completed"
-    | "not_completed"
-    | "cancelled";
-
-
-export interface RouteService {
-    customer_id: string;
-    service_type: ServiceType;
-    status: ServiceStatus;
-    notes: string | null;
-    started_at: string | null;
-    completed_at: string | null;
-}
-
-
-export interface Route {
-    id: string;
-    route_date: string;
-    technician_id: string;
-    services: RouteService[];
-    // NUEVOS CAMPOS:
-    scheduled_date: string;
-    status: string;
-    observations?: string | null;
-}
+export type RouteStatus = "assigned" | "in_progress" | "completed" | "canceled";
+export type ServiceStatus = "pending" | "in_progress" | "completed" | "not_completed" | "canceled";
+export type ServiceType = "installation" | "support" | "maintenance" | "relocation"
 
 export interface RouteService {
     service_id: string;
     customer_id: string;
+    customer?: Customer | null;
     service_type: ServiceType;
     status: ServiceStatus;
-    notes: string | null;
-    started_at: string | null;
-    completed_at: string | null;
+    notes?: string | null;
+    evidence_url?: string | null;
+    started_at?: string | null;
+    completed_at?: string | null;
 }
 
 export interface RouteServiceCreate {
@@ -50,35 +21,23 @@ export interface RouteServiceCreate {
     service_type: ServiceType;
 }
 
-export interface CustomerSummary {
-    id: string;
-    name: string;
-    phone: string;
-    location: string;
-    reference: string | null;
+export interface RouteCreate {
+    route_date: string;
+    technician_id: string;
+    services: RouteServiceCreate[];
 }
 
-
-export interface TechnicianSummary {
-    id: string;
-    name: string;
-    phone: string | null;
-    active: boolean;
+export interface RouteUpdate {
+    route_date?: string;
+    technician_id?: string;
+    status?: RouteStatus;
 }
 
-
-export interface RouteServiceDetail
-    extends RouteService {
-
-    customer: CustomerSummary | null;
-}
-
-
-export interface RouteDetail {
+export interface Route {
     id: string;
     route_date: string;
     technician_id: string;
-    technician: TechnicianSummary;
-    status: string;
-    services: RouteServiceDetail[];
+    status: RouteStatus;
+    notes?: string | null;
+    services: RouteService[];
 }

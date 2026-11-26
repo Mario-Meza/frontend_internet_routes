@@ -26,7 +26,7 @@ import Layout from "../../layouts/Layout.astro";
 
         <!-- CONTENEDOR DE SERVICIOS -->
         <div class="px-4 pt-6 sm:px-6">
-            <!-- Banner de mensajes (reemplaza alert) -->
+            <!-- Banner de mensajes -->
             <div id="message" class="mb-4 hidden rounded-2xl p-4 text-sm font-semibold shadow-sm transition-all"></div>
 
             <h2 class="mb-4 text-sm font-bold uppercase tracking-widest text-slate-400">Clientes a visitar</h2>
@@ -96,74 +96,70 @@ import Layout from "../../layouts/Layout.astro";
 
     <script>
         import { getRoute, startService, completeService } from "../../services/api";
-            import { getToken } from "../../utils/auth";
+        import { getToken } from "../../utils/auth";
+        import { escapeHtml } from "../../utils/format";
+        import type { RouteService } from "../../types/route";
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const routeId = urlParams.get("id");
+        const urlParams = new URLSearchParams(window.location.search);
+        const routeId = urlParams.get("id");
 
-            const container = document.getElementById("service-container");
-            const routeIdDisplay = document.getElementById("route-id-display");
-            const messageEl = document.getElementById("message");
+        const container = document.getElementById("service-container");
+        const routeIdDisplay = document.getElementById("route-id-display");
+        const messageEl = document.getElementById("message");
 
-            // Elementos del Modal
-            const modal = document.getElementById("observations-modal");
-            const cancelModalBtn = document.getElementById("cancel-modal") as HTMLButtonElement;
-            const confirmCompleteBtn = document.getElementById("confirm-complete") as HTMLButtonElement;
-            const notesInput = document.getElementById("service-notes") as HTMLTextAreaElement;
+        // Elementos del Modal
+        const modal = document.getElementById("observations-modal");
+        const cancelModalBtn = document.getElementById("cancel-modal") as HTMLButtonElement;
+        const confirmCompleteBtn = document.getElementById("confirm-complete") as HTMLButtonElement;
+        const notesInput = document.getElementById("service-notes") as HTMLTextAreaElement;
 
-            let currentServiceId: string | null = null;
+        let currentServiceId: string | null = null;
 
-            if (!getToken()) {
-                window.location.href = "/login";
-                }
+        if (!getToken()) {
+            window.location.href = "/login";
+        }
 
-            function escapeHtml(value: string): string {
-                const div = document.createElement("div");
-                div.textContent = value;
-                return div.innerHTML;
-                }
+        function showMessage(text: string, isError = false) {
+            if (!messageEl) return;
+            messageEl.textContent = text;
+            messageEl.className = isError
+                ? "mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800 shadow-sm"
+                : "mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 shadow-sm";
+            messageEl.classList.remove("hidden");
+            setTimeout(() => messageEl.classList.add("hidden"), 4000);
+        }
 
-            function showMessage(text: string, isError = false) {
-                if (!messageEl) return;
-                messageEl.textContent = text;
-                messageEl.className = isError
-                    ? "mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-800 shadow-sm"
-                    : "mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 shadow-sm";
-                messageEl.classList.remove("hidden");
-                setTimeout(() => messageEl.classList.add("hidden"), 4000);
-                }
+        function formatDisplayStatus(statusLower: string) {
+            const isPending = statusLower === "pending" || statusLower === "pendiente";
+            const isInProgress = statusLower === "in_progress" || statusLower === "en_progreso";
+            const isCompleted = statusLower === "completed" || statusLower === "completada";
+            const isCanceled = statusLower === "canceled" || statusLower === "cancelada";
 
-            function formatDisplayStatus(statusLower: string) {
-                const isPending = statusLower === "pending" || statusLower === "pendiente";
-                const isInProgress = statusLower === "in_progress" || statusLower === "en_progreso";
-                const isCompleted = statusLower === "completed" || statusLower === "completada";
-                const isCanceled = statusLower === "canceled" || statusLower === "cancelada";
+            return {
+                isPending,
+                isInProgress,
+                isCompleted,
+                isCanceled,
+                text: isPending ? "PENDIENTE" : isInProgress ? "EN PROCESO" : isCompleted ? "COMPLETADO" : statusLower.toUpperCase(),
+            };
+        }
 
-                return {
-                    isPending,
-                    isInProgress,
-                    isCompleted,
-                    isCanceled,
-                    text: isPending ? "PENDIENTE" : isInProgress ? "EN PROCESO" : isCompleted ? "COMPLETADO" : statusLower.toUpperCase(),
-                    };
-                }
+        async function loadRouteDetails() {
+            if (!routeId || !container || !routeIdDisplay) return;
 
-            async function loadRouteDetails() {
-                if (!routeId || !container || !routeIdDisplay) return;
+            try {
+                const route = await getRoute(routeId);
 
-                try {
-                    const route = await getRoute(routeId);
-
-                    routeIdDisplay.innerHTML = `
+                routeIdDisplay.innerHTML = `
                     <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                     Asignación #${escapeHtml(route.id.substring(0, 8).toUpperCase())}
-                        `;
+                `;
 
-                    const isRouteCanceled = route.status.toLowerCase() === "canceled" || route.status.toLowerCase() === "cancelada";
+                const isRouteCanceled = route.status.toLowerCase() === "canceled" || route.status.toLowerCase() === "cancelada";
 
-                    if (route.services && route.services.length > 0) {
-                        container.innerHTML = route.services
-                            .map((service, index) => {
+                if (route.services && route.services.length > 0) {
+                    container.innerHTML = route.services
+                        .map((service: RouteService, index: number) => {
                             const customer = service.customer;
                             let status = formatDisplayStatus(service.status.toLowerCase());
 
@@ -174,10 +170,10 @@ import Layout from "../../layouts/Layout.astro";
                                     isCompleted: false,
                                     isCanceled: true,
                                     text: "CANCELADO",
-                                    };
-                                } else {
+                                };
+                            } else {
                                 status.isCanceled = false;
-                                }
+                            }
 
                             const customerName = escapeHtml(customer?.name || "Sin nombre");
                             const customerLocation = escapeHtml(customer?.location || "Dirección no registrada");
@@ -202,13 +198,13 @@ import Layout from "../../layouts/Layout.astro";
                                 status.isInProgress
                                     ? "bg-blue-100 text-blue-700"
                                     : status.isCompleted
-                                    ? "bg-emerald-100 text-emerald-700"
-                                    : status.isCanceled
-                                    ? "bg-red-100 text-red-700"
-                                    : "bg-orange-100 text-orange-700"
-                                }">
+                                        ? "bg-emerald-100 text-emerald-700"
+                                        : status.isCanceled
+                                            ? "bg-red-100 text-red-700"
+                                            : "bg-orange-100 text-orange-700"
+                            }">
                                             ${status.isInProgress ? '<span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>' : ""}
-                                ${escapeHtml(status.text)}
+                                            ${escapeHtml(status.text)}
                                         </span>
                                     </div>
                                     
@@ -242,117 +238,117 @@ import Layout from "../../layouts/Layout.astro";
                                         </div>
                                     `
                                     : status.isPending
-                                    ? `
+                                        ? `
                                         <button type="button" data-action="start-service" data-route-id="${escapeHtml(route.id)}" data-service-id="${escapeHtml(service.service_id)}" class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-4 text-sm font-bold text-white shadow-md shadow-slate-900/20 transition active:scale-[0.98]">
                                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                             Iniciar Instalación
                                         </button>
                                     `
-                                    : status.isInProgress
-                                    ? `
+                                        : status.isInProgress
+                                            ? `
                                         <button type="button" data-action="open-complete-modal" data-service-id="${escapeHtml(service.service_id)}" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-4 text-sm font-bold text-white shadow-md shadow-emerald-500/30 transition active:scale-[0.98] animate-pulse">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
                                             Marcar como Terminado
                                         </button>
                                     `
-                                    : `
+                                            : `
                                         <div class="flex w-full items-center justify-center gap-2 py-1 text-sm font-bold text-emerald-600">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             Servicio completado
                                         </div>
                                         ${
-                                    serviceNotes
-                                        ? `
+                                                serviceNotes
+                                                    ? `
                                             <div class="mt-3 rounded-xl bg-slate-50 p-3 border border-slate-100">
                                                 <p class="text-xs font-bold text-slate-400 mb-1">OBSERVACIONES:</p>
                                                 <p class="text-sm font-medium text-slate-700 italic">"${serviceNotes}"</p>
                                             </div>
                                         `
-                                        : ""
-                                    }
+                                                    : ""
+                                            }
                                     `
-                                }
+                            }
                                 </div>
                             </div>
                             `;
-                            })
-                            .join("");
+                        })
+                        .join("");
 
-                        attachServiceEvents();
-                        } else {
-                        container.innerHTML = `
+                    attachServiceEvents();
+                } else {
+                    container.innerHTML = `
                         <div class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white p-10 text-center">
                             <span class="text-3xl mb-3">📁</span>
                             <p class="text-slate-500 font-medium">No hay servicios asignados.</p>
                         </div>
                     `;
-                        }
-                    } catch (error) {
-                    container.innerHTML = `
+                }
+            } catch (error) {
+                container.innerHTML = `
                     <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
                         <p class="text-sm font-bold text-red-700">Error al descargar datos</p>
                         <button id="retry-detail-btn" class="mt-3 text-xs font-bold underline text-red-600">Intentar de nuevo</button>
                     </div>
                 `;
-                    document.getElementById("retry-detail-btn")?.addEventListener("click", () => window.location.reload());
+                document.getElementById("retry-detail-btn")?.addEventListener("click", () => window.location.reload());
+            }
+        }
+
+        function attachServiceEvents() {
+            document.querySelectorAll<HTMLButtonElement>("[data-action='start-service']").forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    const rId = btn.dataset.routeId;
+                    const sId = btn.dataset.serviceId;
+                    if (!rId || !sId) return;
+
+                    btn.disabled = true;
+                    try {
+                        await startService(rId, sId);
+                        await loadRouteDetails();
+                    } catch (error) {
+                        btn.disabled = false;
+                        showMessage(error instanceof Error ? error.message : "Error al iniciar el servicio", true);
                     }
-                }
-
-            function attachServiceEvents() {
-                document.querySelectorAll<HTMLButtonElement>("[data-action='start-service']").forEach((btn) => {
-                    btn.addEventListener("click", async () => {
-                        const rId = btn.dataset.routeId;
-                        const sId = btn.dataset.serviceId;
-                        if (!rId || !sId) return;
-
-                        btn.disabled = true;
-                        try {
-                            await startService(rId, sId);
-                            await loadRouteDetails();
-                            } catch (error) {
-                            btn.disabled = false;
-                            showMessage(error instanceof Error ? error.message : "Error al iniciar el servicio", true);
-                            }
-                        });
-                    });
-
-                document.querySelectorAll<HTMLButtonElement>("[data-action='open-complete-modal']").forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        currentServiceId = btn.dataset.serviceId || null;
-                        if (notesInput) notesInput.value = "";
-                        modal?.classList.remove("hidden");
-                        });
-                    });
-                }
-
-            cancelModalBtn?.addEventListener("click", () => {
-                modal?.classList.add("hidden");
-                currentServiceId = null;
                 });
+            });
 
-            confirmCompleteBtn?.addEventListener("click", async () => {
-                if (!routeId || !currentServiceId) return;
+            document.querySelectorAll<HTMLButtonElement>("[data-action='open-complete-modal']").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentServiceId = btn.dataset.serviceId || null;
+                    if (notesInput) notesInput.value = "";
+                    modal?.classList.remove("hidden");
+                });
+            });
+        }
 
-                try {
-                    confirmCompleteBtn.disabled = true;
-                    confirmCompleteBtn.innerHTML = `
+        cancelModalBtn?.addEventListener("click", () => {
+            modal?.classList.add("hidden");
+            currentServiceId = null;
+        });
+
+        confirmCompleteBtn?.addEventListener("click", async () => {
+            if (!routeId || !currentServiceId) return;
+
+            try {
+                confirmCompleteBtn.disabled = true;
+                confirmCompleteBtn.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     Procesando...
                 `;
 
-                    await completeService(routeId, currentServiceId, notesInput.value.trim());
+                await completeService(routeId, currentServiceId, notesInput.value.trim());
 
-                    modal?.classList.add("hidden");
-                    await loadRouteDetails();
-                    showMessage("Servicio marcado como completado.");
-                    } catch (error) {
-                    showMessage(error instanceof Error ? error.message : "Error al completar el servicio", true);
-                    } finally {
-                    confirmCompleteBtn.disabled = false;
-                    confirmCompleteBtn.textContent = "Confirmar y Terminar";
-                    }
-                });
+                modal?.classList.add("hidden");
+                await loadRouteDetails();
+                showMessage("Servicio marcado como completado.");
+            } catch (error) {
+                showMessage(error instanceof Error ? error.message : "Error al completar el servicio", true);
+            } finally {
+                confirmCompleteBtn.disabled = false;
+                confirmCompleteBtn.textContent = "Confirmar y Terminar";
+            }
+        });
 
-            loadRouteDetails();
+        loadRouteDetails();
     </script>
 </Layout>

@@ -6,7 +6,7 @@ import MobileMenuButton from "../components/MobileMenuButton.astro";
 
 interface Props {
     title?: string;
-    hideMenu?: boolean; // <-- Agregamos esta línea para que TypeScript no marque error
+    hideMenu?: boolean;
 }
 
 const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
@@ -21,8 +21,8 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
 
-<!-- BARRA LATERAL (Admin) -->
-<Sidebar />
+<!-- BARRA LATERAL (Solo se renderiza si hideMenu es false) -->
+{!hideMenu && <Sidebar />}
 
 <!-- ÁREA PRINCIPAL -->
 <div id="main-content" class={hideMenu ? "" : "lg:pl-64"}>
@@ -61,53 +61,36 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
         protectTechnicianRoute,
     } from "../utils/auth";
     import { getWebSocketUrl } from "../services/api";
+    import { showToast } from "../utils/format";
 
     const currentPath = window.location.pathname;
     const isLogin = currentPath.startsWith("/login");
     const isPanel = currentPath.startsWith("/panel");
 
-    // 1. Proteger rutas según el rol: /panel es del técnico, todo lo demás (excepto /login) del admin.
-    //    (Esto solo redirige; el backend es quien valida el acceso real con el JWT.)
+    // 1. Proteger rutas según el rol
     if (isPanel) {
         protectTechnicianRoute();
     } else if (!isLogin) {
         protectAdminRoute();
     }
 
-    // 2. Controlar la visibilidad del Sidebar y Cabecera Móvil
+    // 2. Respaldo de visibilidad del Sidebar y Cabecera Móvil
     const sidebar = document.getElementById("sidebar");
     const mainContent = document.getElementById("main-content");
     const mobileHeader = document.getElementById("mobile-header");
 
     if (isLogin || isPanel) {
-        if (sidebar) {
-            sidebar.classList.add("hidden");
-            sidebar.style.display = "none";
-        }
-        if (mobileHeader) {
-            mobileHeader.classList.add("hidden");
-            mobileHeader.style.display = "none";
-        }
-        if (mainContent) {
-            mainContent.classList.remove("lg:pl-64", "lg:ml-64");
-        }
+        sidebar?.remove();
+        mobileHeader?.remove();
+        mainContent?.classList.remove("lg:pl-64", "lg:ml-64");
     } else {
-        if (sidebar) {
-            sidebar.classList.remove("hidden");
-            sidebar.style.display = "";
-        }
-        if (mobileHeader) {
-            mobileHeader.classList.remove("hidden");
-            mobileHeader.style.display = "";
-        }
-        if (mainContent) {
-            mainContent.classList.add("lg:pl-64");
-        }
+        sidebar?.classList.remove("hidden");
+        mobileHeader?.classList.remove("hidden");
+        mainContent?.classList.add("lg:pl-64");
     }
 
     // 3. Evento para botones de cerrar sesión
-    const logoutBtns = document.querySelectorAll(".logout-button");
-    logoutBtns.forEach((btn) => {
+    document.querySelectorAll(".logout-button").forEach((btn) => {
         btn.addEventListener("click", () => {
             clearSession();
             window.location.href = "/login";
@@ -117,11 +100,20 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
     // 4. WebSocket de notificaciones (solo técnicos)
     let socket: WebSocket | null = null;
 
+    function delayedReload(redirectUrl?: string) {
+        setTimeout(() => {
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            } else {
+                window.location.reload();
+            }
+        }, 1600);
+    }
+
     function initWebSocket() {
         const token = getToken();
         const payload = token ? decodeToken(token) : null;
 
-        // El ID del técnico y su rol salen del JWT (el servidor vuelve a validarlos al conectar)
         if (!token || !payload || payload.role !== "technician" || !payload.id) {
             return;
         }
@@ -139,34 +131,28 @@ const { title = "Rutas Digitales", hideMenu = false } = Astro.props;
 
             switch (data.event) {
                 case "NEW_ROUTE_ASSIGNED":
-                    alert(`📢 ¡Nueva ruta asignada!`);
-                    window.location.reload();
+                    showToast("📢 ¡Nueva ruta asignada!", "success");
+                    delayedReload();
                     break;
 
                 case "NEW_SERVICE_ADDED":
-                    alert(`⚠️ Se ha añadido un nuevo cliente a tu ruta actual.`);
-                    window.location.reload();
+                    showToast("⚠️ Se ha añadido un nuevo cliente a tu ruta actual.", "warning");
+                    delayedReload();
                     break;
 
                 case "SERVICE_DELETED":
-                    alert(`🗑️ Se ha cancelado y retirado un cliente de tu ruta.`);
-                    window.location.reload();
+                    showToast("🗑️ Se ha retirado un cliente de tu ruta.", "warning");
+                    delayedReload();
                     break;
 
                 case "ROUTE_DELETED":
-                    alert(`🚨 Tu ruta actual ha sido eliminada por la oficina.`);
-                    if (window.location.pathname.includes("/panel/ruta")) {
-                        window.location.href = "/panel";
-                    } else {
-                        window.location.reload();
-                    }
+                    showToast("🚨 Tu ruta actual ha sido eliminada por la oficina.", "error");
+                    delayedReload(window.location.pathname.includes("/panel/ruta") ? "/panel" : undefined);
                     break;
 
                 case "ROUTE_CANCELED":
-                    // Solo recargamos: panel/ruta.astro ya muestra los servicios en rojo
-                    // y deshabilita los botones cuando la ruta está cancelada.
-                    alert(`🚫 La oficina ha cancelado tu ruta actual.`);
-                    window.location.reload();
+                    showToast("🚫 La oficina ha cancelado tu ruta actual.", "error");
+                    delayedReload();
                     break;
             }
         };

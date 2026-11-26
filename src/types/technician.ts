@@ -2,9 +2,9 @@ export interface Technician {
     id: string;
     name: string;
     email: string;
-    phone: string | null;
+    phone?: string | null;
+    specialties: string[];
     active: boolean;
-    specialties?: string[];
     photo_url?: string | null;
 }
 
@@ -13,14 +13,15 @@ export interface TechnicianCreate {
     email: string;
     password: string;
     phone?: string | null;
-    specialties?: string[];
-    photo_url?: string | null;
+    specialties: string[];
+    active?: boolean;
 }
 
 export interface TechnicianUpdate {
     name?: string;
     email?: string;
+    password?: string;
     phone?: string | null;
-    specialty?: string;
-    photo_url?: string | null;
+    specialties?: string[]; // <-- Corregido (antes era specialty?: string)
+    active?: boolean;
 }
