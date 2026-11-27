@@ -266,7 +266,7 @@ import Layout from "../../layouts/Layout.astro";
                         updateServiceNumbers();
                         }
 
-                    } catch (error) {
+                    } catch{
                     showError("No se pudieron cargar los datos base. Revisa tu conexión.");
                     if (technicianSelect) {
                         technicianSelect.disabled = true;

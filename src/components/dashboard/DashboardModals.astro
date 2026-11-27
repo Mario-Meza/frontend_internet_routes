@@ -1,0 +1,61 @@
+---
+// src/components/dashboard/DashboardModals.astro
+---
+
+<!-- MODAL DE CANCELAR RUTA -->
+<div
+        id="cancel-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cancel-modal-title"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity"
+>
+    <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-500 ring-8 ring-amber-50/50">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        <h3 id="cancel-modal-title" class="text-xl font-black tracking-tight text-slate-900">¿Suspender ruta?</h3>
+        <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+            Al confirmar, el técnico ya no podrá realizar ni terminar ninguna instalación de esta asignación.
+        </p>
+        <div class="mt-8 flex flex-col gap-3">
+            <button id="confirm-cancel-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600 active:scale-95">
+                Sí, suspender
+            </button>
+            <button id="close-cancel-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                Volver
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE ELIMINAR RUTA -->
+<div
+        id="delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-modal-title"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity"
+>
+    <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+        </div>
+        <h3 id="delete-modal-title" class="text-xl font-black tracking-tight text-slate-900">¿Eliminar registro?</h3>
+        <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
+            Esta acción borrará la ruta permanentemente de la base de datos y no se podrá deshacer.
+        </p>
+        <div class="mt-8 flex flex-col gap-3">
+            <button id="confirm-delete-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
+                Eliminar permanentemente
+            </button>
+            <button id="close-delete-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>

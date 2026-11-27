@@ -41,3 +41,15 @@ export interface Route {
     notes?: string | null;
     services: RouteService[];
 }
+
+// Al final de src/types/route.ts
+export interface RouteTechnicianSummary {
+    id: string;
+    name: string;
+    phone?: string | null;
+    active?: boolean;
+}
+
+export interface RouteDetail extends Route {
+    technician: RouteTechnicianSummary;
+}

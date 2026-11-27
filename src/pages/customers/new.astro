@@ -199,7 +199,7 @@ import Layout from "../../layouts/Layout.astro";
                 return "El teléfono es obligatorio.";
             }
 
-            const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
+            const cleanPhone = phone.trim().replace(/[-\s()]/g, "");
             const digitsOnly = cleanPhone.replace("+", "");
             const pureNumber = digitsOnly.slice(-10);
             const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);

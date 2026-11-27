@@ -168,7 +168,12 @@ import Layout from "../layouts/Layout.astro";
     </main>
 
     <script>
-        import { getAdminProfile, updateAdminProfile } from "../services/api";
+        import {
+            getAdminProfile,
+            updateAdminProfile,
+            type AdminProfileUpdate,
+        } from "../services/api";
+        import { escapeHtml } from "../utils/format";
 
         const form = document.querySelector<HTMLFormElement>("#profile-form");
         const nameInput = document.querySelector<HTMLInputElement>("#name");
@@ -188,7 +193,7 @@ import Layout from "../layouts/Layout.astro";
             errorMessage.innerHTML = `
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p>${message}</p>
+                    <p>${escapeHtml(message)}</p>
                 </div>
             `;
             errorMessage.classList.remove("hidden");
@@ -224,7 +229,7 @@ import Layout from "../layouts/Layout.astro";
                 if (nameInput) nameInput.value = profile.name || "";
                 if (emailInput) emailInput.value = profile.email || "";
 
-            } catch (error) {
+            } catch {
                 showError("No se pudieron cargar tus datos. Revisa tu conexión.");
                 if (saveBtn) saveBtn.disabled = true;
             }
@@ -238,22 +243,15 @@ import Layout from "../layouts/Layout.astro";
             const email = emailInput?.value.trim() || "";
             const currentPassword = currentPasswordInput?.value || "";
             const newPassword = newPasswordInput?.value || "";
-            const confirmPassword = confirmPasswordInput?.value || "";
 
             if (!name || !email || !currentPassword) {
                 showError("El nombre, correo y tu contraseña actual son obligatorios.");
                 return;
             }
 
-            if (newPassword || confirmPassword) {
-                if (newPassword.length < 6) {
-                    showError("La nueva contraseña debe tener al menos 6 caracteres.");
-                    return;
-                }
-                if (newPassword !== confirmPassword) {
-                    showError("La nueva contraseña y la confirmación no coinciden.");
-                    return;
-                }
+            if (newPassword.length < 8) {
+                showError("La nueva contraseña debe tener al menos 8 caracteres.");
+                return;
             }
 
             try {
@@ -268,10 +266,10 @@ import Layout from "../layouts/Layout.astro";
                     `;
                 }
 
-                const updateData: any = {
+                const updateData: AdminProfileUpdate = {
                     name,
                     email,
-                    current_password: currentPassword
+                    current_password: currentPassword,
                 };
 
                 if (newPassword) {

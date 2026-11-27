@@ -7,6 +7,7 @@ import type {
 } from "../types/technician";
 import type {
     Route,
+    RouteDetail,
     RouteServiceCreate,
     ServiceType,
 } from "../types/route";
@@ -89,8 +90,8 @@ export async function getRoutes(): Promise<Route[]> {
     return apiRequest<Route[]>("/routes/");
 }
 
-export async function getRoute(routeId: string): Promise<Route> {
-    return apiRequest<Route>(`/routes/${routeId}`);
+export async function getRoute(routeId: string): Promise<RouteDetail> {
+    return apiRequest<RouteDetail>(`/routes/${routeId}`);
 }
 
 export async function createRoute(

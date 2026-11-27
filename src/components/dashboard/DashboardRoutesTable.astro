@@ -1,0 +1,102 @@
+---
+// src/components/dashboard/DashboardRoutesTable.astro
+---
+
+<!-- FILTROS Y BÚSQUEDA -->
+<div class="mb-6 flex flex-col gap-4 sm:flex-row">
+    <div class="relative flex-1">
+        <label for="search" class="sr-only">Buscar por técnico o fecha</label>
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+        </span>
+        <input
+                id="search"
+                type="search"
+                placeholder="Buscar por técnico o fecha..."
+                class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-4 text-sm font-medium text-slate-800 placeholder-slate-400 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+        />
+    </div>
+
+    <div class="relative sm:w-64 shrink-0">
+        <label for="status-filter" class="sr-only">Filtrar por estado</label>
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+        </span>
+        <select
+                id="status-filter"
+                class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3.5 pl-11 pr-10 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 cursor-pointer"
+        >
+            <option value="">Todos los estados</option>
+            <option value="assigned">Asignadas</option>
+            <option value="in_progress">En proceso</option>
+            <option value="completed">Completadas</option>
+            <option value="canceled">Canceladas</option>
+        </select>
+        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </span>
+    </div>
+</div>
+
+<!-- TABLA PRINCIPAL -->
+<div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] ring-1 ring-slate-200/50">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+            <thead class="hidden bg-slate-50 border-b border-slate-200 md:table-header-group">
+            <tr>
+                <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                    Fecha Programada
+                </th>
+                <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                    Técnico Asignado
+                </th>
+                <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                    Servicios
+                </th>
+                <th class="px-6 py-4 text-left text-[11px] font-black uppercase tracking-widest text-slate-500">
+                    Estado
+                </th>
+                <th class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-slate-500">
+                    Acciones
+                </th>
+            </tr>
+            </thead>
+            <tbody
+                    id="routes-body"
+                    class="block divide-y divide-slate-100 bg-white md:table-row-group"
+            >
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ESTADO VACÍO -->
+<div
+        id="empty"
+        class="mt-8 hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center shadow-sm sm:p-16"
+>
+    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 ring-8 ring-slate-50/50">
+        <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+    </div>
+    <h3 class="mt-6 text-xl font-bold text-slate-900">
+        No encontramos ninguna ruta
+    </h3>
+    <p class="mt-2 text-sm text-slate-500 max-w-sm mx-auto">
+        Intenta cambiar los términos de búsqueda, ajustar los filtros o crear una nueva asignación para tu equipo.
+    </p>
+    <button
+            id="clear-filters-btn"
+            type="button"
+            class="mt-6 inline-flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors"
+    >
+        Limpiar filtros <span aria-hidden="true" class="ml-1">→</span>
+    </button>
+</div>

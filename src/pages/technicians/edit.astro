@@ -235,6 +235,10 @@ import Layout from "../../layouts/Layout.astro";
             uploadTechnicianPhoto,
             deleteTechnicianPhoto,
         } from "../../services/api";
+        import type { Technician, TechnicianUpdate } from "../../types/technician";
+        import { escapeHtml } from "../../utils/format";
+
+
 
         const technicianId = new URLSearchParams(window.location.search).get("id");
 
@@ -270,7 +274,7 @@ import Layout from "../../layouts/Layout.astro";
             errorContainer.innerHTML = `
                     <div class="flex items-center gap-3">
                         ${icon}
-                        <p>${message}</p>
+                        <p>${escapeHtml(message)}</p>
                     </div>
                 `;
 
@@ -289,7 +293,9 @@ import Layout from "../../layouts/Layout.astro";
             try {
                 if (!technicianId) throw new Error("No se encontró el ID del técnico.");
 
-                const technician = await getTechnician(technicianId) as any;
+                const technician = (await getTechnician(technicianId)) as Technician & {
+                    photo?: string | null;
+                };
 
                 if (nameInput) nameInput.value = technician.name;
                 if (phoneInput) phoneInput.value = technician.phone ?? "";
@@ -401,19 +407,19 @@ import Layout from "../../layouts/Layout.astro";
             }
 
             const newPassword = passwordInput?.value.trim() || null;
-            if (newPassword && newPassword.length < 6) {
-                showMessage("Si vas a establecer una nueva contraseña, debe tener al menos 6 caracteres.");
+            if (newPassword && newPassword.length < 8) {
+                showMessage("Si vas a establecer una nueva contraseña, debe tener al menos 8 caracteres.");
                 return;
             }
 
             const checkedSpecialties = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="specialties"]:checked')).map(input => input.value);
             const specialtiesArray = checkedSpecialties.length > 0 ? checkedSpecialties : ["General"];
 
-            const technicianData: any = {
+            const technicianData: TechnicianUpdate = {
                 name: nameInput.value.trim(),
                 phone: phoneInput?.value.trim() || null,
                 email: emailInput.value.trim(),
-                specialties: specialtiesArray
+                specialties: specialtiesArray,
             };
 
             if (newPassword) {

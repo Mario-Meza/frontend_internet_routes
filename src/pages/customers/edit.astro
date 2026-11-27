@@ -10,12 +10,6 @@ import Layout from "../../layouts/Layout.astro";
 
             <!-- CABECERA -->
             <header class="mb-8">
-                <a href="/customers" class="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Volver a directorio
-                </a>
                 <div class="flex items-center gap-3">
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600 shadow-sm ring-1 ring-inset ring-blue-200">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -27,7 +21,7 @@ import Layout from "../../layouts/Layout.astro";
                             Editar cliente
                         </h1>
                         <p class="mt-1 text-sm text-slate-500">
-                            Actualiza la información de contacto o referencias del domicilio[cite: 29].
+                            Actualiza la información de contacto o referencias del domicilio
                         </p>
                     </div>
                 </div>
@@ -162,7 +156,9 @@ import Layout from "../../layouts/Layout.astro";
             updateCustomer,
             } from "../../services/api";
 
+
             import type { CustomerUpdate } from "../../types/customer";
+            import { escapeHtml } from "../../utils/format";
 
             const customerId = new URLSearchParams(window.location.search).get("id");
 
@@ -180,7 +176,7 @@ import Layout from "../../layouts/Layout.astro";
                 error.innerHTML = `
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <p>${message}</p>
+                    <p>${escapeHtml(message)}</p>
                 </div>
             `;
                 error.classList.remove("hidden");
@@ -200,7 +196,7 @@ import Layout from "../../layouts/Layout.astro";
                 if (name.trim().length < 3) return "El nombre debe tener al menos 3 caracteres.";
                 if (!phone.trim()) return "El teléfono es obligatorio.";
 
-                const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
+                const cleanPhone = phone.trim().replace(/[-\s()]/g, "");
                 const digitsOnly = cleanPhone.replace("+", "");
                 const pureNumber = digitsOnly.slice(-10);
                 const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);

@@ -13,8 +13,8 @@ import Layout from "../../layouts/Layout.astro";
                 <div>
                     <div class="flex items-center gap-2 mb-2">
                         <span class="relative flex h-3 w-3">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
                         </span>
                         <span class="text-xs font-bold uppercase tracking-widest text-orange-600">Gestión de Campo</span>
                     </div>
@@ -30,7 +30,7 @@ import Layout from "../../layouts/Layout.astro";
                         href="/routes/new"
                         class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/30 transition-all hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-500/40 active:scale-95 shrink-0"
                 >
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                     <span>Nueva asignación</span>
@@ -57,7 +57,7 @@ import Layout from "../../layouts/Layout.astro";
             </div>
 
             <!-- Toast Messages -->
-            <div id="message" class="mb-6 hidden rounded-2xl p-4 text-sm font-medium shadow-sm transition-all"></div>
+            <div id="message" role="status" aria-live="polite" class="mb-6 hidden rounded-2xl p-4 text-sm font-medium shadow-sm transition-all"></div>
             <div id="error" role="alert" class="hidden rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-700 shadow-sm"></div>
 
             <!-- Tabla -->
@@ -79,7 +79,7 @@ import Layout from "../../layouts/Layout.astro";
             <!-- Empty State -->
             <div id="empty" class="hidden rounded-2xl border-2 border-dashed border-slate-200 bg-white p-16 text-center shadow-sm">
                 <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 ring-8 ring-slate-50/50">
-                    <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                     </svg>
                 </div>
@@ -91,27 +91,29 @@ import Layout from "../../layouts/Layout.astro";
 
         </section>
 
-        <!-- ============================================== -->
-        <!-- MODALES DE CONFIRMACIÓN (Tailwind)             -->
-        <!-- ============================================== -->
-
         <!-- MODAL DE CANCELAR RUTA -->
-        <div id="cancel-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
+        <div
+                id="cancel-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="cancel-modal-title"
+                class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity"
+        >
             <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-500 ring-8 ring-amber-50/50">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                 </div>
-                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Suspender ruta?</h3>
+                <h3 id="cancel-modal-title" class="text-xl font-black tracking-tight text-slate-900">¿Suspender ruta?</h3>
                 <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
                     Al confirmar, el técnico ya no podrá realizar ni terminar ninguna instalación de esta asignación.
                 </p>
                 <div class="mt-8 flex flex-col gap-3">
-                    <button id="confirm-cancel-btn" class="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600 active:scale-95">
+                    <button id="confirm-cancel-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-amber-500 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600 active:scale-95">
                         Sí, suspender
                     </button>
-                    <button id="close-cancel-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                    <button id="close-cancel-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
                         Volver
                     </button>
                 </div>
@@ -119,22 +121,28 @@ import Layout from "../../layouts/Layout.astro";
         </div>
 
         <!-- MODAL DE ELIMINAR RUTA -->
-        <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity">
+        <div
+                id="delete-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delete-modal-title"
+                class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm transition-opacity"
+        >
             <div class="w-full max-w-sm overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-slate-200/50 text-center">
                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 ring-8 ring-red-50/50">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                     </svg>
                 </div>
-                <h3 class="text-xl font-black tracking-tight text-slate-900">¿Eliminar registro?</h3>
+                <h3 id="delete-modal-title" class="text-xl font-black tracking-tight text-slate-900">¿Eliminar registro?</h3>
                 <p class="mt-2 text-sm font-medium text-slate-500 leading-relaxed">
                     Esta acción borrará la ruta permanentemente de la base de datos y no se podrá deshacer.
                 </p>
                 <div class="mt-8 flex flex-col gap-3">
-                    <button id="confirm-delete-btn" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
+                    <button id="confirm-delete-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-red-600 px-5 py-3.5 text-sm font-bold text-white shadow-md shadow-red-500/20 transition hover:bg-red-700 active:scale-95">
                         Eliminar permanentemente
                     </button>
-                    <button id="close-delete-btn" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
+                    <button id="close-delete-btn" type="button" class="flex w-full items-center justify-center rounded-xl bg-slate-100 px-5 py-3.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 active:scale-95">
                         Cancelar
                     </button>
                 </div>
@@ -144,10 +152,23 @@ import Layout from "../../layouts/Layout.astro";
     </main>
 
     <script>
-        import { getRoutes, getTechnicians, updateRouteStatus, deleteRoute } from "../../services/api";
+        import {
+            API_URL,
+            deleteRoute,
+            getRoutes,
+            getTechnicians,
+            updateRouteStatus,
+        } from "../../services/api";
         import type { Route } from "../../types/route";
+        import type { Technician } from "../../types/technician";
+        import {
+            escapeHtml,
+            formatDate,
+            getAvatarColor,
+            getInitials,
+        } from "../../utils/format";
 
-        const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://127.0.0.1:8000/api/v1";
+        type TechnicianWithPhoto = Technician & { photo?: string | null };
 
         const loading = document.getElementById("loading");
         const errorContainer = document.getElementById("error");
@@ -156,7 +177,6 @@ import Layout from "../../layouts/Layout.astro";
         const empty = document.getElementById("empty");
         const routesBody = document.getElementById("routes-body");
 
-        // MODALES DOM
         const cancelModal = document.getElementById("cancel-modal");
         const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
         const closeCancelBtn = document.getElementById("close-cancel-btn");
@@ -167,34 +187,20 @@ import Layout from "../../layouts/Layout.astro";
 
         let routeIdToActOn: string | null = null;
         let routesData: Route[] = [];
+        let technicianMap = new Map<string, TechnicianWithPhoto>();
 
-        function escapeHtml(value: unknown): string {
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
+        function openModal(modal: HTMLElement | null) {
+            if (!modal) return;
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
         }
 
-        function getInitials(name: string): string {
-            return name.split(" ").filter(Boolean).slice(0, 2).map((word) => word[0].toUpperCase()).join("");
-        }
-
-        function formatDate(value: string): string {
-            const [year, month, day] = value.split("-");
-            const date = new Date(Number(year), Number(month) - 1, Number(day));
-            return date.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" }).replace('.', '');
-        }
-
-        function getAvatarColor(name: string): string {
-            const colors = [
-                'bg-blue-100 text-blue-700', 'bg-indigo-100 text-indigo-700',
-                'bg-violet-100 text-violet-700', 'bg-fuchsia-100 text-fuchsia-700',
-                'bg-pink-100 text-pink-700', 'bg-rose-100 text-rose-700'
-            ];
-            const charCode = name.charCodeAt(0) || 0;
-            return colors[charCode % colors.length];
+        function closeModals() {
+            cancelModal?.classList.add("hidden");
+            cancelModal?.classList.remove("flex");
+            deleteModal?.classList.add("hidden");
+            deleteModal?.classList.remove("flex");
+            routeIdToActOn = null;
         }
 
         function renderStatus(status: string): string {
@@ -204,24 +210,32 @@ import Layout from "../../layouts/Layout.astro";
                 completed: { label: "Completada", bg: "bg-green-50", dot: "bg-green-500", text: "text-green-700", border: "ring-green-600/20" },
                 canceled: { label: "Cancelada", bg: "bg-red-50", dot: "bg-red-500", text: "text-red-700", border: "ring-red-600/20" },
             };
-            const current = config[status] ?? { label: status, bg: "bg-slate-100", dot: "bg-slate-400", text: "text-slate-600", border: "ring-slate-500/20" };
+            const current = config[status] ?? {
+                label: status,
+                bg: "bg-slate-100",
+                dot: "bg-slate-400",
+                text: "text-slate-600",
+                border: "ring-slate-500/20",
+            };
 
             return `
                 <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-bold md:text-xs ${current.bg} ${current.text} ring-1 ring-inset ${current.border}">
                     <span class="h-1.5 w-1.5 rounded-full ${current.dot}"></span>
-                    ${current.label}
+                    ${escapeHtml(current.label)}
                 </span>
             `;
         }
 
-        function showMessage(text: string, isError: boolean = false) {
+        function showMessage(text: string, isError = false) {
             if (!messageContainer) return;
             messageContainer.innerHTML = `
                 <div class="flex items-center gap-3">
-                    ${isError
-                ? `<svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
-                : `<svg class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`}
-                    <p>${text}</p>
+                    ${
+                isError
+                    ? `<svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+                    : `<svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+            }
+                    <p>${escapeHtml(text)}</p>
                 </div>
             `;
             messageContainer.className = isError
@@ -234,82 +248,97 @@ import Layout from "../../layouts/Layout.astro";
             }, 4000);
         }
 
-        async function loadRoutes() {
-            try {
-                const [routesResponse, technicians] = await Promise.all([
-                    getRoutes(),
-                    getTechnicians(),
-                ]);
+        function attachAvatarFallbacks() {
+            routesBody?.querySelectorAll<HTMLImageElement>("img[data-avatar]").forEach((img) => {
+                const swapToFallback = () => {
+                    const span = document.createElement("span");
+                    const avatarColor = img.dataset.avatarColor ?? "bg-slate-100 text-slate-700";
+                    span.className = `flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white`;
+                    span.textContent = img.dataset.avatarInitials ?? "T";
+                    img.replaceWith(span);
+                };
 
-                routesData = routesResponse;
-                loading?.classList.add("hidden");
-
-                if (routesData.length === 0) {
-                    empty?.classList.remove("hidden");
-                    return;
+                img.addEventListener("error", swapToFallback, { once: true });
+                if (img.complete && img.naturalWidth === 0) {
+                    swapToFallback();
                 }
-
-                container?.classList.remove("hidden");
-
-                const technicianMap = new Map(
-                    technicians.map((technician) => [technician.id, technician])
-                );
-
-                renderTable(technicianMap);
-
-            } catch (err) {
-                loading?.classList.add("hidden");
-                if (errorContainer) {
-                    errorContainer.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <p>${err instanceof Error ? err.message : "No se pudieron cargar las rutas."}</p>
-                        </div>
-                    `;
-                    errorContainer.classList.remove("hidden");
-                }
-            }
+            });
         }
 
-        function renderTable(technicianMap: Map<string, any>) {
+        function attachRowEvents() {
+            routesBody?.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
+                button.addEventListener("click", () => {
+                    routeIdToActOn = button.dataset.id || null;
+                    openModal(cancelModal);
+                });
+            });
+
+            routesBody?.querySelectorAll<HTMLButtonElement>("[data-action='delete']").forEach((button) => {
+                button.addEventListener("click", () => {
+                    routeIdToActOn = button.dataset.id || null;
+                    openModal(deleteModal);
+                });
+            });
+        }
+
+        function renderTable() {
             if (!routesBody) return;
 
             routesBody.innerHTML = routesData
                 .map((route) => {
-                    const technician = technicianMap.get(route.technician_id) as any;
+                    const technician = technicianMap.get(route.technician_id);
                     const technicianName = technician?.name ?? "Técnico desconocido";
-                    const technicianSpecialty = technician?.specialty ?? "General";
+                    const specialties =
+                        technician?.specialties && technician.specialties.length > 0
+                            ? technician.specialties
+                            : ["General"];
                     const serviceCount = route.services.length;
                     const serviceLabel = serviceCount === 1 ? "Visita" : "Visitas";
                     const avatarColor = getAvatarColor(technicianName);
+                    const initials = getInitials(technicianName);
+                    const encodedId = encodeURIComponent(route.id);
+                    const safeId = escapeHtml(route.id);
 
-                    let avatarHtml = '';
-                    if (technician) {
-                        const photoUrl = technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`;
-                        avatarHtml = `
+                    const photoUrl = technician
+                        ? technician.photo_url || technician.photo || `${API_URL}/technicians/${technician.id}/photo`
+                        : "";
+
+                    const avatarHtml = technician
+                        ? `
                             <img
+                                data-avatar
+                                data-avatar-color="${escapeHtml(avatarColor)}"
+                                data-avatar-initials="${escapeHtml(initials)}"
                                 src="${escapeHtml(photoUrl)}"
                                 alt="${escapeHtml(technicianName)}"
                                 class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-sm"
-                                onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('span'), {className: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white', textContent: '${getInitials(technicianName)}'}));"
                             />
-                        `;
-                    } else {
-                        avatarHtml = `
+                        `
+                        : `
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatarColor} text-sm font-black shadow-sm ring-2 ring-white">
-                                ${escapeHtml(getInitials(technicianName))}
+                                ${escapeHtml(initials)}
                             </span>
                         `;
-                    }
+
+                    const specialtiesHtml = specialties
+                        .map(
+                            (spec) => `
+                            <div class="inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
+                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                ${escapeHtml(spec)}
+                            </div>
+                        `,
+                        )
+                        .join("");
 
                     return `
                         <tr class="group block px-4 py-4 transition-colors hover:bg-slate-50 md:table-row md:px-0 md:py-0 border-b border-slate-100 md:border-b-0">
-                            
-                            <!-- FECHA -->
                             <td data-label="Fecha" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                                 <div class="flex items-center gap-3">
                                     <div class="hidden md:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
@@ -319,7 +348,6 @@ import Layout from "../../layouts/Layout.astro";
                                 </div>
                             </td>
 
-                            <!-- TÉCNICO + ESPECIALIDAD -->
                             <td data-label="Técnico" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                                 <div class="flex items-center gap-4">
                                     ${avatarHtml}
@@ -327,17 +355,13 @@ import Layout from "../../layouts/Layout.astro";
                                         <div class="text-sm font-bold text-slate-800">
                                             ${escapeHtml(technicianName)}
                                         </div>
-                                        <div class="mt-1 inline-flex items-center gap-1 rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-orange-600 ring-1 ring-inset ring-orange-600/20">
-                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                            ${escapeHtml(technicianSpecialty)}
+                                        <div class="mt-1 flex flex-wrap gap-1.5">
+                                            ${specialtiesHtml}
                                         </div>
                                     </div>
                                 </div>
                             </td>
 
-                            <!-- SERVICIOS -->
                             <td data-label="Servicios" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                                 <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 ring-1 ring-inset ring-slate-200">
                                     <span class="text-slate-900">${serviceCount}</span>
@@ -345,21 +369,19 @@ import Layout from "../../layouts/Layout.astro";
                                 </span>
                             </td>
 
-                            <!-- ESTADO -->
                             <td data-label="Estado" class="flex items-center justify-between gap-4 py-2 before:text-xs before:font-bold before:text-slate-400 before:content-[attr(data-label)] md:table-cell md:px-6 md:py-5 md:before:content-none">
                                 ${renderStatus(route.status)}
                             </td>
 
-                            <!-- ACCIONES COMPLETAS -->
                             <td class="mt-4 flex justify-end pt-4 md:mt-0 md:table-cell md:px-6 md:py-5 border-t border-slate-100 md:border-0 md:pt-5">
                                 <div class="flex items-center gap-2 transition-opacity md:opacity-80 md:group-hover:opacity-100">
-                                    
                                     <a
-                                        href="/routes/detail?id=${route.id}"
+                                        href="/routes/detail?id=${encodedId}"
                                         class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-indigo-600 active:scale-95 md:p-2"
                                         title="Ver detalles completos"
+                                        aria-label="Ver detalles de la ruta"
                                     >
-                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
@@ -369,52 +391,55 @@ import Layout from "../../layouts/Layout.astro";
                                     ${
                         route.status === "assigned"
                             ? `
-                                                <a
-                                                    href="/routes/edit?id=${route.id}"
-                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-orange-600 active:scale-95 md:p-2"
-                                                    title="Editar asignación"
-                                                >
-                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                    </svg>
-                                                </a>
-                                            `
+                                        <a
+                                            href="/routes/edit?id=${encodedId}"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-orange-600 active:scale-95 md:p-2"
+                                            title="Editar asignación"
+                                            aria-label="Editar asignación"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                    `
                             : ""
                     }
 
                                     ${
                         route.status === "assigned" || route.status === "in_progress"
                             ? `
-                                                <button
-                                                    type="button"
-                                                    data-action="cancel"
-                                                    data-id="${route.id}"
-                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
-                                                    title="Suspender/Cancelar ruta"
-                                                >
-                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                                    </svg>
-                                                </button>
-                                            `
+                                        <button
+                                            type="button"
+                                            data-action="cancel"
+                                            data-id="${safeId}"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-slate-50 hover:text-amber-600 active:scale-95 md:p-2"
+                                            title="Suspender/Cancelar ruta"
+                                            aria-label="Suspender o cancelar ruta"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                            </svg>
+                                        </button>
+                                    `
                             : ""
                     }
 
                                     ${
                         route.status === "assigned"
                             ? `
-                                                <button
-                                                    type="button"
-                                                    data-action="delete"
-                                                    data-id="${route.id}"
-                                                    class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
-                                                    title="Eliminar permanentemente"
-                                                >
-                                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            `
+                                        <button
+                                            type="button"
+                                            data-action="delete"
+                                            data-id="${safeId}"
+                                            class="inline-flex items-center justify-center rounded-xl bg-white p-2.5 text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200 transition-all hover:bg-red-50 hover:text-red-600 hover:ring-red-200 active:scale-95 md:p-2"
+                                            title="Eliminar permanentemente"
+                                            aria-label="Eliminar ruta permanentemente"
+                                        >
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    `
                             : ""
                     }
                                 </div>
@@ -424,74 +449,103 @@ import Layout from "../../layouts/Layout.astro";
                 })
                 .join("");
 
-            addTableEvents(technicianMap);
+            attachAvatarFallbacks();
+            attachRowEvents();
         }
 
-        // ==============================================
-        // EVENTOS DE BOTONES Y MODALES
-        // ==============================================
-        function addTableEvents(technicianMap: Map<string, any>) {
-            document.querySelectorAll<HTMLButtonElement>("[data-action='cancel']").forEach((button) => {
-                button.addEventListener("click", () => {
-                    routeIdToActOn = button.dataset.id || null;
-                    cancelModal?.classList.remove("hidden");
-                });
-            });
+        async function loadRoutes() {
+            try {
+                const [routesResponse, technicians] = await Promise.all([
+                    getRoutes(),
+                    getTechnicians(),
+                ]);
 
-            document.querySelectorAll<HTMLButtonElement>("[data-action='delete']").forEach((button) => {
-                button.addEventListener("click", () => {
-                    routeIdToActOn = button.dataset.id || null;
-                    deleteModal?.classList.remove("hidden");
-                });
-            });
+                routesData = routesResponse;
+                technicianMap = new Map(
+                    technicians.map((technician) => [technician.id, technician]),
+                );
 
-            if (confirmCancelBtn) {
-                const newCancelBtn = confirmCancelBtn.cloneNode(true) as HTMLButtonElement;
-                confirmCancelBtn.parentNode?.replaceChild(newCancelBtn, confirmCancelBtn);
+                loading?.classList.add("hidden");
 
-                newCancelBtn.addEventListener("click", async () => {
-                    if (!routeIdToActOn) return;
-                    cancelModal?.classList.add("hidden");
+                if (routesData.length === 0) {
+                    empty?.classList.remove("hidden");
+                    return;
+                }
 
-                    try {
-                        await updateRouteStatus(routeIdToActOn, "canceled");
-                        routesData = routesData.map((route) => (route.id === routeIdToActOn ? { ...route, status: "canceled" } : route));
-                        renderTable(technicianMap);
-                        showMessage("Ruta suspendida correctamente.", false);
-                    } catch (error) {
-                        showMessage(error instanceof Error ? error.message : "No se pudo cancelar la ruta.", true);
-                    }
-                });
-            }
-
-            if (confirmDeleteBtn) {
-                const newDeleteBtn = confirmDeleteBtn.cloneNode(true) as HTMLButtonElement;
-                confirmDeleteBtn.parentNode?.replaceChild(newDeleteBtn, confirmDeleteBtn);
-
-                newDeleteBtn.addEventListener("click", async () => {
-                    if (!routeIdToActOn) return;
-                    deleteModal?.classList.add("hidden");
-
-                    try {
-                        await deleteRoute(routeIdToActOn);
-                        routesData = routesData.filter((route) => route.id !== routeIdToActOn);
-
-                        if(routesData.length === 0) {
-                            document.getElementById("routes-container")?.classList.add("hidden");
-                            document.getElementById("empty")?.classList.remove("hidden");
-                        } else {
-                            renderTable(technicianMap);
-                        }
-                        showMessage("Asignación eliminada permanentemente.", false);
-                    } catch (error) {
-                        showMessage(error instanceof Error ? error.message : "Error al intentar eliminar.", true);
-                    }
-                });
+                container?.classList.remove("hidden");
+                renderTable();
+            } catch (err) {
+                loading?.classList.add("hidden");
+                if (errorContainer) {
+                    const msg = err instanceof Error ? err.message : "No se pudieron cargar las rutas.";
+                    errorContainer.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <p>${escapeHtml(msg)}</p>
+                        </div>
+                    `;
+                    errorContainer.classList.remove("hidden");
+                }
             }
         }
 
-        closeCancelBtn?.addEventListener("click", () => cancelModal?.classList.add("hidden"));
-        closeDeleteBtn?.addEventListener("click", () => deleteModal?.classList.add("hidden"));
+        // Eventos globales de modales (registrados una sola vez)
+        closeCancelBtn?.addEventListener("click", closeModals);
+        closeDeleteBtn?.addEventListener("click", closeModals);
+
+        cancelModal?.addEventListener("click", (e) => {
+            if (e.target === cancelModal) closeModals();
+        });
+        deleteModal?.addEventListener("click", (e) => {
+            if (e.target === deleteModal) closeModals();
+        });
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeModals();
+        });
+
+        confirmCancelBtn?.addEventListener("click", async () => {
+            if (!routeIdToActOn) return;
+            const targetId = routeIdToActOn;
+            closeModals();
+
+            try {
+                await updateRouteStatus(targetId, "canceled");
+                routesData = routesData.map((route) =>
+                    route.id === targetId ? { ...route, status: "canceled" } : route,
+                );
+                renderTable();
+                showMessage("Ruta suspendida correctamente.", false);
+            } catch (error) {
+                showMessage(
+                    error instanceof Error ? error.message : "No se pudo cancelar la ruta.",
+                    true,
+                );
+            }
+        });
+
+        confirmDeleteBtn?.addEventListener("click", async () => {
+            if (!routeIdToActOn) return;
+            const targetId = routeIdToActOn;
+            closeModals();
+
+            try {
+                await deleteRoute(targetId);
+                routesData = routesData.filter((route) => route.id !== targetId);
+
+                if (routesData.length === 0) {
+                    container?.classList.add("hidden");
+                    empty?.classList.remove("hidden");
+                } else {
+                    renderTable();
+                }
+                showMessage("Asignación eliminada permanentemente.", false);
+            } catch (error) {
+                showMessage(
+                    error instanceof Error ? error.message : "Error al intentar eliminar.",
+                    true,
+                );
+            }
+        });
 
         loadRoutes();
     </script>

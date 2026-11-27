@@ -339,12 +339,12 @@ import Layout from "../../layouts/Layout.astro";
                     return "Ingresa un correo electrónico válido.";
                     }
 
-                if (password.length < 6) {
-                    return "La contraseña debe tener al menos 6 caracteres.";
-                    }
+                if (password.length < 8) {
+                    return "La contraseña debe tener al menos 8 caracteres.";
+                }
 
                 if (phone.trim()) {
-                    const cleanPhone = phone.trim().replace(/[\s\-\(\)]/g, "");
+                    const cleanPhone = phone.trim().replace(/[-\s()]/g, "");
                     const digitsOnly = cleanPhone.replace("+", "");
                     const pureNumber = digitsOnly.slice(-10);
                     const isAllSameDigits = /^(\d)\1+$/.test(pureNumber);

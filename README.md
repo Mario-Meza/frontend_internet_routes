@@ -1,51 +1,36 @@
-# Astro Starter Kit: Basics
+# Rutas Digitales — Frontend Web
 
-```sh
-npm create astro@latest -- --template basics
-```
+Aplicación web para la gestión, asignación y seguimiento en tiempo real de cuadrillas técnicas en campo (instalaciones de fibra óptica, enlaces wireless y soporte).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+> **Backend asociado:** [`backend_internet_routes`](https://github.com/Mario-Meza/backend_internet_routes) (FastAPI + MongoDB + WebSockets + Cloudinary).
 
-## 🚀 Project Structure
+## Características principales
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Panel Administrativo:** Dashboard con tarjetas de métricas animadas en SVG, control de rutas (`assigned` → `in_progress` → `completed` / `canceled`), administración de técnicos con carga de fotos y directorio de clientes.
+- **Módulo de Clientes en React:** Búsqueda instantánea, filtros por estado, paginación y modales accesibles (`role="dialog"`, soporte de teclado) integrados con `@astrojs/react`.
+- **Panel Móvil para Técnicos (`/panel`):** Interfaz optimizada para trabajo en campo con hoja de ruta paso a paso, inicio/cierre de servicios y registro de observaciones técnicas.
+- **Sincronización en tiempo real:** Conexión WebSocket autenticada con JWT que notifica al técnico mediante toasts no bloqueantes cuando la oficina asigna, modifica o cancela servicios.
+- **Seguridad y contratos estrictos:** Tipado estricto en TypeScript alineado con Pydantic, escape centralizado contra XSS y cierre automático de sesión ante respuestas `401`.
+
+## Stack Tecnológico
+
+- **Framework:** Astro + React (`@astrojs/react`)
+- **Lenguaje:** TypeScript (`strict`)
+- **Estilos:** Tailwind CSS
+- **Testing y Calidad:** Vitest, Testing Library, ESLint y GitHub Actions CI
+
+## Estructura del proyecto
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## run as network
-```bash
-npm run dev -- --host 
-```
+src/
+├── components/
+│   ├── customers/     # Módulo interactivo de clientes (React + TSX)
+│   ├── dashboard/     # Tarjetas SVG, tabla y modales del panel principal
+│   └── Sidebar.astro
+├── hooks/             # Custom hooks de React (useCustomers)
+├── layouts/           # Layout base, control de roles y cliente WebSocket
+├── pages/             # Rutas de Astro (admin, técnicos, clientes, login y /panel)
+├── scripts/           # Lógica modular de vistas interactivas
+├── services/          # Cliente HTTP centralizado (api.ts)
+├── types/             # Contratos TypeScript sincronizados con FastAPI
+└── utils/             # Manejo de JWT (auth.ts) y formateo/toasts (format.ts)
