@@ -2,7 +2,7 @@ import type { Customer } from "./customer";
 
 export type RouteStatus = "assigned" | "in_progress" | "completed" | "canceled";
 export type ServiceStatus = "pending" | "in_progress" | "completed" | "not_completed" | "canceled";
-export type ServiceType = "installation" | "support" | "maintenance" | "relocation"
+export type ServiceType = "S" | "R" | "A" | "CF"
 
 export interface RouteService {
     service_id: string;
