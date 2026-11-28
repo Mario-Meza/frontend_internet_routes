@@ -1,3 +1,4 @@
+![CI](https://github.com/Mario-Meza/backend_internet_routes/actions/workflows/ci.yml/badge.svg)
 # Rutas Digitales — Frontend Web
 
 Aplicación web para la gestión, asignación y seguimiento en tiempo real de cuadrillas técnicas en campo (instalaciones de fibra óptica, enlaces wireless y soporte).
